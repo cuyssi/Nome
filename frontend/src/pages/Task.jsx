@@ -10,8 +10,7 @@ const Task = () => {
                 <h2 className="text-purple-400 font font-bold font-poppins text-4xl underline-offset-8 decoration-[3px] mt-6 mb-10">
                     Tareas
                 </h2>
-
-                {/* Tabs */}
+                                
                 <div className="w-full mt-2">
                     <button
                         onClick={() => setActiveTab("deberes")}

@@ -11,6 +11,7 @@ export const addToTranscriptionStorage = (response) => {
 export const getTranscriptionOfStorage = () => {
     try {
         const response = JSON.parse(localStorage.getItem("transcriptionHistory"));
+        console.log("📦 Leyendo localStorage:", response);
         return response;
     } catch (err) {
         console.error("❌ Error al recibir transcripciones:", err);
@@ -55,6 +56,13 @@ export const dateAndTime = (data) => {
         return { date: undefined, hour: undefined };
     }
 };
+
+export const deleteTranscriptionById = (id) => {
+  const existing = getTranscriptionOfStorage() || [];
+  const updated = existing.filter(task => task.id !== id);
+  localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
+};
+
 
 
 

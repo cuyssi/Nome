@@ -10,8 +10,7 @@ const Dates = () => {
                 <h2 className="text-purple-400 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
                     Citas
                 </h2>
-
-                {/* Tabs */}
+               
                 <div className="w-full  mt-5">
                     <button
                         onClick={() => setActiveTab("citas")}

@@ -1,5 +1,3 @@
-// src/hooks/useTaskColor.js
-
 const defaultColorMap = {
   deberes: "blue-400",
   ejercicios: "blue-400",

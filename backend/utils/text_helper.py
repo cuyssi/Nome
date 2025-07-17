@@ -2,7 +2,7 @@ import re
 from utils.preprocess import clean_text
 from datetime import datetime
 
-# 🧩 Funciones auxiliares de limpieza
+# Funciones auxiliares de limpieza
 
 def remove_relative_expressions(text):
     return re.sub(r"\b(pasado\s+mañana|mañana|hoy)\b[,\s]*", "", text, flags=re.IGNORECASE)
