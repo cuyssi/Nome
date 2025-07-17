@@ -11,7 +11,7 @@ router = APIRouter()
 async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
     texto_prelimpio = clean_text(texto_raw)
-    fecha = combine_date_and_time(texto_prelimpio)
+    fecha = combine_date_and_time(texto_raw)
     texto_final = clean_final_text(texto_prelimpio, fecha) if fecha else texto_prelimpio
 
     return {

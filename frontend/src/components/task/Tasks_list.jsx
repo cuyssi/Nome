@@ -1,9 +1,10 @@
-import { getTranscriptionOfStorage } from "../../utils/transcriptionStorage";
+import { getTranscriptionOfStorage, sortedTasks } from "../../utils/transcriptionStorage";
 import { Task_card } from "./Task_card";
 import { filterTasks } from "../../utils/taskFilter";
 
 export const Tasks_list = ({ type, exclude = false }) => {
-    const task_list = getTranscriptionOfStorage() || [];
+    const tasks = getTranscriptionOfStorage() || [];
+    const task_list = sortedTasks(tasks);
     const filtered_tasks = type
     ? filterTasks(task_list, type, exclude)
     : task_list;    

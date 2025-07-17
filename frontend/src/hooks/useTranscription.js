@@ -13,7 +13,8 @@ export const useTranscription = () => {
             const {text_raw, text, dateTime} = getFormattedTasks(response);
             const { date, hour } = dateAndTime(dateTime)
             const text_clean = normalizeType(text)
-            const { type } = getTaskColor(text_clean)            
+            const { type } = getTaskColor(text_clean)   
+            console.log(text_raw)         
             console.log(text)
             console.log(text_clean)
             console.log(type)            

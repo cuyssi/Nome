@@ -17,6 +17,20 @@ export const getTranscriptionOfStorage = () => {
     }
 }
 
+export const sortedTasks = (tasks) => {
+    return [...tasks].sort((a, b) => {
+        const [dayA, monthA] = a.date.split("/").map(Number);
+        const [hourA, minuteA] = a.hour.split(":").map(Number);
+        const [dayB, monthB] = b.date.split("/").map(Number);
+        const [hourB, minuteB] = b.hour.split(":").map(Number);
+
+        const dateA = new Date(2025, monthA - 1, dayA, hourA, minuteA);
+        const dateB = new Date(2025, monthB - 1, dayB, hourB, minuteB);
+
+        return dateA - dateB; // orden ascendente
+    });
+};
+
 export const getFormattedTasks = (transcription) => {
     const text_raw = transcription.text_raw
     const text = transcription.text

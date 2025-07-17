@@ -53,6 +53,19 @@ def remove_stray_numbers(text):
 
 # 🧼 Función principal
 
+def remove_articles_before_time_or_date(text: str) -> str:
+    # Artículos antes de hora
+    text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=a\s+las\s+\d+)", "", text, flags=re.IGNORECASE)
+
+    # Artículos antes de día de la semana
+    dias = "lunes|martes|miércoles|jueves|viernes|sábado|domingo"
+    text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=(" + dias + r"))", "", text, flags=re.IGNORECASE)
+
+    # Artículos antes de fechas tipo "24 de julio"
+    text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=\d{1,2}\s+de\s+\w+)", "", text, flags=re.IGNORECASE)
+
+    return text
+
 def clean_final_text(text: str, task_datetime: datetime) -> str:
     text = clean_text(text)
     day = task_datetime.day
@@ -60,6 +73,7 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
     hour = task_datetime.hour
     minute = task_datetime.minute
 
+    text = remove_articles_before_time_or_date(text)
     text = remove_relative_expressions(text)
     text = remove_moment_of_day(text)
     text = remove_explicit_date(text, day, month_name)
@@ -67,6 +81,21 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
     text = remove_hour_expressions(text, hour, minute)
     text = remove_stray_numbers(text)
 
-    final_text = text.strip().rstrip(",.")
+    final_text = text.strip()
+    final_text = re.sub(r",\s+", " ", final_text)
+    final_text = final_text.rstrip(",.")
+    final_text = final_text[0].upper() + final_text[1:] if final_text else ""
+    final_text = re.sub(r"^quede\b", "Quedé", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\ba\s+(con|para|en)\b", r"\1", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\bmedia\b", "", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\b(media|cuarto)\b", "", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\s{2,}", " ", final_text).strip()
+    final_text = final_text.rstrip(",.")
+    lugares = ["biblioteca", "oficina", "casa", "piscina", "canchas", "playa", "tienda", "farmacia"]
+    for lugar in lugares:
+        pattern = rf"\bcon\s+(\w+)\s+{lugar}\b"
+        replacement = rf"con \1 en la {lugar}"
+        final_text = re.sub(pattern, replacement, final_text, flags=re.IGNORECASE)
+
     print("🧼 clean_final_text output:", final_text)
     return final_text

@@ -25,7 +25,27 @@ def find_manual_date(texto: str) -> Optional[datetime]:
         r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|"
         r"septiembre|octubre|noviembre|diciembre)"
     )
+    pattern_NotMonth = r"\b(el\s+)?día\s+(\d{1,2})\b"
     match = re.search(pattern, texto, flags=re.IGNORECASE)
+    if match:
+        dia = int(match.group(2))
+        mes = {
+            "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+            "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10,
+            "noviembre": 11, "diciembre": 12,
+        }[match.group(3)]
+        return datetime.now().replace(day=dia, month=mes, hour=0, minute=0, second=0, microsecond=0)
+
+    match_sin_mes = re.search(pattern_NotMonth, texto, flags=re.IGNORECASE)
+    if match_sin_mes:
+        dia = int(match_sin_mes.group(2))
+        hoy = datetime.now()
+        try:
+            return hoy.replace(day=dia, hour=0, minute=0, second=0, microsecond=0)
+        except ValueError:
+            return None
+
+    return None
     month_map = {
         "enero": 1,
         "febrero": 2,
@@ -51,13 +71,12 @@ def find_manual_date(texto: str) -> Optional[datetime]:
 
 def detect_relative_date(texto: str) -> Optional[date]:
     texto = texto.lower()
-    hoy = datetime.now().date()
-    if "pasado mañana" in texto:
-        return hoy + timedelta(days=2)
-    elif "mañana" in texto:
-        return hoy + timedelta(days=1)
-    elif "hoy" in texto:
-        return hoy
+    if re.search(r"\bpasado\s+mañana\b", texto):
+        return datetime.now().date() + timedelta(days=2)
+    elif re.search(r"\bmañana\b", texto) and not re.search(r"\bpor\s+la\s+mañana\b", texto):
+        return datetime.now().date() + timedelta(days=1)
+    elif re.search(r"\bhoy\b", texto):
+        return datetime.now().date()
     return None
 
 
@@ -76,12 +95,35 @@ def extract_weekday(texto: str) -> Optional[str]:
     return None
 
 
-def calculate_date_by_weekday(dia_nombre: str) -> date:
+def calculate_date_by_weekday(texto: str) -> Optional[date]:
+    texto = texto.lower()
     semana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
     hoy = datetime.now()
     hoy_index = hoy.weekday()
-    dia_index = semana.index(dia_nombre.lower())
-    delta = (dia_index - hoy_index) % 7
+
+    # Detectar día mencionado
+    dia_mencionado = None
+    for dia in semana:
+        if re.search(rf"\b{dia}\b", texto):
+            dia_mencionado = dia
+            break
+    print(dia_mencionado)
+
+    if not dia_mencionado:
+        return None
+
+    dia_index = semana.index(dia_mencionado)
+    print(dia_index)
+
+    es_proximo = bool(re.search(r"(proximo|que viene|de la semana que viene)", texto))
+
+    delta = dia_index - hoy_index
+    if delta < 0 or (delta == 0 and not es_proximo):
+        delta += 7
+
+    if es_proximo:
+        delta += 7
+    print(datetime.now(), datetime.now().weekday())
     return (hoy + timedelta(days=delta)).date()
 
 

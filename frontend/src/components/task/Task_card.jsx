@@ -3,6 +3,7 @@ import Container_task from "../commons/Container_task";
 
 export const Task_card = ({ task }) => {
     const color = getTaskColor(task.type);
+    console.log(task.text)
 
     return (
         <Container_task outerClass={`${color.bg}`} innerClass={`${color.border}`}>
