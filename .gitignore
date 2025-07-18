@@ -37,10 +37,16 @@ coverage/
 __pycache__/
 *.sqlite
 *.db
+# Temp files
+temp
 
 #Optional: keep shared VSCode settings
 !.vscode/extensions.json
 
 #Python virtual environment
 backend/venv/
+
+# Ignorar archivos temporales de audio
+*.mp3
+backend/temp_audio.mp3
 
