@@ -100,8 +100,6 @@ def calculate_date_by_weekday(texto: str) -> Optional[date]:
     semana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
     hoy = datetime.now()
     hoy_index = hoy.weekday()
-
-    # Detectar día mencionado
     dia_mencionado = None
     for dia in semana:
         if re.search(rf"\b{dia}\b", texto):
@@ -178,11 +176,9 @@ def extract_simple_time(texto: str):
         except ValueError:
             minutos = 0
 
-    # Aplicar lógica según momento_str
     if momento_str in ["tarde", "noche"] and hora < 12:
         hora += 12
 
-    # Si no se especificó, asumir tarde si parece vespertino
     if momento_str is None and hora < 8:
         hora += 12
 

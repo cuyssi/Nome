@@ -2,7 +2,6 @@ import re
 from utils.preprocess import clean_text
 from datetime import datetime
 
-# Funciones auxiliares de limpieza
 
 def remove_relative_expressions(text):
     return re.sub(r"\b(pasado\s+mañana|mañana|hoy)\b[,\s]*", "", text, flags=re.IGNORECASE)
@@ -51,20 +50,17 @@ def remove_stray_numbers(text):
     return re.sub(r"(?:^|\s)(\d{1,2})(?=\s|$)", "", text)
 
 
-# 🧼 Función principal
-
 def remove_articles_before_time_or_date(text: str) -> str:
-    # Artículos antes de hora
+
     text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=a\s+las\s+\d+)", "", text, flags=re.IGNORECASE)
 
-    # Artículos antes de día de la semana
     dias = "lunes|martes|miércoles|jueves|viernes|sábado|domingo"
     text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=(" + dias + r"))", "", text, flags=re.IGNORECASE)
 
-    # Artículos antes de fechas tipo "24 de julio"
     text = re.sub(r"\b(el|la|los|las|un|una|unos|unas)\s+(?=\d{1,2}\s+de\s+\w+)", "", text, flags=re.IGNORECASE)
 
     return text
+
 
 def clean_final_text(text: str, task_datetime: datetime) -> str:
     text = clean_text(text)
@@ -97,5 +93,4 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
         replacement = rf"con \1 en la {lugar}"
         final_text = re.sub(pattern, replacement, final_text, flags=re.IGNORECASE)
 
-    print("🧼 clean_final_text output:", final_text)
     return final_text

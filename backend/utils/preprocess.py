@@ -13,7 +13,6 @@ def preformat_audio_text(text: str) -> str:
 def clean_text(texto: str) -> str:
     texto = texto.replace("mañaña", "mañana")
 
-    # Reemplazar número escrito por número cifrado
     texto = re.sub(
         r"(el día|día|dia)?\s*(catorce|trece|doce|once|diez|nueve|ocho|siete|seis|cinco|cuatro|tres|dos|una|uno)",
         lambda m: str(number_map.get(m.group(2).lower(), m.group(2))),
@@ -21,11 +20,8 @@ def clean_text(texto: str) -> str:
         flags=re.IGNORECASE
     )
 
-    # Corregir comas antes de "a las"
     texto = re.sub(r"(de \w+),? a las", r"\1, a las", texto)
 
-    # Ahora aplicar corrección de espacios
     texto = preformat_audio_text(texto)
-    print("🧼 clean_text output:", texto.strip())
-
+    
     return texto.strip()
