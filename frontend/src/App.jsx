@@ -12,8 +12,8 @@ import Footer from "./components/commons/Footer";
 
 function App() {
     return (
-        <div className="flex bg-black flex-col sm:flex-col w-[100%] min-h-[100dvh] sm:items-center sm:justify-center">
-            <main className="bg-black h-[100%] flex-grow">
+        <div className="flex bg-black flex-col sm:flex-col w-[100%] min-h-screen sm:items-center sm:justify-center">
+            <main className="bg-black flex-1 overflow-y-auto">
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/tasks" element={<Task />} />

@@ -1,23 +1,19 @@
-import { getTaskColor } from "../../utils/getTaskColor";
 import Container_task from "../commons/Container_task";
 import { Trash2 } from "lucide-react";
-import { useSwipeToDelete } from "../../hooks/useSwipeToDelete";
+import { useTaskCard } from "../../hooks/useTaskCard";
 
 export const Task_card = ({ task, onDelete }) => {
-    const color = task.color
-        ? {
-              base: task.color,
-              bg: `bg-${task.color}`,
-              border: `border-${task.color}`,
-              text: `text-${task.color}`,
-          }
-        : getTaskColor(task.type);
-    const { dragOffset, handleTouchStart, handleTouchMove, handleTouchEnd, isRemoving } = useSwipeToDelete(() =>
-        onDelete(task.id)
-    );
+   const {
+    dragOffset,
+    handleTouchStart,
+    handleTouchMove,
+    handleTouchEnd,
+    isRemoving,
+    color,
+  } = useTaskCard(task, onDelete);
 
     return (
-        <div className="relative w-full overflow-hidden rounded-xl">
+        <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
             <div className="absolute inset-0 w-[80%] z-0 flex gap-4 items-center justify-start bg-red-400">
                 <Trash2 className="text-white w-8 h-8 ml-6" />
                 <p className="text-white"> ¿Eliminar?</p>

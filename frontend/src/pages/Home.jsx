@@ -4,8 +4,8 @@ import Voice_rec from "../components/audio/Voice_rec"
 
 const Home = () => {
     return (
-        <div>
-            <div className="flex flex-col w-full h-[100dvh] items-center bg-black">
+        <div className="flex flex-col w-[100%] h-[100dvh] items-center bg-black">
+            <div className="flex flex-col w-[95%] h-[100dvh] items-center bg-black">
                 <Welcome />               
                 <Voice_rec />
             </div>

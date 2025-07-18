@@ -11,7 +11,7 @@ export const addToTranscriptionStorage = (response) => {
 export const getTranscriptionOfStorage = () => {
     try {
         const response = JSON.parse(localStorage.getItem("transcriptionHistory"));
-        console.log("📦 Leyendo localStorage:", response);
+        console.log("Leyendo localStorage:", response);
         return response;
     } catch (err) {
         console.error("❌ Error al recibir transcripciones:", err);

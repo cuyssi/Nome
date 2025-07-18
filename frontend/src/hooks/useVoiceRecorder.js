@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import beep_start from "./../assets/beep_start.mp3";
+import beep_end from "./../assets/beep_end.mp3";
 
 export const useVoiceRecorder = () => {
     const [recording, setRecording] = useState(false);
@@ -6,6 +8,8 @@ export const useVoiceRecorder = () => {
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const [audioFile, setAudioFile] = useState();
+    const startSound = new Audio(beep_start);
+    const stopSound = new Audio(beep_end);
 
     const startRecording = async () => {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -23,7 +27,7 @@ export const useVoiceRecorder = () => {
             setAudioBlob(blob);
             console.log("✅ Audio listo, tamaño:", blob.size);
             const file = passToFile(blob);
-            setAudioFile(file)
+            setAudioFile(file);
         };
 
         mediaRecorder.start();
@@ -45,13 +49,21 @@ export const useVoiceRecorder = () => {
     };
 
     const toggleRecording = () => {
-        recording ? stopRecording() : startRecording();
+        if (!recording) {
+            startSound.play();
+            startRecording();
+        } else {
+            stopSound.play();
+            stopRecording();
+        }
     };
 
     return {
         recording,
         audioBlob,
         toggleRecording,
-        audioFile
+        audioFile,
+        startRecording,
+        stopRecording,  
     };
 };

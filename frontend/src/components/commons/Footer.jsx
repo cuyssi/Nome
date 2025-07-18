@@ -6,7 +6,7 @@ const Footer = () => {
     const { getIconClass } = useActivePath();
 
   return (
-    <div className="flex flex-row justify-between px-4 items-center w-full h-[8%] bg-black bottom-0 absolute">
+    <div className="flex flex-row justify-between px-4 items-center w-full h-[8%] bg-black bottom-0 absolute z-10 ">
         <Link to="./dates">
             <Notebook className={getIconClass("/dates")} />
         </Link>

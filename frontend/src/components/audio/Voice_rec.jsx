@@ -5,8 +5,8 @@ import { useTranscription } from "../../hooks/useTranscription";
 import { useEffect } from "react";
 
 const Voice_rec = () => {
-    const { recording, audioBlob, toggleRecording, audioFile } = useVoiceRecorder();
-    const { sendFile } = useTranscription();
+    const { recording, toggleRecording, audioFile, startRecording, stopRecording } = useVoiceRecorder();
+    const { sendFile, isProcessing, confirmationMessage } = useTranscription();
 
     useEffect(() => {
         if (audioFile) {
@@ -20,6 +20,8 @@ const Voice_rec = () => {
                 <Button
                     className="flex bg-black border border-black rounded-[100%] w-[8rem] h-[8rem] items-center justify-center"
                     onClick={toggleRecording}
+                    onTouchStart={startRecording} 
+                    onTouchEnd={stopRecording}
                 >
                     {" "}
                     <Mic
@@ -34,7 +36,10 @@ const Voice_rec = () => {
                     <SquarePen className="w-5 h-5 text-white border border-black drop-shadow-[0_1px_1px_black]" />
                 </Button>
             </div>
-            {audioBlob && <p className="text-sm text-green-300 mt-4">✅ Audio grabado: {audioBlob.size} bytes</p>}
+            {isProcessing && <p className="text-sm text-yellow-300 mt-2 animate-pulse">Espera por favor, procesando audio...</p>}
+            {confirmationMessage && (
+  <p className="text-sm text-green-300 mt-2 transition-opacity duration-500">✅ Tarea añadida!</p>
+)}
         </div>
     );
 };
