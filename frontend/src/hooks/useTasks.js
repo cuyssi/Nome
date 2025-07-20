@@ -17,6 +17,10 @@ export const useTasks = (type, exclude = false) => {
         loadTasks();
     };
 
+    const editTask = (id) => {
+        loadTasks();
+    };
+
     useEffect(() => {
         loadTasks();
     }, [type, exclude]);
@@ -25,5 +29,6 @@ export const useTasks = (type, exclude = false) => {
         tasks,
         deleteTask,
         reload: loadTasks,
+        editTask,
     };
 };

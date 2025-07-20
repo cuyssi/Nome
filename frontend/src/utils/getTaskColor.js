@@ -31,7 +31,7 @@ export function getTaskColor(text) {
     return {
         type: "otros",
         base: "green-400",
-        bg: "bg-green-300",
+        bg: "bg-blue-200",
         border: "border-green-300",
         text: "text-gray-300",
     };
