@@ -1,3 +1,14 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Funciones para extraer y combinar fecha y hora desde texto de transcripción.
+# - find_day_number: busca patrón “<día> <número>” y devuelve el número.
+# - combine_date_and_time: detecta fecha manual, relativa o por día semanal.
+#   También interpreta hora directa o por contexto (mañana, tarde, noche).
+# Combina la fecha resultante con hora estimada para crear un `datetime` completo.
+# Ideal para transformar instrucciones como “el lunes por la tarde” en objeto útil.
+#
+# @author: Ana Castro
+# ──────────────────────────────────────────────────────────────────────────────
+
 from datetime import datetime
 from utils.preprocess import clean_text
 from services.date_parser_helpers import (
@@ -24,11 +35,11 @@ def combine_date_and_time(text: str) -> datetime:
 
     if manual_date:
         base_date = manual_date.date()
-    elif (weekday := extract_weekday(text)):
+    elif weekday := extract_weekday(text):
         calculated = calculate_date_by_weekday(text)
         if calculated:
             base_date = calculated
-    elif (relative := detect_relative_date(text)):
+    elif relative := detect_relative_date(text):
         base_date = relative
 
     time_result = extract_simple_time(text)
@@ -40,8 +51,12 @@ def combine_date_and_time(text: str) -> datetime:
         hour, minutes = time_result
     elif moment_of_day:
         moment = moment_of_day.group(2).lower()
-        hour, minutes = {"mañana": (9, 0), "tarde": (18, 0), "noche": (21, 0)}.get(moment, (0, 0))
+        hour, minutes = {"mañana": (9, 0), "tarde": (18, 0), "noche": (21, 0)}.get(
+            moment, (0, 0)
+        )
     else:
         hour, minutes = 0, 0
 
-    return datetime.combine(base_date, datetime.min.time()).replace(hour=hour, minute=minutes)
+    return datetime.combine(base_date, datetime.min.time()).replace(
+        hour=hour, minute=minutes
+    )

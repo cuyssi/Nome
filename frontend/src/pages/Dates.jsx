@@ -1,15 +1,44 @@
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
+import { updateTranscriptionById } from "../utils/transcriptionStorage";
 
-const Dates = () => {
+import { useTasks } from "../hooks/useTasks";
+import { Modal } from "../components/commons/Modal";
+import { Form } from "../components/commons/Form";
+import { useModalStore } from "../store/modalStore";
+
+const Dates = ({ type, exclude = false }) => {
     const [activeTab, setActiveTab] = useState("citas");
+    const { reload } = useTasks(type, exclude);
+    const [renderKey, setRenderKey] = useState(0);
+    const [showModalConfirmation, setShowModalConfirmation] = useState(false);
 
+
+  const handleEditTask = (updatedTask) => {
+  updateTranscriptionById(updatedTask.id, updatedTask);
+  reload();                 
+  setRenderKey(prev => prev + 1);
+  setShowModalConfirmation(true);
+
+  setTimeout(() => {
+    setShowModalConfirmation(false);
+    closeModal();
+  }, 1500);
+};
+
+
+    const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
+
+    console.log("openModalWithTask en Dates:", openModalWithTask);
+    console.log("task en Dates:", selectedTask);
+    console.log("Pasando tarea al modal:", selectedTask);
+    const task= selectedTask || null;
+    console.log("task en Dates:", task);
     return (
         <div className="flex flex-col h-[100%] items-center">
-            <h2 className="text-purple-400 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
+            <h2 className="text-purple-500 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
                 Citas
             </h2>
-
             <div className="w-full  mt-5">
                 <button
                     onClick={() => setActiveTab("citas")}
@@ -34,11 +63,25 @@ const Dates = () => {
                 }`}
             >
                 {activeTab === "medico" ? (
-                    <Tasks_list type="medico" />
+                    <Tasks_list key={renderKey} type="medico" openModalWithTask={openModalWithTask} />
                 ) : (
-                    <Tasks_list type={["medico", "deberes", "trabajo"]} exclude />
+                    <Tasks_list key={renderKey} type={["medico", "deberes", "trabajo"]} exclude openModalWithTask={openModalWithTask} />
                 )}
             </div>
+            {isOpen ? (
+  <Modal onClose={closeModal}>
+    {showModalConfirmation ? (
+      <p className="text-green-500 text-center font-semibold animate-fadeIn">
+        ✅ Cambios guardados con éxito
+      </p>
+    ) : selectedTask && selectedTask.id ? (
+      <Form task={selectedTask} onSubmit={handleEditTask} onClose={closeModal} />
+    ) : (
+      <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
+    )}
+  </Modal>
+) : null}
+
         </div>
     );
 };

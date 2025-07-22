@@ -1,3 +1,12 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Hook personalizado para grabar audio usando el micrófono del navegador.      │
+ * Inicia y detiene la grabación con sonidos de confirmación de inicio/final.   │
+ * Convierte el audio grabado en un archivo `.webm` y lo expone para su uso.    │
+ * Ideal para funciones de transcripción, comandos por voz o tareas dictadas.   │
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 import { useState, useRef } from "react";
 import beep_start from "./../assets/beep_start.mp3";
 import beep_end from "./../assets/beep_end.mp3";
@@ -64,6 +73,6 @@ export const useVoiceRecorder = () => {
         toggleRecording,
         audioFile,
         startRecording,
-        stopRecording,  
+        stopRecording,
     };
 };

@@ -1,3 +1,15 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Funciones utilitarias para limpiar y preformatear texto proveniente de audio.
+# - preformat_audio_text: normaliza patrones como “las9” o “1 y cuarto” → legibles.
+# - clean_text: corrige errores comunes (“mañaña”), convierte números escritos
+#   (como “catorce”) a dígitos usando `number_map`, y ajusta separadores clave.
+# Prepara el contenido transcrito para análisis semántico, extracción de fecha
+# u otras transformaciones posteriores.
+# Ideal como paso previo al parser de tareas por voz.
+#
+# @author: Ana Castro
+# ──────────────────────────────────────────────────────────────────────────────
+
 from constants.number_map import number_map
 import re
 
@@ -17,11 +29,11 @@ def clean_text(texto: str) -> str:
         r"(el día|día|dia)?\s*(catorce|trece|doce|once|diez|nueve|ocho|siete|seis|cinco|cuatro|tres|dos|una|uno)",
         lambda m: str(number_map.get(m.group(2).lower(), m.group(2))),
         texto,
-        flags=re.IGNORECASE
+        flags=re.IGNORECASE,
     )
 
     texto = re.sub(r"(de \w+),? a las", r"\1, a las", texto)
 
     texto = preformat_audio_text(texto)
-    
+
     return texto.strip()

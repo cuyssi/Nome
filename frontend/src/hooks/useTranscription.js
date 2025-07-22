@@ -1,3 +1,12 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Hook personalizado para enviar archivos de audio y obtener transcripciones.  │
+ * Procesa la respuesta, formatea texto y extrae fecha, hora y tipo de tarea.   │
+ * Añade automáticamente la tarea transcrita al almacenamiento local.           │
+ * Muestra un estado de carga y confirma visualmente cuando se completa.        │
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 import { sendAudioFile } from "../services/Task_services";
 import { getFormattedTasks, dateAndTime, addToTranscriptionStorage } from "../utils/transcriptionStorage";
 import { getTaskColor } from "../utils/getTaskColor";
@@ -8,6 +17,7 @@ export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState(false);
     const sendFile = async (file) => {
+        console.log("📤 Enviando archivo:", file);
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);

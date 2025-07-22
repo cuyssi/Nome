@@ -1,3 +1,12 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente que graba audio desde el navegador.                               │
+ * Presenta un botón circular para iniciar/parar la grabación de voz.           │
+ * Al detectar un archivo de audio, lo envía al hook de transcripción,          │
+ * y muestra mensajes visuales durante el procesamiento y al confirmar la tarea.│
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 import Button from "../commons/Button";
 import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
@@ -15,12 +24,12 @@ const Voice_rec = () => {
     }, [audioFile]);
 
     return (
-        <div className="flex flex-col w-full h-auto p-3 bg-black justify-center items-center mt-14">
+        <div className="flex flex-col w-full h-auto p-3 bg-black justify-center items-center mt-10">
             <div className="flex justify-center border border-none items-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px]">
                 <Button
                     className="flex bg-black border border-black rounded-[100%] w-[8rem] h-[8rem] items-center justify-center"
                     onClick={toggleRecording}
-                    onTouchStart={startRecording} 
+                    onTouchStart={startRecording}
                     onTouchEnd={stopRecording}
                 >
                     {" "}
@@ -36,10 +45,12 @@ const Voice_rec = () => {
                     <SquarePen className="w-5 h-5 text-white border border-black drop-shadow-[0_1px_1px_black]" />
                 </Button>
             </div>
-            {isProcessing && <p className="text-sm text-yellow-300 mt-2 animate-pulse">Espera por favor, procesando audio...</p>}
+            {isProcessing && (
+                <p className="text-sm text-yellow-300 mt-2 animate-pulse">Espera por favor, procesando audio...</p>
+            )}
             {confirmationMessage && (
-  <p className="text-sm text-green-300 mt-2 transition-opacity duration-500">✅ Tarea añadida!</p>
-)}
+                <p className="text-sm text-green-300 mt-2 transition-opacity duration-500">✅ Tarea añadida!</p>
+            )}
         </div>
     );
 };

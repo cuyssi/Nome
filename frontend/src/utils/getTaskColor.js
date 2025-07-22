@@ -1,3 +1,13 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Función para asignar color visual a tareas según palabras clave en el texto. │
+ * Utiliza expresiones regulares para buscar coincidencias en el contenido.     │
+ * Devuelve clases tailwind (bg, border, text) basadas en color aleatorio.      │
+ * Asigna por defecto una paleta "otros" si no se encuentra coincidencia.       │
+ * Ideal para destacar tareas por contexto visual sin depender del tipo directo.│
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 export function getTaskColor(text) {
     const lower = text?.toLowerCase() || "";
     const allColors = ["blue-400", "purple-400", "orange-400", "pink-400"];
