@@ -1,15 +1,8 @@
-/**────────────────────────────────────────────────────────────────────────────────┐
- * Componente de formulario para editar una tarea existente.                       │
- * Carga datos iniciales desde la tarea seleccionada y permite actualizarlos.      │
- * Muestra un mensaje de confirmación al guardar y cierra el modal automáticamente.│
- * Usa un botón flotante para cerrar manualmente sin guardar.                      │
- *                                                                                 │
- * @author: Ana Castro                                                             │
- └────────────────────────────────────────────────────────────────────────────────*/
-
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { useStorageStore } from "../../store/storageStore";
+
+const tareasCrudas = ["deberes", "ejercicios", "estudiar"];
+const esCruda = (tipo) => tareasCrudas.includes(tipo);
 
 export function Form({ task, onClose, onSubmit }) {
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -22,8 +15,9 @@ export function Form({ task, onClose, onSubmit }) {
 
     useEffect(() => {
         if (task) {
+            const usarRaw = esCruda(task.type);
             setFormData({
-                text: task.text || "",
+                text: usarRaw ? task.text_raw || "" : task.text || "",
                 date: task.date || "",
                 hour: task.hour || "",
                 color: task.color || "",
@@ -37,15 +31,41 @@ export function Form({ task, onClose, onSubmit }) {
     };
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        const updatedTask = { ...task, ...formData };
-        onSubmit(updatedTask); // ✅ ya maneja la lógica desde Dates.jsx
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        const usarRaw = esCruda(task.type);
+        const updatedTask = {
+            ...task,
+            date: formData.date,
+            hour: formData.hour,
+            color: formData.color,
+            ...(usarRaw ? { text_raw: formData.text } : { text: formData.text, text_raw: task.text_raw }),
+        };
+
+        onSubmit(updatedTask);
         setShowConfirmation(true);
         setTimeout(() => onClose(), 1500);
     };
 
+    // 🧠 Detectar ENTER y forzar guardado
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Enter" && e.target.tagName === "INPUT") {
+                handleSubmit(e);
+            }
+        };
+
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [formData]);
+
     return (
-        <form onSubmit={handleSubmit} className="relative bg-white rounded-xl p-6 w-[90%] h-[50%]">
+        <form className="relative bg-white rounded-xl p-6 w-[90%] h-[50%]">
             {showConfirmation && (
                 <p className="text-green-600 text-center mb-3 font-semibold">✅ Cambios guardados con éxito</p>
             )}
@@ -75,7 +95,7 @@ export function Form({ task, onClose, onSubmit }) {
                     <input name="color" value={formData.color} onChange={handleChange} className="border w-full p-1" />
                 </label>
 
-                <button type="submit" className="bg-blue-600 text-white py-1 rounded mt-4">
+                <button type="button" onClick={handleSubmit} className="bg-blue-600 text-white py-1 rounded mt-4">
                     Guardar cambios
                 </button>
             </div>

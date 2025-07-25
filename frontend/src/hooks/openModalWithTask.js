@@ -16,17 +16,16 @@
  * @author: Ana Castro                                                             │
  └────────────────────────────────────────────────────────────────────────────────*/
 
-
 import { useState } from "react";
 import { useModalStore } from "../store/modalStore";
 
-export const useModalFlow = (reload) => {
+export const useModalFlow = (reload, updateFn) => {
     const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [renderKey, setRenderKey] = useState(0);
 
-    const handleEditTask = (updatedTask, updateFn) => {
-        updateFn(updatedTask);
+    const handleEditTask = (updatedTask) => {
+        updateFn(updatedTask.id, updatedTask);
         if (reload) reload();
         setRenderKey((prev) => prev + 1);
         setShowConfirmation(true);

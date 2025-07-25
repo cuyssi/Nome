@@ -15,7 +15,7 @@ import Container from "./Container";
 const Welcome = () => {
     return (
         <div>
-            <div className="flex flex-col items-center text-center mt-10">
+            <div className="flex flex-col items-center text-center mt-8">
                 <img src={logo_nome} className="w-[100%]" />
 
                 <div className="flex flex-col gap-4 w-full mt-12 justify-center items-center ">

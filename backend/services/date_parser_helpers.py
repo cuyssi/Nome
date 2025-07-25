@@ -30,11 +30,22 @@ def find_manual_date(texto: str) -> Optional[datetime]:
     if match:
         dia = int(match.group(2))
         mes = {
-            "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
-            "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10,
-            "noviembre": 11, "diciembre": 12,
+            "enero": 1,
+            "febrero": 2,
+            "marzo": 3,
+            "abril": 4,
+            "mayo": 5,
+            "junio": 6,
+            "julio": 7,
+            "agosto": 8,
+            "septiembre": 9,
+            "octubre": 10,
+            "noviembre": 11,
+            "diciembre": 12,
         }[match.group(3)]
-        return datetime.now().replace(day=dia, month=mes, hour=0, minute=0, second=0, microsecond=0)
+        return datetime.now().replace(
+            day=dia, month=mes, hour=0, minute=0, second=0, microsecond=0
+        )
 
     match_sin_mes = re.search(pattern_NotMonth, texto, flags=re.IGNORECASE)
     if match_sin_mes:
@@ -46,34 +57,13 @@ def find_manual_date(texto: str) -> Optional[datetime]:
             return None
 
     return None
-    month_map = {
-        "enero": 1,
-        "febrero": 2,
-        "marzo": 3,
-        "abril": 4,
-        "mayo": 5,
-        "junio": 6,
-        "julio": 7,
-        "agosto": 8,
-        "septiembre": 9,
-        "octubre": 10,
-        "noviembre": 11,
-        "diciembre": 12,
-    }
-    if match:
-        dia = int(match.group(2))
-        mes = month_map[match.group(3)]
-        return datetime.now().replace(
-            day=dia, month=mes, hour=0, minute=0, second=0, microsecond=0
-        )
-    return None
 
 
 def detect_relative_date(texto: str) -> Optional[date]:
     texto = texto.lower()
     if re.search(r"\bpasado\s+mañana\b", texto):
         return datetime.now().date() + timedelta(days=2)
-    elif re.search(r"\bmañana\b", texto) and not re.search(r"\bpor\s+la\s+mañana\b", texto):
+    elif re.search(r"\bmañana\b", texto):
         return datetime.now().date() + timedelta(days=1)
     elif re.search(r"\bhoy\b", texto):
         return datetime.now().date()

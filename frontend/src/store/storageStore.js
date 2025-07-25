@@ -20,9 +20,7 @@ export const useStorageStore = create((set) => ({
 
     updateTask: (updatedTask) => {
         const stored = JSON.parse(localStorage.getItem("tasks")) || [];
-        const updated = stored.map((task) =>
-            task.id === updatedTask.id ? { ...task, ...updatedTask } : task
-        );
+        const updated = stored.map((task) => (task.id === updatedTask.id ? { ...task, ...updatedTask } : task));
         localStorage.setItem("tasks", JSON.stringify(updated));
         set({ tasks: updated });
     },
@@ -39,4 +37,3 @@ export const useStorageStore = create((set) => ({
         set({ tasks: stored });
     },
 }));
-

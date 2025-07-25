@@ -28,12 +28,12 @@ export const useTasks = (type, exclude = false) => {
 
     const deleteTask = (id) => {
         deleteTranscriptionById(id);
-        loadTasks(); // recarga visual
+        loadTasks();
     };
 
     const editTask = (updatedTask) => {
-        updateTranscriptionById(updatedTask.id, updatedTask); // actualiza en localStorage
-        loadTasks(); // 🔁 importante para reflejar el cambio
+        updateTranscriptionById(updatedTask.id, updatedTask);
+        loadTasks(); 
     };
 
     useEffect(() => {

@@ -56,7 +56,7 @@ def remove_hour_expressions(text, hour, minute):
         minute_text = str(minute)
 
     # "a las 4 y media"
-    pattern_phrase = rf"(a\s+)?las\s+{hour_text}( y {minute_text})?( de la (mañana|tarde|noche))?[,\s]*"
+    pattern_phrase = rf"\ba\s+las\s+{hour_text}( y {minute_text})?( de la (mañana|tarde|noche))?[,\s]*"
     text = re.sub(pattern_phrase, "", text, flags=re.IGNORECASE)
 
     # "a las 16.30"
@@ -116,12 +116,12 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
     hour = task_datetime.hour
     minute = task_datetime.minute
 
-    text = remove_articles_before_time_or_date(text)
     text = remove_relative_expressions(text)
     text = remove_moment_of_day(text)
     text = remove_explicit_date(text, day, month_name)
     text = remove_weekday_phrases(text, day)
     text = remove_hour_expressions(text, hour, minute)
+    text = remove_articles_before_time_or_date(text)
     text = remove_stray_numbers(text)
 
     final_text = text.strip()
@@ -134,6 +134,7 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
     )
     final_text = re.sub(r"\bmedia\b", "", final_text, flags=re.IGNORECASE)
     final_text = re.sub(r"\b(media|cuarto)\b", "", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\ba\b\s*$", "", final_text, flags=re.IGNORECASE)
     final_text = re.sub(r"\s{2,}", " ", final_text).strip()
     final_text = final_text.rstrip(",.")
     lugares = [

@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { updateTranscriptionById } from "../utils/transcriptionStorage";
-
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
@@ -12,28 +11,21 @@ const Dates = ({ type, exclude = false }) => {
     const { reload } = useTasks(type, exclude);
     const [renderKey, setRenderKey] = useState(0);
     const [showModalConfirmation, setShowModalConfirmation] = useState(false);
-
-
-  const handleEditTask = (updatedTask) => {
-  updateTranscriptionById(updatedTask.id, updatedTask);
-  reload();                 
-  setRenderKey(prev => prev + 1);
-  setShowModalConfirmation(true);
-
-  setTimeout(() => {
-    setShowModalConfirmation(false);
-    closeModal();
-  }, 1500);
-};
-
-
     const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
 
-    console.log("openModalWithTask en Dates:", openModalWithTask);
-    console.log("task en Dates:", selectedTask);
-    console.log("Pasando tarea al modal:", selectedTask);
-    const task= selectedTask || null;
-    console.log("task en Dates:", task);
+
+    const handleEditTask = (updatedTask) => {
+        updateTranscriptionById(updatedTask.id, updatedTask);
+        reload();
+        setRenderKey((prev) => prev + 1);
+        setShowModalConfirmation(true);
+
+        setTimeout(() => {
+            setShowModalConfirmation(false);
+            closeModal();
+        }, 1500);
+    };
+    
     return (
         <div className="flex flex-col h-[100%] items-center">
             <h2 className="text-purple-500 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
@@ -58,30 +50,34 @@ const Dates = ({ type, exclude = false }) => {
                 </button>
             </div>
             <div
-                className={`relative border border-black border-t-purple-400 -mt-0.5 w-full h-[100dvh]  px-4 py-6 transition-colors duration-300 ${
+                className={`relative pt-14 border border-black border-t-purple-400 -mt-0.5 w-full h-[100dvh]  px-4 py-6 transition-colors duration-300 ${
                     activeTab === "citas" ? "bg-black" : activeTab === "medico" ? "bg-black" : "bg-gray-200"
                 }`}
             >
                 {activeTab === "medico" ? (
                     <Tasks_list key={renderKey} type="medico" openModalWithTask={openModalWithTask} />
                 ) : (
-                    <Tasks_list key={renderKey} type={["medico", "deberes", "trabajo"]} exclude openModalWithTask={openModalWithTask} />
+                    <Tasks_list
+                        key={renderKey}
+                        type={["medico", "deberes", "trabajo"]}
+                        exclude
+                        openModalWithTask={openModalWithTask}
+                    />
                 )}
             </div>
             {isOpen ? (
-  <Modal onClose={closeModal}>
-    {showModalConfirmation ? (
-      <p className="text-green-500 text-center font-semibold animate-fadeIn">
-        ✅ Cambios guardados con éxito
-      </p>
-    ) : selectedTask && selectedTask.id ? (
-      <Form task={selectedTask} onSubmit={handleEditTask} onClose={closeModal} />
-    ) : (
-      <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
-    )}
-  </Modal>
-) : null}
-
+                <Modal onClose={closeModal}>
+                    {showModalConfirmation ? (
+                        <p className="text-green-500 text-center font-semibold animate-fadeIn">
+                            ✅ Cambios guardados con éxito
+                        </p>
+                    ) : selectedTask && selectedTask.id ? (
+                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={closeModal} />
+                    ) : (
+                        <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
+                    )}
+                </Modal>
+            ) : null}
         </div>
     );
 };

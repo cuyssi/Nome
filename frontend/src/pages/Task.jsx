@@ -1,30 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-
 import { updateTranscriptionById } from "../utils/transcriptionStorage";
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
-import { useModalStore } from "../store/modalStore";
+
+import { useModalFlow } from "../hooks/openModalWithTask";
 
 const Task = ({ type, exclude }) => {
-    const [activeTab, setActiveTab] = useState("deberes");
-    const { reload } = useTasks(type, exclude);
-    const [renderKey, setRenderKey] = useState(0);
-    const [showModalConfirmation, setShowModalConfirmation] = useState(false);
-    const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
-   
-    const handleEditTask = (updatedTask) => {
-        updateTranscriptionById(updatedTask.id, updatedTask);
-        reload();
-        setRenderKey((prev) => prev + 1);
-        setShowModalConfirmation(true);
+    const [activeTab, setActiveTab] = useState("deberes");  
+    const { tasks, reload } = useTasks(type, exclude);  
 
-        setTimeout(() => {
-            setShowModalConfirmation(false);
-            closeModal();
-        }, 1500);
-    };
+    useEffect(() => {
+        reload();
+    }, []);
+
+    const {
+        isOpen,
+        selectedTask,
+        openModalWithTask,
+        handleEditTask,
+        handleCloseModal,
+        renderKey,
+        showConfirmation,
+        } = useModalFlow(reload, updateTranscriptionById);
+
+    console.log("tasks en Task.jsx:", tasks);
 
     return (
         <div className="flex flex-col bg-black h-[100%] justify-center items-center border border-black">
@@ -56,23 +57,24 @@ const Task = ({ type, exclude }) => {
                 }`}
             >
                 {activeTab === "trabajo" ? (
-                    <Tasks_list key={`tasks-${renderKey}`} type="trabajo" openModalWithTask={openModalWithTask} />
+                    <Tasks_list key={renderKey} tasks={tasks} type="trabajo" openModalWithTask={openModalWithTask} />
                 ) : (
                     <Tasks_list
-                        key={`tasks-${renderKey}`}
+                        key={renderKey}
                         type={["deberes", "ejercicios", "estudiar"]}
+                        tasks={tasks}
                         openModalWithTask={openModalWithTask}
                     />
                 )}
             </div>
             {isOpen ? (
-                <Modal onClose={closeModal}>
-                    {showModalConfirmation ? (
+                <Modal onClose={handleCloseModal}>
+                    {showConfirmation ? (
                         <p className="text-green-500 text-center font-semibold animate-fadeIn">
                             ✅ Cambios guardados con éxito
                         </p>
                     ) : selectedTask && selectedTask.id ? (
-                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={closeModal} />
+                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={handleCloseModal} />
                     ) : (
                         <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
                     )}
