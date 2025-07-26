@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-import { updateTranscriptionById } from "../utils/transcriptionStorage";
+import { useStorageStore } from "../store/storageStore";
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
@@ -12,10 +12,10 @@ const Dates = ({ type, exclude = false }) => {
     const [renderKey, setRenderKey] = useState(0);
     const [showModalConfirmation, setShowModalConfirmation] = useState(false);
     const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
-
+    const { updateTask } = useStorageStore();
 
     const handleEditTask = (updatedTask) => {
-        updateTranscriptionById(updatedTask.id, updatedTask);
+        updateTask(updatedTask);
         reload();
         setRenderKey((prev) => prev + 1);
         setShowModalConfirmation(true);

@@ -1,6 +1,6 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
  * Store global que sincroniza tareas con `localStorage` usando Zustand.        │
- * Proporciona funciones para actualizar, eliminar y recargar tareas guardadas. │
+ * Proporciona funciones para añadir, actualizar y eliminar tareas guardadas.   │
  * Ideal para mantener consistencia entre estado en memoria y persistencia local│
  * Facilita edición desde componentes sin duplicar lógica de almacenamiento.    │
  *                                                                              │
@@ -8,32 +8,52 @@
  └─────────────────────────────────────────────────────────────────────────────*/
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
-export const useStorageStore = create((set) => ({
-    tasks: JSON.parse(localStorage.getItem("tasks")) || [],
+const sortTasks = (tasks) => {
+    return [...tasks].sort((a, b) => {
+        const [dayA, monthA] = a.date.split("/").map(Number);
+        const [hourA, minuteA] = a.hour.split(":").map(Number);
+        const [dayB, monthB] = b.date.split("/").map(Number);
+        const [hourB, minuteB] = b.hour.split(":").map(Number);
 
-    addTask: (newTask) => {
-        const updatedTasks = [...(JSON.parse(localStorage.getItem("tasks")) || []), newTask];
-        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-        set({ tasks: updatedTasks });
-    },
+        const dateA = new Date(2025, monthA - 1, dayA, hourA, minuteA);
+        const dateB = new Date(2025, monthB - 1, dayB, hourB, minuteB);
 
-    updateTask: (updatedTask) => {
-        const stored = JSON.parse(localStorage.getItem("tasks")) || [];
-        const updated = stored.map((task) => (task.id === updatedTask.id ? { ...task, ...updatedTask } : task));
-        localStorage.setItem("tasks", JSON.stringify(updated));
-        set({ tasks: updated });
-    },
+        return dateA - dateB;
+    });
+};
 
-    deleteTask: (id) => {
-        const stored = JSON.parse(localStorage.getItem("tasks")) || [];
-        const updated = stored.filter((task) => task.id !== id);
-        localStorage.setItem("tasks", JSON.stringify(updated));
-        set({ tasks: updated });
-    },
+export const useStorageStore = create(
+    persist(
+        (set, get) => ({
+            tasks: [],
 
-    syncFromStorage: () => {
-        const stored = JSON.parse(localStorage.getItem("tasks")) || [];
-        set({ tasks: stored });
-    },
-}));
+            addTask: (newTask) => {
+                const tasks = [...get().tasks, newTask];
+                set({ tasks: sortTasks(tasks) });
+            },
+
+            updateTask: (updatedTask) => {
+                const tasks = get().tasks.map((task) =>
+                    task.id === updatedTask.id ? { ...task, ...updatedTask } : task
+                );
+                set({ tasks: sortTasks(tasks) });
+            },
+
+            deleteTask: (id) => {
+                const tasks = get().tasks.filter((task) => task.id !== id);
+                set({ tasks: sortTasks(tasks) });
+            },
+
+            clearAllTasks: () => set({ tasks: [] }),
+
+            getSortedTasks: () => {
+                return sortTasks(get().tasks);
+            },
+        }),
+        {
+            name: "tasks-storage",
+        }
+    )
+);

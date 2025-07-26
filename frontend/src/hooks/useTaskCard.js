@@ -8,7 +8,7 @@
  └─────────────────────────────────────────────────────────────────────────────*/
 
 import { useSwipeActions } from "./useSwipeActions";
-import { getTaskColor } from "../utils/getTaskColor";
+import { getTaskColor } from "./useTaskColor";
 
 export const useTaskCard = (task, onDelete, onEdit) => {
     const safeEdit = onEdit ? () => onEdit(task) : () => {};

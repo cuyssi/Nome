@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-import { updateTranscriptionById } from "../utils/transcriptionStorage";
+import { useStorageStore } from "../store/storageStore";
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
@@ -10,6 +10,7 @@ import { useModalFlow } from "../hooks/openModalWithTask";
 const Task = ({ type, exclude }) => {
     const [activeTab, setActiveTab] = useState("deberes");  
     const { tasks, reload } = useTasks(type, exclude);  
+    const { updateTask } = useStorageStore();
 
     useEffect(() => {
         reload();
@@ -23,7 +24,7 @@ const Task = ({ type, exclude }) => {
         handleCloseModal,
         renderKey,
         showConfirmation,
-        } = useModalFlow(reload, updateTranscriptionById);
+        } = useModalFlow(reload, updateTask);
 
     console.log("tasks en Task.jsx:", tasks);
 

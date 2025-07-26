@@ -12,39 +12,39 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-export const addToTranscriptionStorage = (response) => {
-    try {
-        const existing = JSON.parse(localStorage.getItem("transcriptionHistory")) || [];
-        const updated = [...existing, response];
-        localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
-    } catch (err) {
-        console.error("❌ Error al enviar:", err);
-    }
-};
+// export const addToTranscriptionStorage = (response) => {
+//     try {
+//         const existing = JSON.parse(localStorage.getItem("transcriptionHistory")) || [];
+//         const updated = [...existing, response];
+//         localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
+//     } catch (err) {
+//         console.error("❌ Error al enviar:", err);
+//     }
+// };
 
-export const getTranscriptionOfStorage = () => {
-    try {
-        const response = JSON.parse(localStorage.getItem("transcriptionHistory"));
-        console.log("Leyendo localStorage:", response);
-        return response;
-    } catch (err) {
-        console.error("❌ Error al recibir transcripciones:", err);
-    }
-};
+// export const getTranscriptionOfStorage = () => {
+//     try {
+//         const response = JSON.parse(localStorage.getItem("transcriptionHistory"));
+//         console.log("Leyendo localStorage:", response);
+//         return response;
+//     } catch (err) {
+//         console.error("❌ Error al recibir transcripciones:", err);
+//     }
+// };
 
-export const sortedTasks = (tasks) => {
-    return [...tasks].sort((a, b) => {
-        const [dayA, monthA] = a.date.split("/").map(Number);
-        const [hourA, minuteA] = a.hour.split(":").map(Number);
-        const [dayB, monthB] = b.date.split("/").map(Number);
-        const [hourB, minuteB] = b.hour.split(":").map(Number);
+// export const sortedTasks = (tasks) => {
+//     return [...tasks].sort((a, b) => {
+//         const [dayA, monthA] = a.date.split("/").map(Number);
+//         const [hourA, minuteA] = a.hour.split(":").map(Number);
+//         const [dayB, monthB] = b.date.split("/").map(Number);
+//         const [hourB, minuteB] = b.hour.split(":").map(Number);
 
-        const dateA = new Date(2025, monthA - 1, dayA, hourA, minuteA);
-        const dateB = new Date(2025, monthB - 1, dayB, hourB, minuteB);
+//         const dateA = new Date(2025, monthA - 1, dayA, hourA, minuteA);
+//         const dateB = new Date(2025, monthB - 1, dayB, hourB, minuteB);
 
-        return dateA - dateB;
-    });
-};
+//         return dateA - dateB;
+//     });
+// };
 
 export const getFormattedTasks = (transcription) => {
     const text_raw = transcription.text_raw;
@@ -71,16 +71,16 @@ export const dateAndTime = (data) => {
     }
 };
 
-export const deleteTranscriptionById = (id) => {
-    const existing = getTranscriptionOfStorage() || [];
-    const updated = existing.filter((task) => task.id !== id);
-    localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
-};
+// export const deleteTranscriptionById = (id) => {
+//     const existing = getTranscriptionOfStorage() || [];
+//     const updated = existing.filter((task) => task.id !== id);
+//     localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
+// };
 
-export const updateTranscriptionById = (id, updatedData) => {
-    const stored = JSON.parse(localStorage.getItem("transcriptionHistory")) || [];
+// export const updateTranscriptionById = (id, updatedData) => {
+//     const stored = JSON.parse(localStorage.getItem("transcriptionHistory")) || [];
 
-    const updated = stored.map((t) => (t.id === id ? { ...t, ...updatedData } : t));
+//     const updated = stored.map((t) => (t.id === id ? { ...t, ...updatedData } : t));
 
-    localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
-};
+//     localStorage.setItem("transcriptionHistory", JSON.stringify(updated));
+// };

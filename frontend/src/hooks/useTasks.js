@@ -1,49 +1,33 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
  * Hook personalizado que gestiona el acceso y manipulación de las tareas.      │
- * Obtiene tareas desde almacenamiento local, filtra por tipo y ordena.         │
- * Permite editar, eliminar y recargar visualmente tras cada acción.            │
+ * Utiliza Zustand para obtener, editar y eliminar tareas con persistencia.     │
+ * Filtra por tipo y permite recarga visual tras cada acción.                   │
  * Ideal para centralizar la lógica de tareas en componentes reutilizables.     │
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
-
-import {
-    getTranscriptionOfStorage,
-    sortedTasks,
-    deleteTranscriptionById,
-    updateTranscriptionById,
-} from "../utils/transcriptionStorage";
+import { useStorageStore } from "../store/storageStore";
 import { filterTasks } from "../utils/taskFilter";
 import { useState, useEffect } from "react";
 
 export const useTasks = (type, exclude = false) => {
+    const { tasks: rawTasks, deleteTask, updateTask } = useStorageStore();
     const [tasks, setTasks] = useState([]);
 
-    const loadTasks = () => {
-        const stored = getTranscriptionOfStorage() || [];
-        const sorted = sortedTasks(stored);
-        const filtered = type ? filterTasks(sorted, type, exclude) : sorted;
+    useEffect(() => {
+        const filtered = type ? filterTasks(rawTasks, type, exclude) : rawTasks;
+        setTasks(filtered);
+    }, [rawTasks, type, exclude]);
+
+    const reload = () => {
+        const filtered = type ? filterTasks(rawTasks, type, exclude) : rawTasks;
         setTasks(filtered);
     };
-
-    const deleteTask = (id) => {
-        deleteTranscriptionById(id);
-        loadTasks();
-    };
-
-    const editTask = (updatedTask) => {
-        updateTranscriptionById(updatedTask.id, updatedTask);
-        loadTasks(); 
-    };
-
-    useEffect(() => {
-        loadTasks();
-    }, [type, exclude]);
 
     return {
         tasks,
         deleteTask,
-        editTask,
-        reload: loadTasks,
+        editTask: updateTask,
+        reload,
     };
 };
