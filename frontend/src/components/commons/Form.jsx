@@ -1,3 +1,18 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Formulario interactivo para editar o registrar tareas en modal contextual.   │
+ * Adapta el campo de texto según el tipo (raw vs procesado) de la tarea.       │
+ * Pre-carga los datos existentes y actualiza con el estado local controlado.   │
+ * Gestiona el envío manual o automático al pulsar ENTER sobre campos input.    │
+ *                                                                              │
+ * - Detecta si una tarea debe editarse como cruda ("deberes", "ejercicios").   │
+ * - Muestra mensaje de confirmación tras guardar cambios.                      │
+ * - Ejecuta cierre automático del modal después de guardar.                    │
+ * - Usa Lucide React para mostrar el botón de cierre con icono "X".            │
+ * - Admite interacción rápida con teclado y mejora accesibilidad.              │
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 

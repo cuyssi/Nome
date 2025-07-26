@@ -1,3 +1,18 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente principal para mostrar, editar y organizar tareas en pestañas.    │
+ * Separa la vista en "deberes" y "trabajos", permitiendo alternancia dinámica. │
+ * Utiliza Zustand para persistir tareas y gestionar actualizaciones globales.  │
+ * Muestra las tareas en listas filtradas y permite edición con modal fluido.   │
+ *                                                                              │
+ * - Sincroniza tareas con el store a través del hook useTasks.                 │
+ * - Refresca automáticamente al montar mediante reload().                      │
+ * - El componente es reactivo ante cambios en el store (Zustand persistente).  │
+ * - Estilos adaptados con transiciones visuales y jerarquía de colores.        │
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
+
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { useStorageStore } from "../store/storageStore";

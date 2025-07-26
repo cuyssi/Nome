@@ -1,5 +1,5 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * Función utilitaria para normalizar el tipo de tarea a una forma estándar.   │
+ * Función utilitaria para normalizar el tipo de tarea a una forma estándar.    │
  * Convierte a minúsculas, elimina acentos y artículos innecesarios.            │
  * Reduce múltiples espacios y recorta bordes para asegurar limpieza textual.   │
  * Ideal para clasificar, comparar o colorear tareas sin inconsistencias.       │
