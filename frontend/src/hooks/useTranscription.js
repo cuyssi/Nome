@@ -28,7 +28,7 @@ export const useTranscription = () => {
             const { text_raw, text, dateTime } = getFormattedTasks(response);
             const { date, hour } = dateAndTime(dateTime);
             const text_clean = normalizeType(text);
-            const type = inferType(text_clean);
+            const type = response.type;
             const { assignColor } = getTaskColor();
             const color = assignColor();
             addTask({ id: crypto.randomUUID(), text_raw, text, date, hour, type, color });
