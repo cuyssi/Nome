@@ -51,6 +51,18 @@ export const useStorageStore = create(
             getSortedTasks: () => {
                 return sortTasks(get().tasks);
             },
+
+            markAsCompleted: (id) => {
+                const tasks = get().tasks.map((task) => (task.id === id ? { ...task, completed: true } : task));
+                set({ tasks });
+            },
+
+            toggleCompleted: (id) => {
+                const tasks = get().tasks.map((task) =>
+                    task.id === id ? { ...task, completed: !task.completed } : task
+                );
+                set({ tasks });
+            },
         }),
         {
             name: "tasks-storage",

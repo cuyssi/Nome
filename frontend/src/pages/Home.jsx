@@ -9,12 +9,14 @@
 
 import Welcome from "../components/commons/Wellcome";
 import Voice_rec from "../components/audio/Voice_rec";
+import Task_count from "../components/task/Task_count";
 
 const Home = () => {
     return (
         <div className="flex flex-col w-[100%] h-[100dvh] items-center bg-black">
             <div className="flex flex-col w-[95%] h-[100dvh] items-center bg-black">
                 <Welcome />
+                <Task_count className="h-20" />
                 <Voice_rec />
             </div>
         </div>

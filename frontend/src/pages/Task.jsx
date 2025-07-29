@@ -12,7 +12,6 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { useStorageStore } from "../store/storageStore";
@@ -23,25 +22,26 @@ import { Form } from "../components/commons/Form";
 import { useModalFlow } from "../hooks/openModalWithTask";
 
 const Task = ({ type, exclude }) => {
-    const [activeTab, setActiveTab] = useState("deberes");  
-    const { tasks, reload } = useTasks(type, exclude);  
+    const [activeTab, setActiveTab] = useState("deberes");
+    const { tasks, reload } = useTasks(type, exclude);
     const { updateTask } = useStorageStore();
 
     useEffect(() => {
         reload();
     }, []);
 
-    const {
-        isOpen,
-        selectedTask,
-        openModalWithTask,
-        handleEditTask,
-        handleCloseModal,
-        renderKey,
-        showConfirmation,
-        } = useModalFlow(reload, updateTask);
+    const { isOpen, selectedTask, openModalWithTask, handleEditTask, handleCloseModal, renderKey, showConfirmation } =
+        useModalFlow(reload, updateTask);
 
     console.log("tasks en Task.jsx:", tasks);
+
+    const filterByType = (tasks, types) => {
+        const targetTypes = Array.isArray(types) ? types : [types];
+        return tasks.filter((t) => {
+            const currentTypes = Array.isArray(t.type) ? t.type : [t.type];
+            return currentTypes.some((type) => targetTypes.includes(type));
+        });
+    };
 
     return (
         <div className="flex flex-col bg-black h-[100%] justify-center items-center border border-black">
@@ -73,12 +73,15 @@ const Task = ({ type, exclude }) => {
                 }`}
             >
                 {activeTab === "trabajo" ? (
-                    <Tasks_list key={renderKey} tasks={tasks} type="trabajo" openModalWithTask={openModalWithTask} />
+                    <Tasks_list
+                        key={renderKey}
+                        tasks={filterByType(tasks, "trabajo")}
+                        openModalWithTask={openModalWithTask}
+                    />
                 ) : (
                     <Tasks_list
                         key={renderKey}
-                        type={["deberes", "ejercicios", "estudiar"]}
-                        tasks={tasks}
+                        tasks={filterByType(tasks, ["deberes", "ejercicios", "estudiar"])}
                         openModalWithTask={openModalWithTask}
                     />
                 )}

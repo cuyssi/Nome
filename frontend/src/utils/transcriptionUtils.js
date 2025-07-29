@@ -16,7 +16,8 @@ export const getFormattedTasks = (transcription) => {
     const text_raw = transcription.text_raw;
     const text = transcription.text;
     const dateTime = transcription.datetime;
-    return { text_raw, text, dateTime };
+    const isToday = transcription.isToday;
+    return { text_raw, text, dateTime, isToday };
 };
 
 export const dateAndTime = (data) => {

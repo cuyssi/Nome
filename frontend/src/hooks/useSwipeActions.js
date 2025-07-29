@@ -8,13 +8,21 @@
  └──────────────────────────────────────────────────────────────────────────────*/
 
 import { useState } from "react";
+import { useStorageStore } from "../store/storageStore";
 
-export const useSwipeActions = (onDelete, threshold = 100, onEdit) => {
+export const useSwipeActions = ({
+  onDelete,
+  threshold = 100,
+  onEdit,
+  markAsCompleted,
+}) => {
     const [dragStartX, setDragStartX] = useState(null);
     const [dragOffset, setDragOffset] = useState(0);
     const [isDeleted, setIsDeleted] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
+    const [isChecked, setIsChecked] = useState(false);
+    let pressTimer;
 
     const handleTouchStart = (e) => {
         setDragStartX(e.touches[0].clientX);
@@ -58,11 +66,32 @@ export const useSwipeActions = (onDelete, threshold = 100, onEdit) => {
         }
     };
 
+    const toggleCompleted = useStorageStore((state) => state.toggleCompleted);
+
+    const handleLongPressStart = (task) => {
+        pressTimer = setTimeout(() => {
+            console.log("markAsCompleted tipo:", typeof markAsCompleted);
+
+            setIsChecked((prev) => !prev);
+            toggleCompleted(task.id); 
+            console.log("Antes:", task.completed);
+            console.log("markAsCompleted:", typeof markAsCompleted);            
+            console.log("Después:", useStorageStore.getState().tasks.find(t => t.id === task.id)?.completed);
+        }, 550);
+    };
+
+    const handleLongPressEnd = () => {
+        clearTimeout(pressTimer);
+    };
+
     return {
         dragOffset,
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
+        handleLongPressStart,
+        handleLongPressEnd,
+        isChecked,
         isRemoving,
         isEdited,
     };

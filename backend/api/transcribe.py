@@ -12,7 +12,7 @@
 
 from fastapi import APIRouter, File, UploadFile
 from services.whisper_engine import transcribe_audio_file
-from services.date_parser import combine_date_and_time
+from services.date_parser import combine_date_and_time, is_today
 from utils.text_helper import clean_final_text
 from utils.preprocess import clean_text
 from utils.spacy_utils import nlp, infer_type  # ← importa tu spaCy y función de tipo
@@ -37,4 +37,5 @@ async def transcribe_audio(file: UploadFile = File(...)):
         "text": texto_final,
         "datetime": fecha.isoformat() if fecha else None,
         "type": tipo,
+        "isToday": is_today(fecha)
     }

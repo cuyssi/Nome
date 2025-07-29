@@ -24,10 +24,14 @@ export const useTasks = (type, exclude = false) => {
         setTasks(filtered);
     };
 
+    const todayTasks = tasks.filter((task) => task.isToday);
+    console.log("todayTasks:", todayTasks);
+
     return {
         tasks,
         deleteTask,
         editTask: updateTask,
         reload,
+        todayTasks,
     };
 };

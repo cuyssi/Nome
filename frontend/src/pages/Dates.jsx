@@ -12,7 +12,6 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-
 import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { useStorageStore } from "../store/storageStore";
@@ -28,6 +27,7 @@ const Dates = ({ type, exclude = false }) => {
     const [showModalConfirmation, setShowModalConfirmation] = useState(false);
     const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
     const { updateTask } = useStorageStore();
+    const { tasks } = useTasks(type, exclude);
 
     const handleEditTask = (updatedTask) => {
         updateTask(updatedTask);
@@ -40,7 +40,7 @@ const Dates = ({ type, exclude = false }) => {
             closeModal();
         }, 1500);
     };
-    
+
     return (
         <div className="flex flex-col h-[100%] items-center">
             <h2 className="text-purple-500 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
@@ -70,12 +70,19 @@ const Dates = ({ type, exclude = false }) => {
                 }`}
             >
                 {activeTab === "medico" ? (
-                    <Tasks_list key={renderKey} type="medico" openModalWithTask={openModalWithTask} />
+                    <Tasks_list
+                        key={renderKey}
+                        tasks={tasks.filter((t) =>
+                            Array.isArray(t.type) ? t.type.includes("medico") : t.type === "medico"
+                        )}
+                        openModalWithTask={openModalWithTask}
+                    />
                 ) : (
                     <Tasks_list
                         key={renderKey}
-                        type={["medico", "deberes", "trabajo"]}
-                        exclude
+                        tasks={tasks.filter((t) =>
+                            Array.isArray(t.type) ? !t.type.includes("medico") : t.type !== "medico"
+                        )}
                         openModalWithTask={openModalWithTask}
                     />
                 )}

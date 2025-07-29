@@ -1,22 +1,54 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Componente visual para mostrar una tarjeta de tarea deslizable.              │
- * Permite editar o eliminar al deslizar hacia los lados, con feedback de color.│
- * Usa un hook personalizado para controlar el gesto táctil y estado visual.    │
- * El contenido se adapta según el tipo de tarea y estilos dinámicos.           │
- *                                                                              │
- * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
-
 import Container_task from "../commons/Container_task";
 import { Trash2, Pencil } from "lucide-react";
 import { useTaskCard } from "../../hooks/useTaskCard";
+import { useStorageStore } from "../../store/storageStore";
+import { useRef } from "react";
 
 export const Task_card = ({ task, onDelete, onEdit }) => {
-    const { dragOffset, handleTouchStart, handleTouchMove, handleTouchEnd, isRemoving, color } = useTaskCard(
-        task,
-        onDelete,
-        onEdit
-    );
+    const { markAsCompleted } = useStorageStore();
+    const {
+        dragOffset,
+        handleTouchStart,
+        handleTouchMove,
+        handleTouchEnd,
+        handleLongPressStart,
+        handleLongPressEnd,
+        isChecked,
+        isRemoving,
+        color,
+    } = useTaskCard(task, onDelete, onEdit, markAsCompleted);
+
+    const touchStartX = useRef(0);
+
+    const pressTimer = useRef(null);
+    const hasMoved = useRef(false);
+
+    const onPointerDown = () => {
+        hasMoved.current = false;
+        pressTimer.current = setTimeout(() => {
+            if (!hasMoved.current) {
+                handleLongPressStart(task);
+            }
+        }, 600);
+    };
+
+    const onPointerUp = () => {
+        clearTimeout(pressTimer.current);
+        handleLongPressEnd();
+    };
+
+    const onTouchStart = (e) => {
+        handleTouchStart(e);
+    };
+
+    const onTouchMove = (e) => {
+        hasMoved.current = true;
+        handleTouchMove(e);
+    };
+
+    const onTouchEnd = (e) => {
+        handleTouchEnd(e);
+    };
 
     return (
         <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
@@ -46,10 +78,13 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                     <p className="text-white"> ¿Editar?</p>
                 </div>
             </div>
+
             <div
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+                onPointerDown={onPointerDown}
+                onPointerUp={onPointerUp}
                 className={`relative rounded-xl z-10 ${color.bg} transition-transform duration-150 ease-out ${
                     isRemoving ? "opacity-0 scale-90 blur-sm" : ""
                 }`}
@@ -62,7 +97,13 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                             <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
                         </div>
                     ) : null}
-                    <div className="flex flex-2 text-center justify-center items-center px-2 h-full w-full text-sm text-white">
+                    <div
+                        className={`flex flex-2 text-center justify-center items-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
+                            task.completed
+                                ? "line-through text-white decoration-4 decoration-red-400 scale-[0.97]"
+                                : "text-white"
+                        }`}
+                    >
                         {["deberes", "ejercicios", "trabajo"].includes(task.type)
                             ? task.text_raw || task.text
                             : task.text}

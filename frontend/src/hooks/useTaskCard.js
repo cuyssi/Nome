@@ -10,14 +10,25 @@
 import { useSwipeActions } from "./useSwipeActions";
 import { getTaskColor } from "./useTaskColor";
 
-export const useTaskCard = (task, onDelete, onEdit) => {
+export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
     const safeEdit = onEdit ? () => onEdit(task) : () => {};
 
-    const { dragOffset, handleTouchStart, handleTouchMove, handleTouchEnd, isRemoving, isEdited } = useSwipeActions(
-        () => onDelete(task.id),
-        200,
-        safeEdit
-    );
+    const {
+        dragOffset,
+        handleTouchStart,
+        handleTouchMove,
+        handleTouchEnd,
+        handleLongPressStart,
+        handleLongPressEnd,
+        isChecked,
+        isRemoving,
+        isEdited,
+    } = useSwipeActions({
+        onDelete: () => onDelete(task.id),
+        threshold: 200,
+        onEdit: safeEdit,
+        markAsCompleted,
+    });
 
     const baseColor = task.color || getTaskColor(task.type).base;
 
@@ -33,6 +44,9 @@ export const useTaskCard = (task, onDelete, onEdit) => {
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
+        handleLongPressStart,
+        handleLongPressEnd,
+        isChecked,
         isRemoving,
         isEdited,
         color,

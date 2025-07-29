@@ -9,7 +9,6 @@
 import { Link } from "react-router-dom";
 import { NotebookPen, CalendarDays } from "lucide-react";
 import logo_nome from "../../assets/logo_nome.png";
-import Task_count from "../task/Task_count";
 import Container from "./Container";
 
 const Welcome = () => {
@@ -19,7 +18,7 @@ const Welcome = () => {
                 <img src={logo_nome} className="w-[100%]" />
 
                 <div className="flex flex-col gap-4 w-full mt-12 justify-center items-center ">
-                    <Task_count className="h-20" />
+                    
                     <div className="flex justify-between w-[100%] gap-4 p-2">
                         <Container outerClass="w-[50%]">
                             <Link to="./tasks" className="flex  gap-2 justify-center items-center p-2">

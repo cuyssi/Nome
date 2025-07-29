@@ -28,6 +28,12 @@ def find_day_number(text: str) -> int | None:
         return int(match.group(2))
     return None
 
+def is_today(dateTime):
+    today = datetime.now().date()
+    if dateTime.date() == today:
+        return True
+    return False
+
 
 def combine_date_and_time(text: str) -> datetime:
     base_date = datetime.now().date()
