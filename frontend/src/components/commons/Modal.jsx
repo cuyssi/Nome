@@ -11,8 +11,11 @@ import { useModalStore } from "../../store/modalStore";
 
 export const Modal = ({ children }) => {
     const { isOpen } = useModalStore();
+    console.log("hola Ana soy modal antes")
 
     if (!isOpen) return null;
+    console.log("hola Ana soy modal despues")
+    
 
     return (
         <div className="flex justify-center items-center absolute z-50 w-[100%] h-[100%] backdrop-blur-sm bg-white/20">

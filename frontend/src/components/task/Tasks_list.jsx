@@ -17,7 +17,7 @@ export const Tasks_list = ({ tasks = [], openModalWithTask, className = "" }) =>
         <Task_card
           key={task.id}
           task={task}
-          onDelete={() => {}} // Si no necesitas eliminar aquí, puedes dejarlo vacío
+          onDelete={() => {}}
           onEdit={() => openModalWithTask(task)}
         />
       ))}

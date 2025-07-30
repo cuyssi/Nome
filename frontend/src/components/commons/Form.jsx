@@ -46,26 +46,34 @@ export function Form({ task, onClose, onSubmit }) {
     };
 
     const handleSubmit = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
-        const usarRaw = esCruda(task.type);
-        const updatedTask = {
-            ...task,
-            date: formData.date,
-            hour: formData.hour,
-            color: formData.color,
-            ...(usarRaw ? { text_raw: formData.text } : { text: formData.text, text_raw: task.text_raw }),
-        };
+    const usarRaw = esCruda(task?.type);
 
-        onSubmit(updatedTask);
-        setShowConfirmation(true);
-        setTimeout(() => onClose(), 1500);
+    const baseData = {
+        date: formData.date,
+        hour: formData.hour,
+        color: formData.color,
+        ...(usarRaw ? { text_raw: formData.text } : { text: formData.text }),
     };
 
-    // 🧠 Detectar ENTER y forzar guardado
+    const nuevaTarea = {
+        id: crypto.randomUUID(),
+        type: "personal",
+        completed: false,
+        ...baseData,
+    };
+
+    const finalTask = task?.id ? { ...task, ...baseData } : nuevaTarea;
+
+    onSubmit(finalTask);
+    setShowConfirmation(true);
+    setTimeout(() => onClose(), 1500);
+};
+   
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Enter" && e.target.tagName === "INPUT") {

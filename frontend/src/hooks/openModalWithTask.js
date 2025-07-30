@@ -18,14 +18,21 @@
 
 import { useState } from "react";
 import { useModalStore } from "../store/modalStore";
+import { useStorageStore } from "../store/storageStore";
 
 export const useModalFlow = (reload, updateFn) => {
     const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
+    const { addTask: createTask, updateTask } = useStorageStore();
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [renderKey, setRenderKey] = useState(0);
 
     const handleEditTask = (updatedTask) => {
-        updateFn(updatedTask.id, updatedTask);
+        if (updatedTask.id && selectedTask?.id) {            
+            (updateFn || updateTask)(updatedTask.id, updatedTask);
+        } else {            
+            createTask(updatedTask);
+        }
+
         if (reload) reload();
         setRenderKey((prev) => prev + 1);
         setShowConfirmation(true);

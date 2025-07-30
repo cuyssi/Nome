@@ -15,7 +15,7 @@ from services.whisper_engine import transcribe_audio_file
 from services.date_parser import combine_date_and_time, is_today
 from utils.text_helper import clean_final_text
 from utils.preprocess import clean_text
-from utils.spacy_utils import nlp, infer_type  # ← importa tu spaCy y función de tipo
+from utils.spacy_utils import nlp, infer_type
 
 
 router = APIRouter()
@@ -25,9 +25,8 @@ router = APIRouter()
 async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
 
-    # Procesa con spaCy (ya limpia, lematiza, clasifica...)
     doc = nlp(texto_raw)
-    fecha = combine_date_and_time(texto_raw)  # o podrías usar doc.ents aquí también
+    fecha = combine_date_and_time(texto_raw)
     texto_final = doc._.texto_limpio if fecha else clean_text(doc.text)
     tipo = infer_type(doc.text)
 
