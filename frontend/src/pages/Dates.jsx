@@ -29,6 +29,11 @@ const Dates = ({ type, exclude = false }) => {
     const { updateTask } = useStorageStore();
     const { tasks } = useTasks(type, exclude);
 
+    const handleCloseModal = () => {
+    setRenderKey((prev) => prev + 1);
+    closeModal();
+};
+
     const handleEditTask = (updatedTask) => {
         updateTask(updatedTask);
         reload();
@@ -91,13 +96,13 @@ const Dates = ({ type, exclude = false }) => {
                 )}
             </div>
             {isOpen ? (
-                <Modal onClose={closeModal}>
+                <Modal onClose={handleCloseModal}>
                     {showModalConfirmation ? (
                         <p className="text-green-500 text-center font-semibold animate-fadeIn">
                             ✅ Cambios guardados con éxito
                         </p>
                     ) : selectedTask && selectedTask.id ? (
-                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={closeModal} />
+                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={handleCloseModal} />
                     ) : (
                         <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
                     )}
