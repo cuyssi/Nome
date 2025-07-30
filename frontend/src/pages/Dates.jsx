@@ -41,6 +41,8 @@ const Dates = ({ type, exclude = false }) => {
         }, 1500);
     };
 
+    const tiposExcluir = ["medico", "deberes", "trabajo"];
+
     return (
         <div className="flex flex-col h-[100%] items-center">
             <h2 className="text-purple-500 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
@@ -80,9 +82,10 @@ const Dates = ({ type, exclude = false }) => {
                 ) : (
                     <Tasks_list
                         key={renderKey}
-                        tasks={tasks.filter((t) =>
-                            Array.isArray(t.type) ? !t.type.includes("medico") : t.type !== "medico"
-                        )}
+                        tasks={tasks.filter((t) => {
+                            const tipos = Array.isArray(t.type) ? t.type : [t.type];
+                            return !tipos.some((tipo) => tiposExcluir.includes(tipo));
+                        })}
                         openModalWithTask={openModalWithTask}
                     />
                 )}
