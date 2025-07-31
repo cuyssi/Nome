@@ -13,13 +13,13 @@ import { useTasks } from "../../hooks/useTasks";
 export const Tasks_list = ({ tasks = [], openModalWithTask, className = "" }) => {
     const { deleteTask } = useTasks();
   return (
-    <div className={`flex flex-col gap-8 items-center w-full h-[74%] overflow-y-auto px-2 py-4 ${className}`}>
+    <div className={`flex flex-col gap-8 items-center w-full h-[90%] hide-scrollbar overflow-y-auto px-2 pb-[20rem] ${className}`}>
       {tasks.map((task) => (
         <Task_card
           key={task.id}
           task={task}
           onDelete={() => deleteTask(task.id)}
-          onEdit={() => openModalWithTask(task)}
+          onEdit={() => openModalWithTask(task)}          
         />
       ))}
     </div>

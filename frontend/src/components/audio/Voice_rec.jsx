@@ -28,7 +28,7 @@ const Voice_rec = () => {
     }, [audioFile]);
 
     return (
-        <div className="flex flex-col w-full h-auto p-3 bg-black justify-center items-center mt-8">
+        <div className="flex flex-col w-full h-auto p-3 bg-black justify-center items-center mt-4">
             <div className="flex justify-center border border-none items-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px]">
                 <Button
                     className="flex bg-black border border-black rounded-[100%] w-[8rem] h-[8rem] items-center justify-center"

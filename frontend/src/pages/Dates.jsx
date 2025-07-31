@@ -49,11 +49,11 @@ const Dates = ({ type, exclude = false }) => {
     const tiposExcluir = ["medico", "deberes", "trabajo"];
 
     return (
-        <div className="flex flex-col h-[100%] items-center">
-            <h2 className="text-purple-500 text-4xl font font-bold font-poppins mt-6 underline-offset-8 decoration-[3px] mb-6">
+        <div className="flex flex-col h-[100%] items-center overflow-hidden">
+            <h2 className="text-purple-400 font font-bold font-poppins text-4xl underline-offset-8 decoration-[3px] mt-14 mb-10">
                 Citas
             </h2>
-            <div className="w-full  mt-5">
+            <div className="w-full">
                 <button
                     onClick={() => setActiveTab("citas")}
                     className={`relative px-6 py-2 border border-purple-400 border-l-black rounded-tr-xl font-semibold transition ${
@@ -72,7 +72,7 @@ const Dates = ({ type, exclude = false }) => {
                 </button>
             </div>
             <div
-                className={`relative pt-14 border border-black border-t-purple-400 -mt-0.5 w-full h-[100dvh]  px-4 py-6 transition-colors duration-300 ${
+                className={`relative pt-10 border border-black border-t-purple-400 -mt-0.5 w-full h-[100dvh]  px-4 py-6 transition-colors duration-300 ${
                     activeTab === "citas" ? "bg-black" : activeTab === "medico" ? "bg-black" : "bg-gray-200"
                 }`}
             >

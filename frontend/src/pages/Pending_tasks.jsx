@@ -6,11 +6,11 @@ const Pending_tasks = () => {
     const pendingTasks = todayTasks.filter((task) => !task.completed);
 
     return (
-        <div className="flex flex-col bg-black h-[100%] justify-center items-center border border-black mt-4">
-            <h2 className="flex justify-center text-purple-400 font font-bold font-poppins text-3xl underline-offset-8 decoration-[3px] mt-6 mb-10">
+        <div className="flex flex-col h-[100%] items-center overflow-hidden">
+            <h2 className="flex justify-center text-purple-400 font font-bold font-poppins text-3xl underline-offset-8 decoration-[3px] mt-14 mb-14">
                 Tareas Pendientes
             </h2>
-            <div className="w-[90%]">
+            <div className="w-[90%] h-[90%]">
                 <Tasks_list tasks={pendingTasks} />
             </div>
         </div>

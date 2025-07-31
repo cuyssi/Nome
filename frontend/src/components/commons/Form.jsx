@@ -1,20 +1,7 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Formulario interactivo para editar o registrar tareas en modal contextual.   │
- * Adapta el campo de texto según el tipo (raw vs procesado) de la tarea.       │
- * Pre-carga los datos existentes y actualiza con el estado local controlado.   │
- * Gestiona el envío manual o automático al pulsar ENTER sobre campos input.    │
- *                                                                              │
- * - Detecta si una tarea debe editarse como cruda ("deberes", "ejercicios").   │
- * - Muestra mensaje de confirmación tras guardar cambios.                      │
- * - Ejecuta cierre automático del modal después de guardar.                    │
- * - Usa Lucide React para mostrar el botón de cierre con icono "X".            │
- * - Admite interacción rápida con teclado y mejora accesibilidad.              │
- *                                                                              │
- * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
-
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { buildDateTimeFromManual } from "../../utils/dateUtils";
+import { v4 as uuidv4 } from "uuid";
 
 const tareasCrudas = ["deberes", "ejercicios", "estudiar"];
 const esCruda = (tipo) => tareasCrudas.includes(tipo);
@@ -46,34 +33,35 @@ export function Form({ task, onClose, onSubmit }) {
     };
 
     const handleSubmit = (e) => {
-    if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-    const usarRaw = esCruda(task?.type);
+        const usarRaw = esCruda(task?.type);
 
-    const baseData = {
-        date: formData.date,
-        hour: formData.hour,
-        color: formData.color,
-        ...(usarRaw ? { text_raw: formData.text } : { text: formData.text }),
+        const baseData = {
+            date: formData.date,
+            hour: formData.hour,
+            color: formData.color,
+            ...(usarRaw ? { text_raw: formData.text } : { text: formData.text }),
+        };
+
+        const nuevaTarea = {
+            id: uuidv4(),
+            type: "personal",
+            completed: false,
+            ...baseData,
+        };
+
+        const dateTime = buildDateTimeFromManual(baseData.date, baseData.hour);
+        const finalTask = task?.id ? { ...task, ...baseData, dateTime } : { ...nuevaTarea, dateTime };
+
+        onSubmit(finalTask);
+        setShowConfirmation(true);
+        setTimeout(() => onClose(), 1500);
     };
 
-    const nuevaTarea = {
-        id: crypto.randomUUID(),
-        type: "personal",
-        completed: false,
-        ...baseData,
-    };
-
-    const finalTask = task?.id ? { ...task, ...baseData } : nuevaTarea;
-
-    onSubmit(finalTask);
-    setShowConfirmation(true);
-    setTimeout(() => onClose(), 1500);
-};
-   
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === "Enter" && e.target.tagName === "INPUT") {

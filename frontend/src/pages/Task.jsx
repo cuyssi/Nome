@@ -44,12 +44,12 @@ const Task = ({ type, exclude }) => {
     };
 
     return (
-        <div className="flex flex-col bg-black h-[100%] justify-center items-center border border-black">
-            <h2 className="text-purple-400 font font-bold font-poppins text-4xl underline-offset-8 decoration-[3px] mt-6 mb-10">
+        <div className="flex flex-col h-[100%] items-center overflow-hidden">
+            <h2 className="text-purple-400 font font-bold font-poppins text-4xl underline-offset-8 decoration-[3px] mt-14 mb-10">
                 Tareas
             </h2>
 
-            <div className="w-full mt-2">
+            <div className="w-full">
                 <button
                     onClick={() => setActiveTab("deberes")}
                     className={`relative px-6 py-2 border border-purple-400 border-l-black rounded-tr-xl font-semibold transition ${
