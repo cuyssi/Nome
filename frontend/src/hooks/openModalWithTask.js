@@ -27,16 +27,10 @@ export const useModalFlow = (reload, updateFn) => {
     const [renderKey, setRenderKey] = useState(0);
 
     const handleEditTask = (updatedTask) => {
-        if (updatedTask.id && selectedTask?.id) {
-            (updateFn || updateTask)(updatedTask.id, updatedTask);
-        } else {
-            createTask(updatedTask);
-        }
-
-        if (reload) reload();
+        updateTask(updatedTask);
+        reload();
         setRenderKey((prev) => prev + 1);
         setShowConfirmation(true);
-
         setTimeout(() => {
             setShowConfirmation(false);
             closeModal();

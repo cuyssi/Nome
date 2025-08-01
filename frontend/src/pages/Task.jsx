@@ -18,8 +18,8 @@ import { useStorageStore } from "../store/storageStore";
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
-
 import { useModalFlow } from "../hooks/openModalWithTask";
+import { filterByType } from "../utils/filterByType"
 
 const Task = ({ type, exclude }) => {
     const [activeTab, setActiveTab] = useState("deberes");
@@ -32,16 +32,7 @@ const Task = ({ type, exclude }) => {
 
     const { isOpen, selectedTask, openModalWithTask, handleEditTask, handleCloseModal, renderKey, showConfirmation } =
         useModalFlow(reload, updateTask);
-
-    console.log("tasks en Task.jsx:", tasks);
-
-    const filterByType = (tasks, types) => {
-        const targetTypes = Array.isArray(types) ? types : [types];
-        return tasks.filter((t) => {
-            const currentTypes = Array.isArray(t.type) ? t.type : [t.type];
-            return currentTypes.some((type) => targetTypes.includes(type));
-        });
-    };
+   
 
     return (
         <div className="flex flex-col h-[100%] items-center overflow-hidden">

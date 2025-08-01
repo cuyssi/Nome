@@ -14,37 +14,23 @@
 
 import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-import { useStorageStore } from "../store/storageStore";
 import { useTasks } from "../hooks/useTasks";
 import { Modal } from "../components/commons/Modal";
 import { Form } from "../components/commons/Form";
-import { useModalStore } from "../store/modalStore";
+import { useModalFlow } from "../hooks/openModalWithTask"
 
 const Dates = ({ type, exclude = false }) => {
-    const [activeTab, setActiveTab] = useState("citas");
-    const { reload } = useTasks(type, exclude);
-    const [renderKey, setRenderKey] = useState(0);
-    const [showModalConfirmation, setShowModalConfirmation] = useState(false);
-    const { isOpen, selectedTask, openModalWithTask, closeModal } = useModalStore();
-    const { updateTask } = useStorageStore();
-    const { tasks } = useTasks(type, exclude);
-
-    const handleCloseModal = () => {
-    setRenderKey((prev) => prev + 1);
-    closeModal();
-};
-
-    const handleEditTask = (updatedTask) => {
-        updateTask(updatedTask);
-        reload();
-        setRenderKey((prev) => prev + 1);
-        setShowModalConfirmation(true);
-
-        setTimeout(() => {
-            setShowModalConfirmation(false);
-            closeModal();
-        }, 1500);
-    };
+    const [activeTab, setActiveTab] = useState("citas");   
+    const { tasks, reload } = useTasks(type, exclude);
+    const {
+        isOpen,
+        selectedTask,
+        openModalWithTask,
+        handleEditTask,
+        handleCloseModal,
+        renderKey,
+        showConfirmation
+    } = useModalFlow(reload);    
 
     const tiposExcluir = ["medico", "deberes", "trabajo"];
 
@@ -97,7 +83,7 @@ const Dates = ({ type, exclude = false }) => {
             </div>
             {isOpen ? (
                 <Modal onClose={handleCloseModal}>
-                    {showModalConfirmation ? (
+                    {showConfirmation ? (
                         <p className="text-green-500 text-center font-semibold animate-fadeIn">
                             ✅ Cambios guardados con éxito
                         </p>

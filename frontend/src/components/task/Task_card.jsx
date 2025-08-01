@@ -6,18 +6,8 @@ import { useStorageStore } from "../../store/storageStore";
 export const Task_card = ({ task, onDelete, onEdit }) => {
     const { markAsCompleted } = useStorageStore();
     const {
-        dragOffset,
-        handleTouchStart,
-        handleTouchMove,
-        handleTouchEnd,
-        handlePointerStart,
-        handlePointerMove,
-        handlePointerEnd,
-        handleLongPressStart,
-        handleLongPressEnd,
-        isChecked,
-        isRemoving,
-        isEdited,
+        gestureHandlers,
+        state: { dragOffset, isRemoving },
         color,
     } = useTaskCard(task, onDelete, onEdit, markAsCompleted);
 
@@ -51,17 +41,17 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
             </div>
 
             <div
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                onTouchStart={gestureHandlers.handleTouchStart}
+                onTouchMove={gestureHandlers.handleTouchMove}
+                onTouchEnd={gestureHandlers.handleTouchEnd}
                 onPointerDown={(e) => {
-                    handlePointerStart(e);
-                    handleLongPressStart();
+                    gestureHandlers.handlePointerStart(e);
+                    gestureHandlers.handleLongPressStart();
                 }}
-                onPointerMove={handlePointerMove}
+                onPointerMove={gestureHandlers.handlePointerMove}
                 onPointerUp={(e) => {
-                    handlePointerEnd(e);
-                    handleLongPressEnd();
+                    gestureHandlers.handlePointerEnd(e);
+                    gestureHandlers.handleLongPressEnd();
                 }}
                 className={`relative rounded-xl z-10 ${color.bg} transition-transform duration-150 ease-out ${
                     isRemoving ? "opacity-0 scale-90 blur-sm" : ""
