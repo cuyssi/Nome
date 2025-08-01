@@ -62,12 +62,13 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => 
             setTimeout(() => onDelete(), 160);
         } else if (dragOffset <= -threshold && !isEdited) {
             setIsEdited(true);
-            setTimeout(() => onEdit(), 160);
-        } else {
-            setDragOffset(0);
+            setTimeout(() => {
+                onEdit();
+                setIsEdited(false);
+            }, 160);
         }
-
         setDragStartX(null);
+        setDragOffset(0);
     }, [isDragging, dragOffset, threshold, isDeleted, isEdited, onDelete, onEdit]);
 
     const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
