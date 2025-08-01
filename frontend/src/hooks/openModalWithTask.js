@@ -27,9 +27,9 @@ export const useModalFlow = (reload, updateFn) => {
     const [renderKey, setRenderKey] = useState(0);
 
     const handleEditTask = (updatedTask) => {
-        if (updatedTask.id && selectedTask?.id) {            
+        if (updatedTask.id && selectedTask?.id) {
             (updateFn || updateTask)(updatedTask.id, updatedTask);
-        } else {            
+        } else {
             createTask(updatedTask);
         }
 

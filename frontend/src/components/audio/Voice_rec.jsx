@@ -11,14 +11,12 @@ import Button from "../commons/Button";
 import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { useTranscription } from "../../hooks/useTranscription";
-import { Manual_taskInput } from "../task/Manual_taskInput"
 import { useEffect, useState } from "react";
 import { useModalFlow } from "../../hooks/openModalWithTask";
 
 const Voice_rec = () => {
     const { recording, toggleRecording, audioFile, startRecording, stopRecording } = useVoiceRecorder();
-    const { sendFile, isProcessing, confirmationMessage } = useTranscription();
-    const [showManualInput, setShowManualInput] = useState(false)
+    const { sendFile, isProcessing, confirmationMessage } = useTranscription();    
     const { openModalWithTask } = useModalFlow();
     
     useEffect(() => {
@@ -28,7 +26,7 @@ const Voice_rec = () => {
     }, [audioFile]);
 
     return (
-        <div className="flex flex-col w-full h-auto p-3 bg-black justify-center items-center mt-4">
+        <div className="flex flex-col w-full h-auto p-1 bg-black justify-center items-center mt-4">
             <div className="flex justify-center border border-none items-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px]">
                 <Button
                     className="flex bg-black border border-black rounded-[100%] w-[8rem] h-[8rem] items-center justify-center"
@@ -50,12 +48,11 @@ const Voice_rec = () => {
                 </Button>
             </div>
             {isProcessing && (
-                <p className="text-sm text-yellow-300 mt-2 animate-pulse">Espera por favor, procesando audio...</p>
+                <p className="text-sm text-yellow-300 animate-pulse">Espera por favor, procesando audio...</p>
             )}
             {confirmationMessage && (
-                <p className="text-sm text-green-300 mt-2 transition-opacity duration-500">✅ Tarea añadida!</p>
-            )}
-            {showManualInput && <Manual_taskInput onClose={() => setShowManualInput(false)} />}
+                <p className="text-sm text-green-300 transition-opacity duration-500">✅ Tarea añadida!</p>
+            )}            
         </div>
     );
 };

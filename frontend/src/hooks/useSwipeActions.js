@@ -1,96 +1,101 @@
-/**──────────────────────────────────────────────────────────────────────────────┐
- * Hook personalizado que gestiona acciones táctiles por desplazamiento lateral. │
- * Detecta gestos de swipe hacia la izquierda o derecha para editar o eliminar.  │
- * Aplica zonas de confirmación y animaciones suaves según la distancia del drag │
- * Ideal para tarjetas táctiles con controles intuitivos en dispositivos móviles.│
- *                                                                               │
- * @author: Ana Castro                                                           │
- └──────────────────────────────────────────────────────────────────────────────*/
-
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useStorageStore } from "../store/storageStore";
 
-export const useSwipeActions = ({
-  onDelete,
-  threshold = 100,
-  onEdit,
-  markAsCompleted,
-}) => {
+export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => {
     const [dragStartX, setDragStartX] = useState(null);
     const [dragOffset, setDragOffset] = useState(0);
     const [isDeleted, setIsDeleted] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-    let pressTimer;
+    const [isDragging, setIsDragging] = useState(false);
 
-    const handleTouchStart = (e) => {
-        setDragStartX(e.touches[0].clientX);
+    const pressTimer = useRef(null);
+    const hasMoved = useRef(false);
+    const toggleCompleted = useStorageStore((state) => state.toggleCompleted);
+
+    const handleStart = (clientX) => {
+        setDragStartX(clientX);
+        setIsDragging(true);
+        hasMoved.current = false;
+
+        clearTimeout(pressTimer.current);
+        pressTimer.current = setTimeout(() => {
+            if (!hasMoved.current) {
+                setIsChecked((prev) => !prev);
+                toggleCompleted(task.id);
+            }
+        }, 550);
     };
 
-    const handleTouchMove = (e) => {
+    const handleMove = (clientX) => {
         if (dragStartX === null) return;
 
-        const currentX = e.touches[0].clientX;
-        const deltaX = currentX - dragStartX;
+        const deltaX = clientX - dragStartX;
+
+        if (Math.abs(deltaX) > 10 && !hasMoved.current) {
+            hasMoved.current = true;
+            clearTimeout(pressTimer.current);
+        }
 
         const slowdownZone = 100;
         const maxOffset = 180;
         let adjustedOffset = deltaX;
 
         if (deltaX > slowdownZone) {
-            const over = deltaX - slowdownZone;
-            adjustedOffset = slowdownZone + over * 0.5;
-        }
-
-        if (deltaX < -slowdownZone) {
-            const under = deltaX + slowdownZone;
-            adjustedOffset = -slowdownZone + under * 0.5;
+            adjustedOffset = slowdownZone + (deltaX - slowdownZone) * 0.5;
+        } else if (deltaX < -slowdownZone) {
+            adjustedOffset = -slowdownZone + (deltaX + slowdownZone) * 0.5;
         }
 
         setDragOffset(Math.max(Math.min(adjustedOffset, maxOffset), -maxOffset));
     };
 
-    const handleTouchEnd = () => {
-        const deleteConfirmZone = 160;
+    const endGesture = useCallback(() => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        clearTimeout(pressTimer.current);
 
-        if (dragOffset >= deleteConfirmZone && !isDeleted) {
+        if (dragOffset >= 160 && !isDeleted) {
             setIsDeleted(true);
             setIsRemoving(true);
             setTimeout(() => onDelete(), 160);
-        } else if (dragOffset <= -160 && !isEdited) {
+        } else if (dragOffset <= -threshold && !isEdited) {
             setIsEdited(true);
             setTimeout(() => onEdit(), 160);
         } else {
             setDragOffset(0);
         }
-    };
 
-    const toggleCompleted = useStorageStore((state) => state.toggleCompleted);
+        setDragStartX(null);
+    }, [isDragging, dragOffset, threshold, isDeleted, isEdited, onDelete, onEdit]);
 
-    const handleLongPressStart = (task) => {
-        pressTimer = setTimeout(() => {
-            console.log("markAsCompleted tipo:", typeof markAsCompleted);
+    const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
+    const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
+    const handleTouchEnd = endGesture;
 
-            setIsChecked((prev) => !prev);
-            toggleCompleted(task.id); 
-            console.log("Antes:", task.completed);
-            console.log("markAsCompleted:", typeof markAsCompleted);            
-            console.log("Después:", useStorageStore.getState().tasks.find(t => t.id === task.id)?.completed);
-        }, 550);
-    };
+    const handlePointerStart = (e) => handleStart(e.clientX);
+    const handlePointerMove = (e) => handleMove(e.clientX);
+    const handlePointerEnd = endGesture;
 
-    const handleLongPressEnd = () => {
-        clearTimeout(pressTimer);
-    };
+    useEffect(() => {
+        const handlePointerUpGlobal = () => endGesture();
+        document.addEventListener("pointerup", handlePointerUpGlobal);
+        return () => {
+            document.removeEventListener("pointerup", handlePointerUpGlobal);
+        };
+    }, [endGesture]);
 
     return {
         dragOffset,
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
-        handleLongPressStart,
-        handleLongPressEnd,
+        handlePointerStart,
+        handlePointerMove,
+        handlePointerEnd,
+        handleLongPressStart: () => {},
+        handleLongPressEnd: () => clearTimeout(pressTimer.current),
         isChecked,
         isRemoving,
         isEdited,

@@ -2,7 +2,6 @@ import Container_task from "../commons/Container_task";
 import { Trash2, Pencil } from "lucide-react";
 import { useTaskCard } from "../../hooks/useTaskCard";
 import { useStorageStore } from "../../store/storageStore";
-import { useRef } from "react";
 
 export const Task_card = ({ task, onDelete, onEdit }) => {
     const { markAsCompleted } = useStorageStore();
@@ -11,44 +10,16 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
+        handlePointerStart,
+        handlePointerMove,
+        handlePointerEnd,
         handleLongPressStart,
         handleLongPressEnd,
         isChecked,
         isRemoving,
+        isEdited,
         color,
     } = useTaskCard(task, onDelete, onEdit, markAsCompleted);
-
-    const touchStartX = useRef(0);
-
-    const pressTimer = useRef(null);
-    const hasMoved = useRef(false);
-
-    const onPointerDown = () => {
-        hasMoved.current = false;
-        pressTimer.current = setTimeout(() => {
-            if (!hasMoved.current) {
-                handleLongPressStart(task);
-            }
-        }, 600);
-    };
-
-    const onPointerUp = () => {
-        clearTimeout(pressTimer.current);
-        handleLongPressEnd();
-    };
-
-    const onTouchStart = (e) => {
-        handleTouchStart(e);
-    };
-
-    const onTouchMove = (e) => {
-        hasMoved.current = true;
-        handleTouchMove(e);
-    };
-
-    const onTouchEnd = (e) => {
-        handleTouchEnd(e);
-    };
 
     return (
         <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
@@ -80,11 +51,18 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
             </div>
 
             <div
-                onTouchStart={onTouchStart}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
-                onPointerDown={onPointerDown}
-                onPointerUp={onPointerUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onPointerDown={(e) => {
+                    handlePointerStart(e);
+                    handleLongPressStart();
+                }}
+                onPointerMove={handlePointerMove}
+                onPointerUp={(e) => {
+                    handlePointerEnd(e);
+                    handleLongPressEnd();
+                }}
                 className={`relative rounded-xl z-10 ${color.bg} transition-transform duration-150 ease-out ${
                     isRemoving ? "opacity-0 scale-90 blur-sm" : ""
                 }`}

@@ -18,7 +18,7 @@ const Home = () => {
     const { isOpen, selectedTask, handleCloseModal, handleEditTask } = useModalFlow();
 
     return (
-        <div className="flex flex-col w-[100%] h-auto items-center bg-black">
+        <div className="flex flex-col w-[100%] h-[100%] items-center bg-black overflow-hidden">
             <div className="flex flex-col w-[95%] h-auto items-center bg-black">
                 <Welcome />
                 <Task_count className="h-20" />

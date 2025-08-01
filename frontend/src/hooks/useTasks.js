@@ -24,13 +24,12 @@ export const useTasks = (type, exclude = false) => {
         setTasks(filtered);
     };
 
-   const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = new Date().toISOString().slice(0, 10);
 
     const todayTasks = tasks.filter((task) => {
-    const taskDateStr = task.dateTime?.slice(0, 10);
-    return taskDateStr === todayStr;
+        const taskDateStr = task.dateTime?.slice(0, 10);
+        return taskDateStr === todayStr;
     });
-
 
     return {
         tasks,

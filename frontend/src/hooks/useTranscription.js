@@ -18,22 +18,33 @@ import { useState } from "react";
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState(false);
-    const { addTask } = useStorageStore();    
-    
+    const { addTask } = useStorageStore();
+
     const sendFile = async (file) => {
         console.log("📤 Enviando archivo:", file);
         try {
             setIsProcessing(true);
-            const response = await sendAudioFile(file);            
+            const response = await sendAudioFile(file);
             const { text_raw, text, dateTime, isToday } = getFormattedTasks(response);
             const { date, hour } = dateAndTime(dateTime);
-            console.log(date)                        
+            console.log(date);
             const type = response.type;
             const { assignColor } = getTaskColor();
             const color = assignColor();
             console.log(dateTime);
 
-            addTask({ id: crypto.randomUUID(), dateTime, text_raw, text, date, hour, type, color , completed: false, isToday });
+            addTask({
+                id: crypto.randomUUID(),
+                dateTime,
+                text_raw,
+                text,
+                date,
+                hour,
+                type,
+                color,
+                completed: false,
+                isToday,
+            });
         } catch (err) {
             console.error("❌ Error al enviar:", err);
         } finally {

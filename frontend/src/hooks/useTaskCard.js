@@ -1,12 +1,3 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Hook personalizado para gestionar lógica visual y gestual en tarjetas.       │
- * Integra gestos táctiles de swipe para eliminar o editar una tarea.           │
- * Calcula estilos dinámicos (color, fondo, borde, texto) según el tipo o valor │
- * Ideal para tarjetas de tareas con interacción lateral y estilo por contexto. │
- *                                                                              │
- * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
-
 import { useSwipeActions } from "./useSwipeActions";
 import { getTaskColor } from "./useTaskColor";
 
@@ -15,6 +6,9 @@ export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
 
     const {
         dragOffset,
+        handlePointerStart,
+        handlePointerMove,
+        handlePointerEnd,
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
@@ -24,8 +18,9 @@ export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
         isRemoving,
         isEdited,
     } = useSwipeActions({
+        task,
         onDelete: () => onDelete(task.id),
-        threshold: 200,
+        threshold: 160,
         onEdit: safeEdit,
         markAsCompleted,
     });
@@ -41,6 +36,9 @@ export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
 
     return {
         dragOffset,
+        handlePointerStart,
+        handlePointerMove,
+        handlePointerEnd,
         handleTouchStart,
         handleTouchMove,
         handleTouchEnd,
