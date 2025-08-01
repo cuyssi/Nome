@@ -42,8 +42,7 @@ export const useTranscription = () => {
                 hour,
                 type,
                 color,
-                completed: false,
-                isToday,
+                completed: false,                
             });
         } catch (err) {
             console.error("❌ Error al enviar:", err);
