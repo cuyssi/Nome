@@ -10,37 +10,28 @@
 import Welcome from "../components/commons/Wellcome";
 import Voice_rec from "../components/audio/Voice_rec";
 import Task_count from "../components/task/Task_count";
-import { useModalFlow } from "../hooks/openModalWithTask";
+import { useTaskEditor } from "../hooks/useTaskEditor";
 import { Form } from "../components/commons/Form";
 import { Modal } from "../components/commons/Modal";
 
 const Home = () => {
-  const {
-    isOpen,
-    selectedTask,
-    handleCloseModal,
-    handleEditTask,
-  } = useModalFlow();
+    const { isOpen, selectedTask, handleClose, handleEdit } = useTaskEditor();
 
-  return (
-    <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
-      <div className="flex flex-col w-[95%] h-auto items-center bg-black">
-        <Welcome />
-        <Task_count className="h-20" />
-        <Voice_rec />
+    return (
+        <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
+            <div className="flex flex-col w-[95%] h-auto items-center bg-black">
+                <Welcome />
+                <Task_count className="h-20" />
+                <Voice_rec />
 
-        {isOpen && (
-          <Modal onClose={handleCloseModal}>
-            <Form
-              task={selectedTask}
-              onClose={handleCloseModal}
-              onSubmit={handleEditTask}
-            />
-          </Modal>
-        )}
-      </div>
-    </div>
-  );
+                {isOpen && (
+                    <Modal onClose={handleClose}>
+                        <Form task={selectedTask} onClose={handleClose} onSubmit={handleEdit} />
+                    </Modal>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Home;

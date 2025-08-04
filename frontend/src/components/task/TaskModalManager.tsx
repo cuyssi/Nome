@@ -5,16 +5,15 @@ export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdi
   if (!isOpen) return null;
 
   return (
-    <Modal>
-      {showConfirmation ? (
-        <p className="text-green-500 text-center font-semibold animate-fadeIn">
-          ✅ Cambios guardados con éxito
-        </p>
-      ) : selectedTask && selectedTask.id ? (
-        <Form task={selectedTask} onSubmit={onEdit} onClose={onClose} />
-      ) : (
-        <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
-      )}
-    </Modal>
-  );
+  <Modal>
+    {showConfirmation ? (
+      <p className="text-green-500 text-center font-semibold animate-fadeIn">
+        ✅ Cambios guardados con éxito
+      </p>
+    ) : (
+      <Form task={selectedTask} onSubmit={onEdit} onClose={onClose} />
+    )}
+  </Modal>
+);
+
 };

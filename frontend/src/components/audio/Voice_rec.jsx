@@ -12,13 +12,14 @@ import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { useTranscription } from "../../hooks/useTranscription";
 import { useEffect, useState } from "react";
-import { useModalFlow } from "../../hooks/openModalWithTask";
+import { useTasks } from "../../hooks/useTasks";
+import { useTaskEditor } from "../../hooks/useTaskEditor";
 
 const Voice_rec = () => {
     const { recording, toggleRecording, audioFile, startRecording, stopRecording } = useVoiceRecorder();
-    const { sendFile, isProcessing, confirmationMessage } = useTranscription();    
-    const { openModalWithTask } = useModalFlow();
-    
+    const { sendFile, isProcessing, confirmationMessage } = useTranscription();
+    const { reload, updateTask } = useTasks();
+    const { openModalWithTask } = useTaskEditor(reload, updateTask);
     useEffect(() => {
         if (audioFile) {
             sendFile(audioFile);
@@ -43,7 +44,10 @@ const Voice_rec = () => {
                 </Button>
             </div>
             <div className="flex justify-center items-center w-8 h-8 p-[1.8px] mx-auto bg-gradient-to-br from-yellow-400 to-purple-600 rounded-xl mr-0 mt-6">
-                <Button onClick={() => openModalWithTask({})} className="flex justify-center items-center w-full h-full border border-none rounded-xl bg-black">
+                <Button
+                    onClick={() => openModalWithTask({})}
+                    className="flex justify-center items-center w-full h-full border border-none rounded-xl bg-black"
+                >
                     <SquarePen className="w-5 h-5 text-white border border-black drop-shadow-[0_1px_1px_black]" />
                 </Button>
             </div>
@@ -52,7 +56,7 @@ const Voice_rec = () => {
             )}
             {confirmationMessage && (
                 <p className="text-sm text-green-300 transition-opacity duration-500">✅ Tarea añadida!</p>
-            )}            
+            )}
         </div>
     );
 };

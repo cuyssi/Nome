@@ -6,13 +6,22 @@
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
+
 import { useStorageStore } from "../store/storageStore";
 import { filterTasks } from "../utils/taskFilter";
 import { useState, useEffect } from "react";
 import { isToday } from "../utils/dateUtils";
 
 export const useTasks = (type, exclude = false) => {
-    const { tasks: rawTasks, deleteTask, updateTask } = useStorageStore();
+    const {
+        tasks: rawTasks,
+        addTask,
+        deleteTask,
+        updateTask,
+        markAsCompleted,
+        toggleCompleted
+    } = useStorageStore();
+
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -23,15 +32,18 @@ export const useTasks = (type, exclude = false) => {
     const reload = () => {
         const filtered = type ? filterTasks(rawTasks, type, exclude) : rawTasks;
         setTasks(filtered);
-    };    
+    };
 
     const todayTasks = tasks.filter((task) => isToday(task.dateTime));
 
     return {
         tasks,
-        deleteTask,
-        editTask: updateTask,
-        reload,
         todayTasks,
+        addTask,
+        deleteTask,
+        updateTask,
+        markAsCompleted,
+        toggleCompleted,
+        reload
     };
 };
