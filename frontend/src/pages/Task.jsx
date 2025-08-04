@@ -19,6 +19,7 @@ import { Form } from "../components/commons/Form";
 import { useTasks } from "../hooks/useTasks";
 import { useStorageStore } from "../store/storageStore";
 import { useModalFlow } from "../hooks/openModalWithTask";
+import { filterByType } from "../utils/filterByType"
 
 const Task = ({ type, exclude }) => {
   const [activeTab, setActiveTab] = useState("deberes");

@@ -9,6 +9,7 @@
 import { useStorageStore } from "../store/storageStore";
 import { filterTasks } from "../utils/taskFilter";
 import { useState, useEffect } from "react";
+import { isToday } from "../utils/dateUtils";
 
 export const useTasks = (type, exclude = false) => {
     const { tasks: rawTasks, deleteTask, updateTask } = useStorageStore();
@@ -22,14 +23,9 @@ export const useTasks = (type, exclude = false) => {
     const reload = () => {
         const filtered = type ? filterTasks(rawTasks, type, exclude) : rawTasks;
         setTasks(filtered);
-    };
+    };    
 
-    const todayStr = new Date().toISOString().slice(0, 10);
-
-    const todayTasks = tasks.filter((task) => {
-        const taskDateStr = task.dateTime?.slice(0, 10);
-        return taskDateStr === todayStr;
-    });
+    const todayTasks = tasks.filter((task) => isToday(task.dateTime));
 
     return {
         tasks,
