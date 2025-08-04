@@ -1,19 +1,29 @@
 import { Tasks_list } from "../components/task/Tasks_list";
 import { useTasks } from "../hooks/useTasks";
+import { useStorageStore } from "../store/storageStore";
+import { useTaskEditor } from "../hooks/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager";
+import { TaskPageLayout } from "../components/task/TaskPageLayout";
 
 const Pending_tasks = () => {
-    const { todayTasks } = useTasks();
+    const { todayTasks, reload } = useTasks();
+    const { updateTask } = useStorageStore();
     const pendingTasks = todayTasks.filter((task) => !task.completed);
 
+    const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
+        useTaskEditor(reload, updateTask);
+
     return (
-        <div className="flex flex-col h-[100%] items-center overflow-hidden">
-            <h2 className="flex justify-center text-purple-400 font font-bold font-poppins text-3xl underline-offset-8 decoration-[3px] mt-14 mb-14">
-                Tareas Pendientes
-            </h2>
-            <div className="w-[90%] h-[90%]">
-                <Tasks_list tasks={pendingTasks} />
-            </div>
-        </div>
+        <TaskPageLayout title="Tareas Pendientes">
+            <Tasks_list key={renderKey} tasks={pendingTasks} openModalWithTask={openModalWithTask} />
+            <TaskModalManager
+                isOpen={isOpen}
+                selectedTask={selectedTask}
+                showConfirmation={showConfirmation}
+                onEdit={handleEdit}
+                onClose={handleClose}
+            />
+        </TaskPageLayout>
     );
 };
 

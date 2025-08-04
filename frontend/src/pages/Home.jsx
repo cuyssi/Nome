@@ -15,26 +15,32 @@ import { Form } from "../components/commons/Form";
 import { Modal } from "../components/commons/Modal";
 
 const Home = () => {
-    const { isOpen, selectedTask, handleCloseModal, handleEditTask } = useModalFlow();
+  const {
+    isOpen,
+    selectedTask,
+    handleCloseModal,
+    handleEditTask,
+  } = useModalFlow();
 
-    return (
-        <div className="flex flex-col w-[100%] h-[100%] items-center bg-black overflow-hidden">
-            <div className="flex flex-col w-[95%] h-auto items-center bg-black">
-                <Welcome />
-                <Task_count className="h-20" />
-                <Voice_rec />
-                {isOpen && (
-                    <Modal onClose={handleCloseModal}>
-    <Form
-      task={selectedTask}
-      onClose={handleCloseModal}
-      onSubmit={handleEditTask}
-    />
-  </Modal>
-                )}
-            </div>
-        </div>
-    );
+  return (
+    <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
+      <div className="flex flex-col w-[95%] h-auto items-center bg-black">
+        <Welcome />
+        <Task_count className="h-20" />
+        <Voice_rec />
+
+        {isOpen && (
+          <Modal onClose={handleCloseModal}>
+            <Form
+              task={selectedTask}
+              onClose={handleCloseModal}
+              onSubmit={handleEditTask}
+            />
+          </Modal>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Home;

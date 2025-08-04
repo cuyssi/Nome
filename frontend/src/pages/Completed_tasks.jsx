@@ -1,19 +1,28 @@
 import { Tasks_list } from "../components/task/Tasks_list";
 import { useTasks } from "../hooks/useTasks";
+import { TaskModalManager } from "../components/task/TaskModalManager";
+import { useTaskEditor } from "../hooks/useTaskEditor";
+import { useStorageStore } from "../store/storageStore";
+import { TaskPageLayout } from "../components/task/TaskPageLayout";
 
 const Completed_tasks = () => {
-    const { todayTasks } = useTasks();
+    const { todayTasks, reload } = useTasks();
+    const { updateTask } = useStorageStore();
     const completedTasks = todayTasks.filter((task) => task.completed);
+    const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
+        useTaskEditor(reload, updateTask);
 
     return (
-         <div className="flex flex-col h-[100%] items-center overflow-hidden">
-            <h2 className="flex justify-center text-purple-400 font font-bold font-poppins text-3xl underline-offset-8 decoration-[3px] mt-14 mb-14">
-                Tareas Completas
-            </h2>
-            <div className="w-[90%] h-[90%]">
-                <Tasks_list tasks={completedTasks} />
-            </div>
-        </div>
+        <TaskPageLayout title="Tareas para Hoy">
+            <Tasks_list key={renderKey} tasks={completedTasks} openModalWithTask={openModalWithTask} />
+            <TaskModalManager
+                isOpen={isOpen}
+                selectedTask={selectedTask}
+                showConfirmation={showConfirmation}
+                onEdit={handleEdit}
+                onClose={handleClose}
+            />
+        </TaskPageLayout>
     );
 };
 

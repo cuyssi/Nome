@@ -18,7 +18,8 @@ export const Modal = ({ children }) => {
     
 
     return (
-        <div className="flex justify-center items-center absolute z-50 w-[100%] h-[100%] backdrop-blur-sm bg-white/20">
+        <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-white/20">
+
             {children}
         </div>
     );

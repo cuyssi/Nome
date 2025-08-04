@@ -34,11 +34,11 @@ export const useStorageStore = create(
                 set({ tasks: sortTasks(tasks) });
             },
 
-            updateTask: (updatedTask) => {
-                const tasks = get().tasks.map((task) =>
-                    task.id === updatedTask.id ? { ...task, ...updatedTask } : task
-                );
-                set({ tasks: sortTasks(tasks) });
+            updateTask: (id, updatedFields) => {
+                set((state) => {
+                    const updatedTasks = state.tasks.map((t) => (t.id === id ? { ...t, ...updatedFields } : t));
+                    return { tasks: updatedTasks };
+                });
             },
 
             deleteTask: (id) => {

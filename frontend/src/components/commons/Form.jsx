@@ -33,34 +33,35 @@ export function Form({ task, onClose, onSubmit }) {
     };
 
     const handleSubmit = (e) => {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
-        const usarRaw = esCruda(task?.type);
+    const usarRaw = esCruda(task?.type);
 
-        const baseData = {
-            date: formData.date,
-            hour: formData.hour,
-            color: formData.color,
-            ...(usarRaw ? { text_raw: formData.text } : { text: formData.text }),
-        };
-
-        const nuevaTarea = {
-            id: uuidv4(),
-            type: "personal",
-            completed: false,
-            ...baseData,
-        };
-
-        const dateTime = buildDateTimeFromManual(baseData.date, baseData.hour);
-        const finalTask = task?.id ? { ...task, ...baseData, dateTime } : { ...nuevaTarea, dateTime };
-
-        onSubmit(finalTask);
-        setShowConfirmation(true);
-        setTimeout(() => onClose(), 1500);
+    const baseData = {
+        date: formData.date,
+        hour: formData.hour,
+        color: formData.color,
+        text: formData.text,       // Siempre incluye `text`
+        text_raw: formData.text,   // Siempre incluye `text_raw`
     };
+
+    const nuevaTarea = {
+        id: uuidv4(),
+        type: "personal",
+        completed: false,
+        ...baseData,
+    };
+
+    const dateTime = buildDateTimeFromManual(baseData.date, baseData.hour);
+    const finalTask = task?.id ? { ...task, ...baseData, dateTime } : { ...nuevaTarea, dateTime };
+
+    onSubmit(finalTask);
+    setShowConfirmation(true);
+    setTimeout(() => onClose(), 1500);
+};
 
     useEffect(() => {
         const handleKeyDown = (e) => {
