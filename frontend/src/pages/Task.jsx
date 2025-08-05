@@ -1,4 +1,4 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
+/**────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
  * Componente principal para mostrar, editar y organizar tareas en pestañas.    │
  * Separa la vista en "deberes" y "trabajos", permitiendo alternancia dinámica. │
  * Utiliza Zustand para persistir tareas y gestionar actualizaciones globales.  │
@@ -10,42 +10,38 @@
  * - Estilos adaptados con transiciones visuales y jerarquía de colores.        │
  *                                                                              │
  * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
+ └───────────────────────────────────────────────────────────────────────────────**/
 
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { Modal } from "../components/commons/Modal";
-import { Form } from "../components/commons/Form";
+import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTasks } from "../hooks/useTasks";
-import { useStorageStore } from "../store/storageStore";
 import { useTaskEditor } from "../hooks/useTaskEditor";
+import { filterTasksSmart } from "../utils/taskFilter";
 
 const Task = ({ type, exclude }) => {
     const [activeTab, setActiveTab] = useState("deberes");
-
     const { tasks, reload } = useTasks(type, exclude);
-    const { updateTask } = useStorageStore();
-
-    const { isOpen, selectedTask, openModalWithTask, handleEditTask, handleCloseModal, renderKey, showConfirmation } =
-        useTaskEditor(reload, updateTask);
+    const {
+        isOpen,
+        selectedTask,
+        openModalWithTask,
+        handleEdit: handleEditTask,
+        handleClose: handleCloseModal,
+        renderKey,
+        showConfirmation,
+    } = useTaskEditor(reload);
 
     useEffect(() => {
         reload();
     }, []);
 
-    const filterByType = (tasks, types) => {
-        const targetTypes = Array.isArray(types) ? types : [types];
-        return tasks.filter((t) => {
-            const currentTypes = Array.isArray(t.type) ? t.type : [t.type];
-            return currentTypes.some((type) => targetTypes.includes(type));
-        });
-    };
-
     const deberesTypes = ["deberes", "ejercicios", "estudiar"];
     const trabajoTypes = "trabajo";
 
     const filteredTasks =
-        activeTab === "trabajo" ? filterByType(tasks, trabajoTypes) : filterByType(tasks, deberesTypes);
+        activeTab === "trabajo" ? filterTasksSmart(tasks, trabajoTypes) : filterTasksSmart(tasks, deberesTypes);
 
     return (
         <div className="flex flex-col h-full items-center overflow-hidden">
@@ -78,19 +74,13 @@ const Task = ({ type, exclude }) => {
                 <Tasks_list key={renderKey} tasks={filteredTasks} openModalWithTask={openModalWithTask} />
             </div>
 
-            {isOpen && (
-                <Modal onClose={handleCloseModal}>
-                    {showConfirmation ? (
-                        <p className="text-green-500 text-center font-semibold animate-fadeIn">
-                            ✅ Cambios guardados con éxito
-                        </p>
-                    ) : selectedTask && selectedTask.id ? (
-                        <Form task={selectedTask} onSubmit={handleEditTask} onClose={handleCloseModal} />
-                    ) : (
-                        <p className="text-yellow-300 text-center">Cargando tarea seleccionada…</p>
-                    )}
-                </Modal>
-            )}
+            <TaskModalManager
+                isOpen={isOpen}
+                selectedTask={selectedTask}
+                showConfirmation={showConfirmation}
+                onEdit={handleEditTask}
+                onClose={handleCloseModal}
+            />
         </div>
     );
 };

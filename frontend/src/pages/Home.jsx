@@ -19,7 +19,7 @@ const Home = () => {
 
     return (
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
-            <div className="flex flex-col w-[95%] h-auto items-center bg-black">
+            <div className="flex flex-col w-full h-full items-center bg-black">
                 <Welcome />
                 <Task_count className="h-20" />
                 <Voice_rec />

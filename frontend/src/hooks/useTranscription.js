@@ -7,31 +7,29 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
+import { useState } from "react";
 import { sendAudioFile } from "../services/Task_services";
 import { getFormattedTasks, dateAndTime } from "../utils/transcriptionUtils";
 import { getTaskColor } from "./useTaskColor";
-import { normalizeType } from "../utils/normalizeType";
-import { inferType } from "../utils/inferType";
 import { useStorageStore } from "../store/storageStore";
-import { useState } from "react";
+import { useTaskType } from "./useTaskType";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [confirmationMessage, setConfirmationMessage] = useState(false);
     const { addTask } = useStorageStore();
+    const { getTaskType } = useTaskType(); // 👈 aquí
 
     const sendFile = async (file) => {
-        console.log("📤 Enviando archivo:", file);
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);
-            const { text_raw, text, dateTime, isToday } = getFormattedTasks(response);
+            const { text_raw, text, dateTime } = getFormattedTasks(response);
             const { date, hour } = dateAndTime(dateTime);
-            console.log(date);
-            const type = response.type;
+
+            const type = getTaskType(text); // 👈 inferido limpio
             const { assignColor } = getTaskColor();
             const color = assignColor();
-            console.log(dateTime);
 
             addTask({
                 id: crypto.randomUUID(),
@@ -42,7 +40,7 @@ export const useTranscription = () => {
                 hour,
                 type,
                 color,
-                completed: false,                
+                completed: false,
             });
         } catch (err) {
             console.error("❌ Error al enviar:", err);
@@ -52,5 +50,6 @@ export const useTranscription = () => {
             setTimeout(() => setConfirmationMessage(false), 3000);
         }
     };
+
     return { sendFile, isProcessing, confirmationMessage };
 };

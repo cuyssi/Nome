@@ -8,11 +8,14 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-export function filterTasks(task_list, types = [], exclude = false) {
+
+export const filterTasksSmart = (tasks, types = [], exclude = false) => {
     if (!Array.isArray(types)) types = [types];
 
-    return task_list.filter((task) => {
-        const match = types.includes(task.type);
-        return exclude ? !match : match;
+    return tasks.filter(task => {
+        const taskTypes = Array.isArray(task.type) ? task.type : [task.type];
+        const hasMatch = taskTypes.some(t => types.includes(t));
+        return exclude ? !hasMatch : hasMatch;
     });
-}
+};
+

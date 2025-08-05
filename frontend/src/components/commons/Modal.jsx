@@ -7,20 +7,12 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-import { useModalStore } from "../../store/modalStore";
+export const Modal = ({ isOpen, children }) => {
+  if (!isOpen) return null;
 
-export const Modal = ({ children }) => {
-    const { isOpen } = useModalStore();
-    console.log("hola Ana soy modal antes")
-
-    if (!isOpen) return null;
-    console.log("hola Ana soy modal despues")
-    
-
-    return (
-        <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-white/20">
-
-            {children}
-        </div>
-    );
+  return (
+    <div className="fixed inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-white/20">
+      {children}
+    </div>
+  );
 };

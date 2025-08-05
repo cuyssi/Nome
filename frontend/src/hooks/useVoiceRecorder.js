@@ -21,26 +21,37 @@ export const useVoiceRecorder = () => {
     const stopSound = new Audio(beep_end);
 
     const startRecording = async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const mediaRecorder = new MediaRecorder(stream);
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.error("🎙️ getUserMedia no está disponible en este navegador.");
+            alert("Tu navegador no permite grabar audio.");
+            return;
+        }
 
-        audioChunksRef.current = [];
-        mediaRecorderRef.current = mediaRecorder;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const mediaRecorder = new MediaRecorder(stream);
 
-        mediaRecorder.ondataavailable = (e) => {
-            audioChunksRef.current.push(e.data);
-        };
+            audioChunksRef.current = [];
+            mediaRecorderRef.current = mediaRecorder;
 
-        mediaRecorder.onstop = async () => {
-            const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-            setAudioBlob(blob);
-            console.log("✅ Audio listo, tamaño:", blob.size);
-            const file = passToFile(blob);
-            setAudioFile(file);
-        };
+            mediaRecorder.ondataavailable = (e) => {
+                audioChunksRef.current.push(e.data);
+            };
 
-        mediaRecorder.start();
-        setRecording(true);
+            mediaRecorder.onstop = async () => {
+                const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+                setAudioBlob(blob);
+                console.log("✅ Audio listo, tamaño:", blob.size);
+                const file = passToFile(blob);
+                setAudioFile(file);
+            };
+
+            mediaRecorder.start();
+            setRecording(true);
+        } catch (err) {
+            console.error("🎙️ Error al iniciar la grabación:", err);
+            alert("No se pudo acceder al micrófono. Revisa los permisos.");
+        }
     };
 
     const passToFile = (audioBlob) => {

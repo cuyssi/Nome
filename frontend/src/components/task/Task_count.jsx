@@ -9,7 +9,7 @@ const Task_count = ({ tasks = [] }) => {
   const totalTodayCount = todayTasks.length;
 
   return (
-    <div className="flex w-full justify-center items-center p-2">
+    <div className="flex w-full justify-center items-center p-2 mt-2">
       <Container innerClass="justify-between" outerClass="w-[100%]"> 
         <Link to="./today" className="flex-1 flex-col p-2 no-underline justify-center items-center">
           <p className="text-yellow-200 text-center font-extrabold drop-shadow-[0_0_1px_black] text-2xl">

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-import { useStorageStore } from "../store/storageStore";
 import { useTasks } from "../hooks/useTasks";
 import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTaskEditor } from "../hooks/useTaskEditor";
@@ -8,10 +7,9 @@ import { useTaskEditor } from "../hooks/useTaskEditor";
 const Dates = ({ type, exclude = false }) => {
     const [activeTab, setActiveTab] = useState("citas");
     const { tasks, reload } = useTasks(type, exclude);
-    const { updateTask } = useStorageStore();
 
     const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
-        useTaskEditor(reload, updateTask);
+        useTaskEditor(reload);
 
     const tiposExcluir = ["medico", "deberes", "trabajo"];
 
@@ -20,7 +18,10 @@ const Dates = ({ type, exclude = false }) => {
         return !tipos.some((tipo) => tiposExcluir.includes(tipo));
     });
 
-    const medicoTasks = tasks.filter((t) => (Array.isArray(t.type) ? t.type.includes("medico") : t.type === "medico"));
+    const medicoTasks = tasks.filter((t) => {
+        const tipos = Array.isArray(t.type) ? t.type : [t.type];
+        return tipos.includes("medico");
+    });
 
     return (
         <div className="flex flex-col h-full items-center overflow-hidden">
@@ -49,14 +50,14 @@ const Dates = ({ type, exclude = false }) => {
 
             <div
                 className={`relative pt-10 border border-black border-t-purple-400 -mt-0.5 w-full h-[100dvh] px-4 py-6 transition-colors duration-300 ${
-                    activeTab === "citas" ? "bg-black" : activeTab === "medico" ? "bg-black" : "bg-gray-200"
+                    activeTab === "citas" || activeTab === "medico" ? "bg-black" : "bg-gray-200"
                 }`}
             >
-                {activeTab === "medico" ? (
-                    <Tasks_list key={renderKey} tasks={medicoTasks} openModalWithTask={openModalWithTask} />
-                ) : (
-                    <Tasks_list key={renderKey} tasks={citasTasks} openModalWithTask={openModalWithTask} />
-                )}
+                <Tasks_list
+                    key={renderKey}
+                    tasks={activeTab === "medico" ? medicoTasks : citasTasks}
+                    openModalWithTask={openModalWithTask}
+                />
             </div>
 
             <TaskModalManager

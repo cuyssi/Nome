@@ -17,7 +17,7 @@ const Welcome = () => {
             <div className="flex flex-col items-center text-center mt-8">
                 <img src={logo_nome} className="w-[100%]" />
 
-                <div className="flex flex-col gap-4 w-full mt-12 justify-center items-center ">
+                <div className="flex flex-col gap-4 w-full mt-8 justify-center items-center ">
                     
                     <div className="flex justify-between w-[100%] gap-4 p-2">
                         <Container outerClass="w-[50%]">
