@@ -10,8 +10,10 @@
 
 import axios from "axios";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/transcribe/`;
 console.log("🌍 ENV:", import.meta.env);
+
+const API_URL = `${import.meta.env.VITE_API_URL}/transcribe/`;
+console.log("📡 API_URL:", API_URL);
 
 export const sendAudioFile = async (file) => {
     const formData = new FormData();
