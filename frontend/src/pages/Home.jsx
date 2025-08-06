@@ -11,24 +11,24 @@ import Welcome from "../components/commons/Wellcome";
 import Voice_rec from "../components/audio/Voice_rec";
 import Task_count from "../components/task/Task_count";
 import { useTaskEditor } from "../hooks/useTaskEditor";
-import { Form } from "../components/commons/Form";
-import { Modal } from "../components/commons/Modal";
+import { TaskModalManager } from "../components/task/TaskModalManager";
 
 const Home = () => {
-    const { isOpen, selectedTask, handleClose, handleEdit } = useTaskEditor();
+    const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();
 
     return (
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-black">
                 <Welcome />
                 <Task_count className="h-20" />
-                <Voice_rec />
-
-                {isOpen && (
-                    <Modal onClose={handleClose}>
-                        <Form task={selectedTask} onClose={handleClose} onSubmit={handleEdit} />
-                    </Modal>
-                )}
+                <Voice_rec openModalWithTask={openModalWithTask}/>
+                <TaskModalManager
+                    isOpen={isOpen}
+                    selectedTask={selectedTask}
+                    showConfirmation={showConfirmation}
+                    onEdit={handleEdit}
+                    onClose={handleClose}
+                />
             </div>
         </div>
     );
