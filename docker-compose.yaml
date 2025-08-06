@@ -8,9 +8,10 @@ services:
       - "8083:8000"
     environment:
       - ENV=production
-    # volumes:
-    #   - ./backend:/app
+      - CORS_ORIGINS=${CORS_ORIGINS}
     restart: unless-stopped
+    env_file:
+      - .env
 
   frontend:
     build:
@@ -24,3 +25,5 @@ services:
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    env_file:
+      - .env
