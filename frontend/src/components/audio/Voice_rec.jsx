@@ -23,7 +23,7 @@ const Voice_rec = () => {
     {/* Botón del micrófono */}
     <div className="flex justify-center items-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px] mb-8">
         <Button
-            className="flex bg-black border border-black rounded-full w-[50vw] max-w-[11rem] aspect-square items-center justify-center"
+            className="flex bg-black border border-black rounded-full w-[40vw] max-w-[10rem] aspect-square items-center justify-center"
             onClick={toggleRecording}
             onTouchStart={startRecording}
             onTouchEnd={stopRecording}

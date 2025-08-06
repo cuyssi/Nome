@@ -135,6 +135,7 @@ def clean_final_text(text: str, task_datetime: datetime) -> str:
     final_text = re.sub(r"\bmedia\b", "", final_text, flags=re.IGNORECASE)
     final_text = re.sub(r"\b(media|cuarto)\b", "", final_text, flags=re.IGNORECASE)
     final_text = re.sub(r"\ba\b\s*$", "", final_text, flags=re.IGNORECASE)
+    final_text = re.sub(r"\s+y\s+(?=\s*($|en|con|para|la|el|a|de|del|y))", " ", final_text, flags=re.IGNORECASE)
     final_text = re.sub(r"\s{2,}", " ", final_text).strip()
     final_text = final_text.rstrip(",.")
     lugares = [

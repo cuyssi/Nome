@@ -8,7 +8,7 @@ export const useTasks = (type, exclude = false) => {
         tasks: rawTasks,
         deleteTask,
         updateTask,
-        addTask, // ⬅️ Añadido aquí
+        addTask,
     } = useStorageStore();
 
     const [tasks, setTasks] = useState([]);
@@ -30,7 +30,7 @@ export const useTasks = (type, exclude = false) => {
         todayTasks,
         deleteTask,
         updateTask,
-        addTask,      // ⬅️ Expuesto aquí también
+        addTask,
         reload,
     };
 };
