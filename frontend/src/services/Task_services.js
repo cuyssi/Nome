@@ -10,7 +10,7 @@
 
 import axios from "axios";
 
-const API_URL = "http://localhost:8000/transcribe/";
+const API_URL = `${import.meta.env.VITE_API_URL}/transcribe/`;
 
 export const sendAudioFile = async (file) => {
     const formData = new FormData();
