@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      # Aquí pon las variables de entorno que necesite tu backend, ejemplo:
+      - NODE_ENV=production
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./frontend:/app
+    restart: unless-stopped
