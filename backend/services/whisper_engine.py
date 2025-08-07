@@ -22,7 +22,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"🧠 Usando dispositivo: {device}")
 
 # Carga el modelo Whisper en el dispositivo adecuado
-model = whisper.load_model("base", device=device)
+model = whisper.load_model("medium", device=device)
 
 # Determina si usar fp16 (solo si hay GPU)
 use_fp16 = device == "cuda"
