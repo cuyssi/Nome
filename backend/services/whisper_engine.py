@@ -1,12 +1,11 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # Servicio que utiliza el modelo Whisper para transcribir archivos de audio.
-# - Carga el modelo Whisper con tamaño "medium" para equilibrio entre precisión y rendimiento.
-# - Fuerza uso de CPU si no hay GPU disponible.
-# - Guarda el archivo recibido como `temp_audio.mp3` en disco.
-# - Transcribe el contenido utilizando `model.transcribe` con `fp16=False`.
+# - Usa el modelo Whisper "tiny" para máxima velocidad con buena precisión.
+# - Detecta si hay GPU disponible y usa fp16 si es posible.
+# - Guarda el archivo recibido como temporal en disco.
+# - Transcribe el contenido utilizando `model.transcribe`.
 # - Mide el tiempo de transcripción y muestra logs útiles.
-# - Limpia y une el texto transcrito si se devuelve como lista.
-# Devuelve el texto plano de la transcripción para usarlo en el endpoint principal.
+# - Devuelve el texto plano de la transcripción.
 # Ideal como servicio backend para apps de voz a tarea u organización verbal.
 #
 # @author: Ana Castro
@@ -15,6 +14,7 @@
 import time
 import torch
 import whisper
+import tempfile
 from fastapi import UploadFile
 
 # Detecta si hay GPU disponible
@@ -22,30 +22,29 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"🧠 Usando dispositivo: {device}")
 
 # Carga el modelo Whisper en el dispositivo adecuado
-model = whisper.load_model("medium", device=device)
+model = whisper.load_model("tiny", device=device)
 
+# Determina si usar fp16 (solo si hay GPU)
+use_fp16 = device == "cuda"
 
 async def transcribe_audio_file(file: UploadFile) -> str:
     audio_bytes = await file.read()
-
-    with open("temp_audio.mp3", "wb") as f:
-        f.write(audio_bytes)
-
     print(f"📥 Archivo recibido: {file.filename}, tamaño: {len(audio_bytes)} bytes")
 
+    # Guarda el archivo como temporal
+    with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as temp_audio:
+        temp_audio.write(audio_bytes)
+        temp_audio_path = temp_audio.name
+
+    # Transcribe el audio
     start = time.time()
-    result = model.transcribe("temp_audio.mp3", fp16=False)
+    result = model.transcribe(temp_audio_path, fp16=use_fp16)
     duration = time.time() - start
     print(f"⏱️ Transcripción tardó: {duration:.2f} segundos")
     print(f"🔍 Resultado Whisper: {repr(result)}")
 
-    if (
-        isinstance(result, dict)
-        and "text" in result
-        and isinstance(result["text"], (str, list))
-    ):
-        if isinstance(result["text"], list):
-            return " ".join(result["text"]).strip()
-        return result["text"].strip()
-
-    return ""
+    # Devuelve el texto limpio
+    text = result.get("text", "")
+    if isinstance(text, list):
+        text = " ".join(text)
+    return text.strip()
