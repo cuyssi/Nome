@@ -12,7 +12,7 @@ print(f"🧠 Usando dispositivo: {device}")
 compute_type = "float16" if device == "cuda" else "int8"
 
 # Carga el modelo Faster-Whisper
-model_size = "small" 
+model_size = "small"
 print(f"📦 Cargando modelo: {model_size} con compute_type: {compute_type}")
 model = WhisperModel(model_size, device=device, compute_type=compute_type)
 

@@ -9,7 +9,6 @@ export const useVoiceRecorder = () => {
     const audioChunksRef = useRef([]);
     const [audioFile, setAudioFile] = useState();
 
-    // ✅ Usar useRef para que se mantenga la misma instancia
     const startSound = useRef(new Audio(beep_start));
     const stopSound = useRef(new Audio(beep_end));
 

@@ -12,11 +12,17 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from api.transcribe import router as transcribe_router
+from dotenv import load_dotenv
+load_dotenv()
 import os
 
 app = FastAPI()
 
-allowed_origins = os.getenv("CORS_ORIGINS", "*").split(",")
+allowed_origins = os.getenv("CORS_ORIGINS", "").split(",")
+
+
+print("🌍 CORS_ORIGINS:", os.getenv("CORS_ORIGINS"))
+
 
 app.add_middleware(
     CORSMiddleware,

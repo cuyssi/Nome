@@ -8,7 +8,7 @@ export default defineConfig({
         react(),
         VitePWA({
             registerType: "autoUpdate",
-            includeAssets: ["favicon.svg", "favicon.ico", "robots.txt", "apple-touch-icon.png"],
+            includeAssets: ["favicon.svg", "favicon.ico","favicon.png", "robots.txt", "apple-touch-icon.png"],
             manifest: {
                 name: "Nome - Tareas por Voz",
                 short_name: "Nome",
