@@ -1,14 +1,3 @@
-# ──────────────────────────────────────────────────────────────────────────────
-# Servicio que utiliza el modelo Faster-Whisper para transcribir archivos de audio.
-# - Usa el modelo "tiny" optimizado con ONNX para velocidad incluso en CPU.
-# - Detecta si hay GPU disponible y ajusta el tipo de cómputo.
-# - Guarda el archivo recibido como temporal en disco.
-# - Transcribe el contenido utilizando `model.transcribe`.
-# - Mide el tiempo de transcripción y muestra logs útiles.
-# - Devuelve el texto plano de la transcripción.
-# Ideal como servicio backend para apps de voz a tarea u organización verbal.
-# ──────────────────────────────────────────────────────────────────────────────
-
 import time
 import tempfile
 from fastapi import UploadFile
@@ -23,7 +12,9 @@ print(f"🧠 Usando dispositivo: {device}")
 compute_type = "float16" if device == "cuda" else "int8"
 
 # Carga el modelo Faster-Whisper
-model = WhisperModel("medium", device=device, compute_type=compute_type)
+model_size = "small" 
+print(f"📦 Cargando modelo: {model_size} con compute_type: {compute_type}")
+model = WhisperModel(model_size, device=device, compute_type=compute_type)
 
 async def transcribe_audio_file(file: UploadFile) -> str:
     audio_bytes = await file.read()
@@ -34,12 +25,14 @@ async def transcribe_audio_file(file: UploadFile) -> str:
         temp_audio.write(audio_bytes)
         temp_audio_path = temp_audio.name
 
-    # Transcribe el audio
+    # Transcribe el audio y mide tiempo
     start = time.time()
     segments, info = model.transcribe(temp_audio_path)
     duration = time.time() - start
-    print(f"⏱️ Transcripción tardó: {duration:.2f} segundos")
-    print(f"🔍 Info del audio: {info}")
+
+    print(f"⏱️ Transcripción completada en {duration:.2f} segundos")
+    print(f"🔍 Info del audio: duración={info.duration:.2f}s, idioma={info.language}")
+    print(f"📚 Rendimiento: {info.duration / duration:.2f}x real time")
 
     # Une los segmentos en texto plano
     text = " ".join([segment.text for segment in segments])
