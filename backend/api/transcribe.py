@@ -16,15 +16,14 @@ from services.date_parser import combine_date_and_time, is_today
 from utils.text_helper import clean_final_text
 from utils.preprocess import clean_text
 from utils.spacy_utils import nlp, infer_type
-
+from utils.time_parser import extract_hour
 
 router = APIRouter()
-
 
 @router.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
-
+    hora = extract_hour(texto_raw)
     doc = nlp(texto_raw)
     fecha = combine_date_and_time(texto_raw)
     texto_final = doc._.texto_limpio if fecha else clean_text(doc.text)
@@ -36,5 +35,6 @@ async def transcribe_audio(file: UploadFile = File(...)):
         "text": texto_final,
         "datetime": fecha.isoformat() if fecha else None,
         "type": tipo,
+        "hour": hora,
         "isToday": is_today(fecha)
     }
