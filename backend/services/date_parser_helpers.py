@@ -116,7 +116,7 @@ def calculate_date_by_weekday(texto: str) -> Optional[date]:
 
 
 def extract_decimal_time(texto: str):
-    match = re.search(r"(?:a\s+)?las\s+(\d+)[\.:,](\d+)", texto)
+    match = re.search(r"(?:a\s+)?(?:las\s+)?(\d+)[\.:,](\d+)", texto)
     if match:
         hora = int(match.group(1))
         decimal_raw = int(match.group(2))
@@ -139,7 +139,8 @@ def extract_simple_time(texto: str):
             hora += 12
         return hora, minutos
 
-    pattern = r"(?:a\s+)?las\s+(\d+|\w+)(?:\s+y\s+(cuarto|media|\d+))?(?:\s+de\s+la\s+(mañana|tarde|noche))?"
+    pattern = r"(?:a\s+)?(?:las\s+)?(\d+|\w+)(?:\s+y\s+(cuarto|media|\d+))?(?:\s+de\s+la\s+(mañana|tarde|noche))?"
+
     match = re.search(pattern, texto, flags=re.IGNORECASE)
     if not match:
         return None
@@ -173,3 +174,11 @@ def extract_simple_time(texto: str):
         hora += 12
 
     return hora, minutos
+
+def extract_simple_time_string(texto: str) -> str:
+    resultado = extract_simple_time(texto)
+    if resultado:
+        hora, minutos = resultado
+        return f"{hora:02d}:{minutos:02d}"
+    return "00:00"
+
