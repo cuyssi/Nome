@@ -24,10 +24,14 @@ router = APIRouter()
 async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
     hora = extract_simple_time_string(texto_raw)
-    doc = nlp(texto_raw)
+    print(f"🔍 hora: {hora}")
     fecha = combine_date_and_time(texto_raw)
-    texto_final = doc._.texto_limpio if fecha else clean_text(doc.text)
-    tipo = infer_type(doc.text)
+    tipo = infer_type(texto_raw)
+
+    if fecha:
+        texto_final = clean_final_text(texto_raw, fecha)
+    else:
+        texto_final = clean_text(texto_raw)
 
     print(f"🔍 TEXTO RAW: {repr(texto_raw)}")
     return {
