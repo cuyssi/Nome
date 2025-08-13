@@ -3,14 +3,15 @@
 # - find_day_number: busca patrón “<día> <número>” y devuelve el número.
 # - combine_date_and_time: detecta fecha manual, relativa o por día semanal.
 #   También interpreta hora directa o por contexto (mañana, tarde, noche).
-# Combina la fecha resultante con hora estimada para crear un `datetime` completo.
+#   Si la hora ya pasó hoy, se ajusta al día siguiente.
 # Ideal para transformar instrucciones como “el lunes por la tarde” en objeto útil.
 #
 # @author: Ana Castro
 # ──────────────────────────────────────────────────────────────────────────────
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.preprocess import clean_text
+from typing import Optional
 from services.date_parser_helpers import (
     find_manual_date,
     extract_simple_time,
@@ -28,41 +29,32 @@ def find_day_number(text: str) -> int | None:
         return int(match.group(2))
     return None
 
+
 def is_today(dateTime):
     today = datetime.now().date()
-    if dateTime.date() == today:
-        return True
-    return False
+    return dateTime.date() == today
 
-
-def combine_date_and_time(text: str) -> datetime:
+def combine_date_and_time(text: str):
     base_date = datetime.now().date()
-    manual_date = find_manual_date(text)
+    now = datetime.now()
 
-    if manual_date:
+    if manual_date := find_manual_date(text):
         base_date = manual_date.date()
     elif weekday := extract_weekday(text):
-        calculated = calculate_date_by_weekday(text)
-        if calculated:
+        if calculated := calculate_date_by_weekday(text):
             base_date = calculated
     elif relative := detect_relative_date(text):
         base_date = relative
 
-    time_result = extract_simple_time(text)
-    moment_of_day = re.search(
-        r"(de|por|en)\s+la\s+(mañana|tarde|noche)", text, flags=re.IGNORECASE
-    )
-
+    time_result, texto_limpio = extract_simple_time(text)
     if time_result:
-        hour, minutes = time_result
-    elif moment_of_day:
-        moment = moment_of_day.group(2).lower()
-        hour, minutes = {"mañana": (9, 0), "tarde": (18, 0), "noche": (21, 0)}.get(
-            moment, (0, 0)
-        )
+        hour, minute = time_result
     else:
-        hour, minutes = 0, 0
+        hour, minute = 0, 0
 
-    return datetime.combine(base_date, datetime.min.time()).replace(
-        hour=hour, minute=minutes
-    )
+    combined = datetime.combine(base_date, datetime.min.time()).replace(hour=hour, minute=minute)
+
+    if base_date == now.date() and combined.time() <= now.time() and "mañana" not in text.lower():
+        combined += timedelta(days=1)
+
+    return combined, texto_limpio

@@ -16,29 +16,34 @@ from services.date_parser import combine_date_and_time, is_today
 from utils.text_helper import clean_final_text
 from utils.preprocess import clean_text
 from utils.spacy_utils import nlp, infer_type
-from services.date_parser_helpers import extract_simple_time_string
+from services.date_parser_helpers import extract_simple_time
+
 
 router = APIRouter()
 
 @router.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
-    hora = extract_simple_time_string(texto_raw)
-    print(f"🔍 hora: {hora}")
-    fecha = combine_date_and_time(texto_raw)
-    tipo = infer_type(texto_raw)
 
-    if fecha:
-        texto_final = clean_final_text(texto_raw, fecha)
-    else:
-        texto_final = clean_text(texto_raw)
+    # Extraer hora (hora, minuto) sin tocar endpoint
+    hora_result, _ = extract_simple_time(texto_raw)
+    hour_info = hora_result if hora_result else None
 
-    print(f"🔍 TEXTO RAW: {repr(texto_raw)}")
+    doc = nlp(texto_raw)
+
+    # Desempaquetar correctamente combine_date_and_time
+    combined_dt, texto_limpio = combine_date_and_time(texto_raw)
+    datetime_iso = combined_dt.isoformat() if combined_dt else None
+
+    texto_final = clean_final_text(texto_raw, combined_dt) if combined_dt else clean_text(texto_raw)
+    tipo = infer_type(doc.text)
+
     return {
         "text_raw": texto_raw,
         "text": texto_final,
-        "datetime": fecha.isoformat() if fecha else None,
+        "datetime": datetime_iso,
         "type": tipo,
-        "hour": hora,
-        "isToday": is_today(fecha)
+        "hour": hour_info,
+        "isToday": is_today(combined_dt) if combined_dt else False
     }
+

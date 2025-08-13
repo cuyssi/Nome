@@ -61,6 +61,11 @@ def infer_type(text):
         return tipo
 
     lemmas = [token.lemma_.lower() for token in doc]
+    if "quedar" in lemmas and any(p in lemmas for p in ["pedro", "marta", "maría"]):
+        return "cita"
+    if any(p in text.lower() for p in ["quedé", "quede", "quedar", "vernos", "verme", "vernos con"]):
+        if "con" in text.lower():
+            return "quede"
 
     citas_keywords = {"quedar", "ver", "citar"}
     medico_keywords = {"medico", "cita", "hospital", "consulta"}

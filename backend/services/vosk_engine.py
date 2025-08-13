@@ -13,8 +13,15 @@ MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"No se encontró el modelo en {MODEL_PATH}")
 
-print("📦 Cargando modelo Vosk...")
-model = Model(MODEL_PATH)
+_model = None
+
+def get_model():
+    global _model
+    if _model is None:
+        print("📦 Cargando modelo Vosk...")
+        _model = Model(MODEL_PATH)
+    return _model
+
 
 def convert_to_wav_mono16k(input_path, output_path):
     subprocess.run([
@@ -34,7 +41,8 @@ async def transcribe_audio_file(file: UploadFile) -> str:
 
     wf, sr = sf.read(wav_path, dtype="int16")
 
-    rec = KaldiRecognizer(model, sr)
+    rec = KaldiRecognizer(get_model(), sr)
+
     rec.SetWords(True)
 
     final_text = ""

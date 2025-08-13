@@ -24,10 +24,9 @@ export const useTranscription = () => {
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);
-            const { text_raw, text, dateTime } = getFormattedTasks(response);
+            const { text_raw, text, dateTime, } = getFormattedTasks(response);
             const { date, hour } = dateAndTime(dateTime);
-
-            const type = getTaskType(text); // 👈 inferido limpio
+            const type = getTaskType(text);
             const { assignColor } = getTaskColor();
             const color = assignColor();
 
