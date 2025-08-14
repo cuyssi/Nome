@@ -17,11 +17,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el código
 COPY . .
 
-# Descargar y descomprimir el modelo Vosk
-RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip" && \
+# Descargar y descomprimir el modelo Vosk grande
+RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42.zip" && \
     unzip model.zip -d backend/ && \
-    rm model.zip && \
-    mv backend/vosk-model-small-es-0.42 backend/vosk-model-es-0.42
+    rm model.zip
 
 # Puerto expuesto
 EXPOSE 8000
