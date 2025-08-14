@@ -1,0 +1,39 @@
+# Ignorar dependencias
+node_modules
+frontend/node_modules
+backend/node_modules
+
+# Ignorar compilados
+dist
+dist-ssr
+frontend/dist
+backend/dist
+
+# Ignorar entornos virtuales y temporales
+backend/venv
+__pycache__
+tmp
+temp
+*.log
+*.sqlite
+*.db
+*.mp3
+backend/temp_audio.mp3
+
+# Ignorar IDE y sistema
+.DS_Store
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Ignorar envs
+*.env
+*.env.*
+*.local
+
+# Ignorar modelo Vosk
+backend/vosk-model-es-0.42
