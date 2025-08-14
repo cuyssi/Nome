@@ -26,7 +26,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
     texto_raw = await transcribe_audio_file(file)
 
     # Extraer hora (hora, minuto) sin tocar endpoint
-    hora_result, _ = extract_simple_time(texto_raw)
+    hora_result, texto_sin_hora = extract_simple_time(texto_raw)
     hour_info = hora_result if hora_result else None
 
     doc = nlp(texto_raw)
@@ -34,16 +34,15 @@ async def transcribe_audio(file: UploadFile = File(...)):
     # Desempaquetar correctamente combine_date_and_time
     combined_dt, texto_limpio = combine_date_and_time(texto_raw)
     datetime_iso = combined_dt.isoformat() if combined_dt else None
-
-    texto_final = clean_final_text(texto_raw, combined_dt) if combined_dt else clean_text(texto_raw)
     tipo = infer_type(doc.text)
+
+    print(f"transcribe texto_raw: {texto_raw}")
 
     return {
         "text_raw": texto_raw,
-        "text": texto_final,
+        "text": texto_sin_hora,
         "datetime": datetime_iso,
         "type": tipo,
         "hour": hour_info,
         "isToday": is_today(combined_dt) if combined_dt else False
     }
-

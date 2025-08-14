@@ -128,14 +128,43 @@ def ajustar_hora_por_contexto(hora: int, minutos: int, texto: str,
     return hora, minutos
 
 def extract_simple_time(texto_raw: str):
-    texto = texto_raw.lower().strip()
+    import re
+
+    print("hola soy extract_simple_time")
+    texto = texto_raw.strip().lower()
+
+    # 1️⃣ Corregir errores de transcripción comunes
+    def corregir_errores(texto: str) -> str:
+        errores = {
+            "mañaña": "mañana",
+            "qeude": "quedé",
+            "que de": "quedé",
+            "que ve": "quedé",
+            "qué ve": "quedé",
+            "ve": "quedé"
+        }
+        for k, v in errores.items():
+            texto = re.sub(rf"\b{k}\b", v, texto)
+        return texto
+
+    texto = corregir_errores(texto)
+    print(f"texto despues de corregir errores: {texto}")
+
+    # 2️⃣ Añadir 'a' delante de 'las X' solo si parece hora
     horas_validas = r"una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|\d{1,2}"
-    minutos_validos = r"cuarto|media|\d{1,2}"
+    texto = re.sub(
+        rf"(?<!\w)(?<!en\s)(las\s+({horas_validas}))",
+        r"a \1",
+        texto
+    )
+    print(f"texto despues de añadir 'a' delante de las horas: {texto}")
+
+    # 3️⃣ Buscar hora explícita
+    minutos_validos = r"cuarto|media|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|" \
+                      r"once|doce|trece|catorce|quince|veinte|veinticinco|treinta|\d{1,2}"
 
     patrones = [
-        # Ej: "a la una menos cuarto de la mañana"
         rf"(?:a\s+)?(?:la|las)\s+({horas_validas})\s+menos\s+({minutos_validos})(?:\s+de\s+la\s+(mañana|tarde|noche))?",
-        # Ej: "a las tres y media de la tarde"
         rf"(?:a\s+)?(?:la|las)\s+({horas_validas})(?:\s+y\s+({minutos_validos}))?(?:\s+de\s+la\s+(mañana|tarde|noche))?"
     ]
 
@@ -144,43 +173,72 @@ def extract_simple_time(texto_raw: str):
         if match:
             hora_str, minutos_str, momento_str = match.groups()
 
-            # Validar hora
-            try:
-                hora = number_map.get(hora_str) if hora_str in number_map else int(hora_str)
-            except ValueError:
-                hora = None
-
+            # 🔹 Convertir hora y minutos a int seguros
+            hora = number_map.get(hora_str)
             if hora is None:
-                continue  # saltar si no se puede interpretar la hora
+                try:
+                    hora = int(hora_str)
+                except ValueError:
+                    hora = 0
 
-            minutos = convertir_a_minutos(minutos_str) if minutos_str else 0
+            if minutos_str:
+                minutos = number_map.get(minutos_str)
+                if minutos is None:
+                    try:
+                        minutos = int(minutos_str)
+                    except ValueError:
+                        minutos = 0
+            else:
+                minutos = 0
 
+            # 🔹 Ajustar para "menos" si aplica
             if "menos" in pattern:
-                hora -= 1
-                minutos = 60 - minutos
+                hora = int(hora) - 1
+                minutos = 60 - int(minutos)
 
-            hora, minutos = ajustar_hora_por_contexto(hora, minutos, momento_str)
+            hora, minutos = ajustar_hora_por_contexto(hora, minutos, texto, momento_str)
 
-            # Eliminar solo la expresión horaria del texto original
-            start, end = match.start(), match.end()
-            texto_sin_hora = texto_raw[:start] + texto_raw[end:]
-            texto_sin_hora = re.sub(r'\s{2,}', ' ', texto_sin_hora).strip()
+            # 🔹 Limpiar texto sin hora
+            texto_sin_hora = texto.replace(match.group(0), "").strip()
+            texto_sin_hora = re.sub(r"\s{2,}", " ", texto_sin_hora)
+            texto_sin_hora = re.sub(r"y\s*$", "", texto_sin_hora).strip()
+            texto_sin_hora = corregir_errores(texto_sin_hora)
+            if texto_sin_hora:
+                texto_sin_hora = texto_sin_hora[0].upper() + texto_sin_hora[1:]
 
+            print(f"texto sin hora extract_simple: {texto_sin_hora}")
+            print(f"hora detectada: {hora}, minutos detectados: {minutos}")
             return (hora, minutos), texto_sin_hora
 
-    # Intento con formato decimal: "a las 13:30"
-    decimal_result = extract_decimal_time(texto)
-    if decimal_result:
-        hora, minutos = decimal_result
-        hora, minutos = ajustar_hora_por_contexto(hora, minutos, texto)
-        match_decimal = re.search(r"(?:a\s+)?las\s+\d+[\.:,]\d+", texto, re.IGNORECASE)
-        if match_decimal:
-            start, end = match_decimal.start(), match_decimal.end()
-            texto_sin_hora = texto_raw[:start] + texto_raw[end:]
-            texto_sin_hora = re.sub(r'\s{2,}', ' ', texto_sin_hora).strip()
-        else:
-            texto_sin_hora = texto_raw.strip()
-        return (hora, minutos), texto_sin_hora
+    # 4️⃣ Contexto por defecto (mañana, tarde, noche)
+    contexto_horas = {
+        "mañana por la mañana": (9, 0),
+        "mañana por la tarde": (16, 0),
+        "mañana por la noche": (21, 0),
+        "por la mañana": (9, 0),
+        "por la tarde": (16, 0),
+        "por la noche": (21, 0),
+    }
 
-    return None, texto_raw.strip()
+    for clave, (h_def, m_def) in contexto_horas.items():
+        if clave in texto:
+            hora, minutos = h_def, m_def
+            texto_sin_hora = texto.replace(clave, "").strip()
+            texto_sin_hora = re.sub(r"\s{2,}", " ", texto_sin_hora)
+            texto_sin_hora = re.sub(r"y\s*$", "", texto_sin_hora).strip()
+            texto_sin_hora = corregir_errores(texto_sin_hora)
+            if texto_sin_hora:
+                texto_sin_hora = texto_sin_hora[0].upper() + texto_sin_hora[1:]
+
+            print(f"texto sin hora dentro del bucle: {texto_sin_hora}")
+            print(f"hora por contexto: {hora}, minutos por contexto: {minutos}")
+            return (hora, minutos), texto_sin_hora
+
+    # 5️⃣ Nada detectado, devolver texto limpio
+    texto_sin_hora = corregir_errores(texto)
+    if texto_sin_hora:
+        texto_sin_hora = texto_sin_hora[0].upper() + texto_sin_hora[1:]
+
+    print(f"texto final sin hora: {texto_sin_hora}")
+    return None, texto_sin_hora
 
