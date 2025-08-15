@@ -9,7 +9,6 @@ import json
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
 
-
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"No se encontró el modelo en {MODEL_PATH}")
 
@@ -23,36 +22,50 @@ def get_model():
     return _model
 
 
-def convert_to_wav_mono16k(input_path, output_path):
-    subprocess.run([
-        "ffmpeg", "-y", "-i", input_path,
-        "-ac", "1", "-ar", "16000",
-        output_path
-    ], check=True)
+def convert_to_wav_mono16k(input_path: str, output_path: str):
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", input_path, "-ac", "1", "-ar", "16000", output_path],
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Error al convertir a WAV: {e}")
+
 
 async def transcribe_audio_file(file: UploadFile) -> str:
     audio_bytes = await file.read()
-    with tempfile.NamedTemporaryFile(suffix=".webm", delete=False) as temp_audio:
-        temp_audio.write(audio_bytes)
-        temp_audio_path = temp_audio.name
 
-    wav_path = temp_audio_path.replace(".webm", ".wav")
-    convert_to_wav_mono16k(temp_audio_path, wav_path)
+    with tempfile.TemporaryDirectory() as tmpdir:
+        temp_audio_path = os.path.join(tmpdir, "input.webm")
+        wav_path = os.path.join(tmpdir, "input.wav")
 
-    wf, sr = sf.read(wav_path, dtype="int16")
+        # Guardar archivo temporal
+        with open(temp_audio_path, "wb") as f:
+            f.write(audio_bytes)
 
-    rec = KaldiRecognizer(get_model(), sr)
+        # Convertir a WAV mono 16k
+        convert_to_wav_mono16k(temp_audio_path, wav_path)
 
-    rec.SetWords(True)
+        # Leer WAV
+        wf, sr = sf.read(wav_path, dtype="int16")
+        if sr != 16000:
+            raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {sr}")
 
-    final_text = ""
-    step = 4000
-    for i in range(0, len(wf), step):
-        data = wf[i:i + step].tobytes()
-        if rec.AcceptWaveform(data):
-            result = json.loads(rec.Result())
-            final_text += result.get("text", "") + " "
+        # Inicializar reconocedor
+        rec = KaldiRecognizer(get_model(), sr)
+        rec.SetWords(True)
 
-    final_text += json.loads(rec.FinalResult()).get("text", "")
+        # Procesar en chunks
+        final_text = ""
+        step = 4000
+        for i in range(0, len(wf), step):
+            chunk_bytes = wf[i:i + step].tobytes()
+            if rec.AcceptWaveform(chunk_bytes):
+                result = json.loads(rec.Result())
+                final_text += result.get("text", "") + " "
 
-    return final_text.strip()
+        # Resultado final
+        final_text += json.loads(rec.FinalResult()).get("text", "")
+        return final_text.strip()

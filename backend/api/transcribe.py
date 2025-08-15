@@ -10,39 +10,46 @@
 # @author: Ana Castro
 # ──────────────────────────────────────────────────────────────────────────────
 
+# api/transcribe.py
 from fastapi import APIRouter, File, UploadFile
-from services.vosk_engine import transcribe_audio_file
-from services.date_parser import combine_date_and_time, is_today
-from utils.text_helper import clean_final_text
-from utils.preprocess import clean_text
 from utils.spacy_utils import nlp, infer_type
-from services.date_parser_helpers import extract_simple_time
-
+from services.vosk_engine import transcribe_audio_file
+from services.date_parser import combine_date_and_time
+from utils.helpers.date_helpers import is_today
 
 router = APIRouter()
 
 @router.post("/transcribe/")
 async def transcribe_audio(file: UploadFile = File(...)):
+    # 1️⃣ Transcribir audio
     texto_raw = await transcribe_audio_file(file)
 
-    # Extraer hora (hora, minuto) sin tocar endpoint
-    hora_result, texto_sin_hora = extract_simple_time(texto_raw)
-    hour_info = hora_result if hora_result else None
-
+    # 2️⃣ Procesar con spaCy para inferir tipo
     doc = nlp(texto_raw)
-
-    # Desempaquetar correctamente combine_date_and_time
-    combined_dt, texto_limpio = combine_date_and_time(texto_raw)
-    datetime_iso = combined_dt.isoformat() if combined_dt else None
     tipo = infer_type(doc.text)
 
-    print(f"transcribe texto_raw: {texto_raw}")
+    # 3️⃣ Combinar fecha y hora, obtener texto limpio
+    combined_dt, texto_final = combine_date_and_time(texto_raw)
 
-    return {
-        "text_raw": texto_raw,
-        "text": texto_sin_hora,
-        "datetime": datetime_iso,
-        "type": tipo,
-        "hour": hour_info,
-        "isToday": is_today(combined_dt) if combined_dt else False
+    # 4️⃣ Extraer hora para frontend (opcional)
+    hour_info = None
+    if combined_dt:
+        hour_info = combined_dt.strftime("%H:%M")
+
+    # 5️⃣ Preparar respuesta
+    response = {
+        "text_raw": texto_raw,               # texto original
+        "text": texto_final,                 # texto limpio
+        "datetime": combined_dt.isoformat() if combined_dt else None,
+        "type": tipo,                        # tipo inferido
+        "hour": hour_info,                    # hora "HH:MM"
+        "isToday": is_today(combined_dt)     # si es hoy
     }
+
+    # DEBUG
+    print(f"Transcribe raw: {texto_raw}")
+    print(f"Texto limpio: {texto_final}")
+    print(f"Datetime: {combined_dt}")
+    print(f"Hour: {hour_info}, Is today: {response['isToday']}")
+
+    return response

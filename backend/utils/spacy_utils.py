@@ -2,16 +2,20 @@ import spacy
 from spacy.tokens import Doc
 from spacy.matcher import Matcher
 from datetime import datetime
-from utils.text_helper import clean_final_text
+from utils.helpers.hour_helpers import extract_simple_time
 
 nlp = spacy.load("es_core_news_md")
 
 Doc.set_extension("texto_limpio", default=None)
+Doc.set_extension("hora", default=None)
+Doc.set_extension("minuto", default=None)
 
 @spacy.language.Language.component("custom_cleaner_component")
 def custom_cleaner_component(doc):
-    cleaned = clean_final_text(doc.text, task_datetime=datetime.today())
-    doc._.texto_limpio = cleaned
+    (hora, minuto), texto_limpio = extract_simple_time(doc.text)
+    doc._.texto_limpio = texto_limpio
+    doc._.hora = hora
+    doc._.minuto = minuto
     return doc
 
 nlp.add_pipe("custom_cleaner_component", first=True)
