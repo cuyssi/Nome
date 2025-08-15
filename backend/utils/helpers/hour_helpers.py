@@ -64,25 +64,39 @@ def extract_hour_and_minutes(text: str) -> Tuple[Optional[int], int, str]:
 
 def adjust_hour_by_context(hour: Optional[int], minute: int, text: str) -> Tuple[Optional[int], int, str]:
     context_map = {
-        "por la mañana": 9,
-        "de la mañana": 9,
-        "por la tarde": 16,
-        "de la tarde": 16,
-        "por la noche": 21,
-        "de la noche": 21
+        "por la mañana": "AM",
+        "de la mañana": "AM",
+        "por la tarde": "PM",
+        "de la tarde": "PM",
+        "por la noche": "PM",
+        "de la noche": "PM"
     }
+
     text_lower = text.lower()
-    hour_from_context = False
+    am_pm = None
+    pm_context = False
+
     for k, v in context_map.items():
         if k in text_lower:
-            if hour is None:
-                hour = v
-                hour_from_context = True
+            am_pm = v
+            if "noche" in k:
+                pm_context = True
             text_lower = text_lower.replace(k, "")
 
-    # Ajuste implícito solo si hora no vino del contexto
+    if hour is not None and am_pm:
+        if am_pm == "AM":
+            if hour == 12:
+                if pm_context:
+                    hour = 0  # medianoche
+                else:
+                    hour = 12  # 12 de la mañana = mediodía
+        elif am_pm == "PM":
+            if hour < 12:
+                hour += 12
+
+    # Ajuste implícito solo si no hay contexto y la hora ya pasó
     now = datetime.now()
-    if hour is not None and hour < 12 and not hour_from_context:
+    if hour is not None and not am_pm:
         combined_today = datetime.combine(now.date(), datetime.min.time()).replace(hour=hour, minute=minute)
         if combined_today <= now:
             hour += 12

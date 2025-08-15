@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { useTasks } from "./useTasks";
 
@@ -21,16 +19,13 @@ export function useTaskEditor() {
         setSelectedTask(null);
     };
 
-    const handleClose = () => {
-        setRenderKey((prev) => prev + 1);
-        closeModal();
-    };
-
     const handleEdit = (updatedTask) => {
         if (!updatedTask) return;
 
         if (updatedTask.id && selectedTask?.id) {
-            const { id, ...updatedFields } = updatedTask;
+            // ⚡ Conservar todos los campos existentes y sobrescribir con cambios
+            const mergedTask = { ...selectedTask, ...updatedTask };
+            const { id, ...updatedFields } = mergedTask;
             updateTask(id, updatedFields);
         } else {
             addTask(updatedTask);
@@ -53,6 +48,6 @@ export function useTaskEditor() {
         selectedTask,
         openModalWithTask,
         handleEdit,
-        handleClose,
+        handleClose: closeModal,
     };
 }

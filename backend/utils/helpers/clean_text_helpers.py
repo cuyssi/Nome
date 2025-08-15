@@ -10,6 +10,7 @@ CORRECTIONS = {
     "quede": "quedé",
     "que": "quéde",
     "para la tarde": "por la tarde",
+    "ve": "quéde"
 }
 
 def fix_transcription(text: str) -> str:
@@ -45,3 +46,25 @@ def capitalize_proper_names(text: str) -> str:
     # Primera letra del texto en mayúscula
     result = " ".join(tokens)
     return result[0].upper() + result[1:]
+
+def remove_detected_dates(text: str) -> str:
+    """
+    Elimina:
+      - días de la semana: lunes, martes...
+      - fechas manuales tipo 'el 25 de septiembre'
+    """
+    # Días de la semana
+    text = re.sub(r"\b(lunes|martes|miércoles|jueves|viernes|sábado|domingo)\b", "", text, flags=re.IGNORECASE)
+
+    # Fechas manuales tipo 'el 25 de septiembre'
+    text = re.sub(
+        r"(?:el\s+)?\d{1,2}\s+de\s+"
+        r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)",
+        "",
+        text,
+        flags=re.IGNORECASE
+    )
+
+    # Quitar posibles espacios extra
+    text = re.sub(r"\s+", " ", text).strip()
+    return text

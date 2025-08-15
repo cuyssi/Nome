@@ -15,5 +15,6 @@ number_map = {
     "once": 11, "doce": 12, "trece": 13, "catorce": 14, "quince": 15,
     "dieciseis": 16, "diecisiete": 17, "dieciocho": 18, "diecinueve": 19,
     "veinte": 20, "veintiuno": 21, "veintidós": 22, "veintitrés": 23,
-    "veinticuatro": 24, "veinticinco": 25, "veintiseis": 26, "veintisiete": 27, "veintiocho": 28, "veintinueve": 29, "media": 30
+    "veinticuatro": 24, "veinticinco": 25, "veintiseis": 26, "veintisiete": 27,
+    "veintiocho": 28, "veintinueve": 29, "treinta": 30, "treinta y uno": 31, "treintaiuno": 31, "media": 30
 }

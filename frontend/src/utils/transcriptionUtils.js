@@ -25,15 +25,18 @@ export const dateAndTime = (data) => {
         const formattedDate = new Date(data);
         const day = formattedDate.getDate();
         const month = formattedDate.getMonth() + 1;
-        const date = `${day}/${month}`;
+        const year = formattedDate.getFullYear();
+        const date = `${day}/${month}`; // formato actual
+        const dateWithYear = `${day}/${month}/${year}`; // para guardar con año
 
         const hours = formattedDate.getHours();
         const mins = formattedDate.getMinutes();
         const hour = `${hours}:${mins < 10 ? "0" + mins : mins}`;
 
-        return { date, hour };
+        return { date, hour, dateWithYear };
     } catch (err) {
         console.error("❌ dateAndTime failed:", err);
-        return { date: undefined, hour: undefined };
+        return { date: undefined, hour: undefined, dateWithYear: undefined };
     }
 };
+
