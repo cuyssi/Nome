@@ -12,9 +12,8 @@ RUN apt-get update && apt-get install -y \
 
 # Instalar dependencias de Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir spacy
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir spacy python-multipart
 
 # Copiar el código
 COPY . .
