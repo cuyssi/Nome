@@ -13,12 +13,12 @@ function App() {
     return (
         <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400">
             <div
-                className={clsx(
-                    "w-full h-full bg-white flex flex-col",
-                    "sm:w-[360px] sm:h-[80%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
-                )}
-            >
-                <main className="bg-black flex-1 overflow-y-auto p-2 border border-black">
+  className={clsx(
+    "w-full h-full bg-white flex flex-col",
+    "sm:max-w-[360px] sm:h-[85%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
+  )}
+>
+                <main className="bg-black flex-1 overflow-y-auto border border-black">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/tasks" element={<Task />} />

@@ -13,23 +13,25 @@ import Container from "./Container";
 
 const Welcome = () => {
     return (
-        <div>
-            <div className="flex flex-col items-center text-center mt-8">
-                <img src={logo_nome} className="w-[100%]" />
+        <div className="flex flex-col w-full justify-center items-center px-4">
+            <img src={logo_nome} className="w-[100%] mt-6 mb-4" />
 
-                <div className="flex flex-col gap-4 w-full mt-8 justify-center items-center ">
-                    
-                    <div className="flex justify-between w-[100%] gap-4 p-2">
-                        <Container outerClass="w-[50%]">
-                            <Link to="./tasks" className="flex  gap-2 justify-center items-center p-2">
-                                <NotebookPen className="w-6 text-white border border-black" />
-                                <p className="text-white font font-poppins">Deberes</p>
+            <div className="flex flex-col w-full mt-8">
+                <div className="flex w-full justify-between">
+                    <div className="w-full pr-2 ">
+                        <Container className="w-[100%] py-3">
+                            <Link to="./tasks" className="flex justify-center items-center gap-1 py-2">
+                                <NotebookPen className="w-6 text-white" />
+                                <p className="text-white font-poppins">Deberes</p>
                             </Link>
                         </Container>
-                        <Container outerClass="w-[50%]">
-                            <Link to="./tasks" className="flex  gap-2 justify-center items-center p-2">
-                                <CalendarDays className="w-6 text-white border border-black" />
-                                <p className="text-white font font-poppins">Calendario</p>
+                    </div>
+
+                    <div className="w-full pl-2">
+                        <Container className="w-[100%] py-3">
+                            <Link to="./tasks" className="flex justify-center items-center gap-1 py-2">
+                                <CalendarDays className="w-6 text-white" />
+                                <p className="text-white font-poppins">Calendario</p>
                             </Link>
                         </Container>
                     </div>

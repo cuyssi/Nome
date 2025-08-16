@@ -2,15 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-body, html, #root {
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    overflow: unset;    
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* evita scroll que rompe h-full */
+
+  /* 🔮 Ajustes de tipografía para consistencia cross-browser */
+  font-family: "Inter", "Arial", sans-serif; /* pon la que uses */
+  -webkit-font-smoothing: antialiased; /* Chrome / Safari */
+  -moz-osx-font-smoothing: grayscale;  /* Firefox */
+  text-rendering: optimizeLegibility;  /* mejora kerning y ligaduras */
 }
 
-/* Oculta scrollbar en navegadores modernos */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -19,4 +24,10 @@ body, html, #root {
   scrollbar-width: none;     /* Firefox */
 }
 
-
+/* 🔒 Asegura que el contenedor móvil no se deforme */
+.mobile-frame {
+  max-width: 330px;
+  width: 100%;
+  height: 80%;
+  aspect-ratio: 9 / 16; /* típico formato móvil */
+}

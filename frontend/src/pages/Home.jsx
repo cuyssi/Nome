@@ -20,7 +20,7 @@ const Home = () => {
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-black">
                 <Welcome />
-                <Task_count className="h-20" />
+                <Task_count />
                 <Voice_rec openModalWithTask={openModalWithTask}/>
                 <TaskModalManager
                     isOpen={isOpen}

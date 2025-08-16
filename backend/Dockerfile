@@ -12,15 +12,21 @@ RUN apt-get update && apt-get install -y \
 
 # Instalar dependencias de Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir spacy
 
 # Copiar el código
 COPY . .
 
 # Descargar y descomprimir el modelo Vosk grande directamente en /app
-RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42.zip" && \
-    unzip model.zip -d . && \
-    rm model.zip
+RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42.zip" \
+    && unzip model.zip -d . \
+    && rm model.zip
+
+# Descargar modelos spaCy (es_core_news_sm y es_core_news_md)
+RUN python -m spacy download es_core_news_sm \
+    && python -m spacy download es_core_news_md
 
 # Puerto expuesto
 EXPOSE 8000
