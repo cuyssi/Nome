@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Dependencias del sistema
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     ffmpeg \
@@ -10,22 +10,20 @@ RUN apt-get update && apt-get install -y \
     unzip \
  && rm -rf /var/lib/apt/lists/*
 
-# Copiar e instalar dependencias de Python
+# Instalar dependencias de Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Descargar modelos de SpaCy
-RUN python -m spacy download es_core_news_sm && \
-    python -m spacy download es_core_news_md
-
-# Copiar el código fuente
+# Copiar el código
 COPY . .
 
-# Descargar modelo Vosk grande
+# Descargar y descomprimir el modelo Vosk grande directamente en /app
 RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42.zip" && \
     unzip model.zip -d . && \
     rm model.zip
 
+# Puerto expuesto
 EXPOSE 8000
 
+# Comando para iniciar la app
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
