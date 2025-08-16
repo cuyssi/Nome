@@ -24,6 +24,9 @@ RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42
     && unzip model.zip -d . \
     && rm model.zip
 
+RUN apt-get update && apt-get install -y libsndfile1 && rm -rf /var/lib/apt/lists/*
+
+
 # Descargar modelos spaCy (es_core_news_sm y es_core_news_md)
 RUN python -m spacy download es_core_news_sm \
     && python -m spacy download es_core_news_md
