@@ -1,6 +1,6 @@
 {
-  "name": "Mi App",
-  "short_name": "MiApp",
+  "name": "No me olvides",
+  "short_name": "Nome",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

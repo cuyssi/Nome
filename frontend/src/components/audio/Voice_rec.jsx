@@ -15,10 +15,11 @@ const Voice_rec = ({ openModalWithTask }) => {
     }, [audioFile]);
 
     return (
+        <div className="flex w-full h-full justify-center items-center py-5 mb-5">
         <div className="relative flex flex-col w-full h-[100%] bg-black  items-center mt-12 sm:mt-10">
             <div className="flex justify-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px]">
                 <Button
-                    className="flex bg-black border border-black rounded-full w-[10rem] sm:max-w-[9rem] aspect-square items-center justify-center"
+                    className="flex bg-black border border-black rounded-full w-[12rem] sm:max-w-[12rem] aspect-square items-center justify-center"
                     onClick={toggleRecording}
                     onTouchStart={startRecording}
                     onTouchEnd={stopRecording}
@@ -31,7 +32,7 @@ const Voice_rec = ({ openModalWithTask }) => {
                 </Button>
             </div>
             
-            <div className="h-6 mt-2 flex items-center justify-center">
+            <div className="flex items-center justify-center">
                 <p
                     className={`text-sm transition-opacity duration-500 ${
                         isProcessing ? "opacity-100 text-yellow-300 animate-pulse" : "opacity-0"
@@ -60,6 +61,7 @@ const Voice_rec = ({ openModalWithTask }) => {
                     </Button>
                 </div>
             </div>
+        </div>
         </div>
     );
 };
