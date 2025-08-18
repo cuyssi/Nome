@@ -7,9 +7,11 @@ import { Footer } from "./components/commons/Footer";
 import Completed_tasks from "./pages/Completed_tasks";
 import Pending_tasks from "./pages/Pending_tasks";
 import Today_tasks from "./pages/Today_tasks";
+import { usePushNotifications } from "./hooks/usePushNotifications";
 import clsx from "clsx";
 
 function App() {
+    usePushNotifications();
     return (
         <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400">
             <div

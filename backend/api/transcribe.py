@@ -11,16 +11,33 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 # api/transcribe.py
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, UploadFile, BackgroundTasks
 from utils.spacy_utils import nlp, infer_type
 from services.vosk_engine import transcribe_audio_file
 from services.date_parser import combine_date_and_time
 from utils.helpers.date_helpers import is_today
+import asyncio
+from datetime import datetime, timedelta
+from .notifications import send_push, subscriptions
+
+
+async def schedule_task_notification(task_time: datetime, title: str, body: str):
+    notify_time = task_time - timedelta(minutes=15)
+    delay = (notify_time - datetime.utcnow()).total_seconds()
+
+    if delay > 0:
+        await asyncio.sleep(delay)
+
+    for sub in subscriptions:
+        send_push(sub, title, body)
+
 
 router = APIRouter()
 
+
 @router.post("/transcribe/")
-async def transcribe_audio(file: UploadFile = File(...)):
+async def transcribe_audio(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+
     # 1️⃣ Transcribir audio
     texto_raw = await transcribe_audio_file(file)
 
@@ -38,13 +55,21 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
     # 5️⃣ Preparar respuesta
     response = {
-        "text_raw": texto_raw,               # texto original
-        "text": texto_final,                 # texto limpio
+        "text_raw": texto_raw,  # texto original
+        "text": texto_final,  # texto limpio
         "datetime": combined_dt.isoformat() if combined_dt else None,
-        "type": tipo,                        # tipo inferido
-        "hour": hour_info,                    # hora "HH:MM"
-        "isToday": is_today(combined_dt)     # si es hoy
+        "type": tipo,  # tipo inferido
+        "hour": hour_info,  # hora "HH:MM"
+        "isToday": is_today(combined_dt),  # si es hoy
     }
+
+    if combined_dt:
+        background_tasks.add_task(
+            schedule_task_notification,
+            combined_dt,
+            "Tarea próxima",
+            f"Tienes la tarea: {texto_final}"
+        )
 
     # DEBUG
     print(f"Transcribe raw: {texto_raw}")
