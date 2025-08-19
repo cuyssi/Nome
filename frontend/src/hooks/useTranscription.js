@@ -43,7 +43,9 @@ export const useTranscription = () => {
                 completed: false,
             });
 
-            await axios.post("http://localhost:8000/schedule-task", {
+            const baseURL = import.meta.env.VITE_API_URL;
+
+            await axios.post(`${baseURL}/schedule-task`, {
                 text: text,
                 dateTime: dateTime,
             });

@@ -18,11 +18,12 @@ function NotificationToggle() {
   };
 
   const handleToggle = async () => {
+    const baseURL = import.meta.env.VITE_API_URL;
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
 
     if (subscription) {
-      await axios.post("http://localhost:8000/unsubscribe", {
+      await axios.post(`${baseURL}/unsubscribe`, {
         endpoint: subscription.endpoint
       });
       await subscription.unsubscribe();

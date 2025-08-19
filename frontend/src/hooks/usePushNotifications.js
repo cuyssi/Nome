@@ -8,12 +8,14 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 export async function subscribeUser() {
+  const baseURL = import.meta.env.VITE_API_URL;
   if (!("serviceWorker" in navigator)) return;
 
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return;
 
-  const vapidKeyRes = await axios.get("http://localhost:8000/vapid-public-key");
+
+  const vapidKeyRes = await axios.get(`${baseURL}/vapid-public-key`);
   const applicationServerKey = urlBase64ToUint8Array(vapidKeyRes.data);
 
   const registration = await navigator.serviceWorker.ready;
@@ -22,6 +24,6 @@ export async function subscribeUser() {
     applicationServerKey
   });
 
-  await axios.post("http://localhost:8000/subscribe", subscription);
+  await axios.post(`${baseURL}/subscribe`, subscription);
   console.log("✅ Usuario suscrito a notificaciones push");
 }
