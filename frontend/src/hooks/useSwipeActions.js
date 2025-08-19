@@ -22,6 +22,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => 
         clearTimeout(pressTimer.current);
         pressTimer.current = setTimeout(() => {
             if (!hasMoved.current) {
+                navigator.vibrate(150);
                 setIsChecked((prev) => !prev);
                 toggleCompleted(task.id);
             }
@@ -57,10 +58,12 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => 
         clearTimeout(pressTimer.current);
 
         if (dragOffset >= 160 && !isDeleted) {
+            navigator.vibrate(150);
             setIsDeleted(true);
             setIsRemoving(true);
             setTimeout(() => onDelete(), 160);
         } else if (dragOffset <= -threshold && !isEdited) {
+            navigator.vibrate(150);
             setIsEdited(true);
             setTimeout(() => {
                 onEdit();

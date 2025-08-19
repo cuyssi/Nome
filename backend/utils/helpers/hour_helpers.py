@@ -1,5 +1,5 @@
 # utils/helpers/hour_helpers.py
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, Tuple
 import re
 from constants.number_map import number_map
@@ -75,6 +75,7 @@ def adjust_hour_by_context(hour: Optional[int], minute: int, text: str) -> Tuple
     text_lower = text.lower()
     am_pm = None
     pm_context = False
+    now = datetime.now()
 
     for k, v in context_map.items():
         if k in text_lower:
@@ -83,24 +84,10 @@ def adjust_hour_by_context(hour: Optional[int], minute: int, text: str) -> Tuple
                 pm_context = True
             text_lower = text_lower.replace(k, "")
 
-    if hour is not None and am_pm:
-        if am_pm == "AM":
-            if hour == 12:
-                if pm_context:
-                    hour = 0  # medianoche
-                else:
-                    hour = 12  # 12 de la mañana = mediodía
-        elif am_pm == "PM":
-            if hour < 12:
-                hour += 12
-
-    # Ajuste implícito solo si no hay contexto y la hora ya pasó
-    now = datetime.now()
-    if hour is not None and not am_pm:
+    if hour is not None and am_pm is None:
         combined_today = datetime.combine(now.date(), datetime.min.time()).replace(hour=hour, minute=minute)
         if combined_today <= now:
             hour += 12
-
     return hour, minute, text_lower.strip()
 
 

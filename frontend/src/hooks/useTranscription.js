@@ -6,7 +6,7 @@
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
-
+import axios from "axios";
 import { useState } from "react";
 import { sendAudioFile } from "../services/Task_services";
 import { getFormattedTasks, dateAndTime } from "../utils/transcriptionUtils";
@@ -19,12 +19,12 @@ export const useTranscription = () => {
     const [confirmationMessage, setConfirmationMessage] = useState(false);
     const { addTask } = useStorageStore();
     const { getTaskType } = useTaskType();
-    
+
     const sendFile = async (file) => {
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);
-            const { text_raw, text, dateTime, } = getFormattedTasks(response);            
+            const { text_raw, text, dateTime } = getFormattedTasks(response);
             const { date, hour, dateWithYear } = dateAndTime(dateTime);
             const type = getTaskType(text);
             const { assignColor } = getTaskColor();
@@ -40,7 +40,12 @@ export const useTranscription = () => {
                 hour,
                 type,
                 color,
-                completed: false
+                completed: false,
+            });
+
+            await axios.post("http://localhost:8000/schedule-task", {
+                text: text,
+                dateTime: dateTime,
             });
         } catch (err) {
             console.error("❌ Error al enviar:", err);

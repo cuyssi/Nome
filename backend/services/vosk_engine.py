@@ -4,6 +4,7 @@ import subprocess
 import soundfile as sf
 from fastapi import UploadFile
 from vosk import Model, KaldiRecognizer
+from functools import lru_cache
 import json
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -12,14 +13,10 @@ MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"No se encontró el modelo en {MODEL_PATH}")
 
-_model = None
-
+@lru_cache(maxsize=1)
 def get_model():
-    global _model
-    if _model is None:
-        print("📦 Cargando modelo Vosk...")
-        _model = Model(MODEL_PATH)
-    return _model
+    print("📦 Cargando modelo Vosk...")
+    return Model(MODEL_PATH)
 
 
 def convert_to_wav_mono16k(input_path: str, output_path: str):
@@ -54,7 +51,9 @@ async def transcribe_audio_file(file: UploadFile) -> str:
             raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {sr}")
 
         # Inicializar reconocedor
+        print("🔍 Preparando para cargar modelo Vosk...")
         rec = KaldiRecognizer(get_model(), sr)
+        print("✅ Modelo Vosk listo")
         rec.SetWords(True)
 
         # Procesar en chunks

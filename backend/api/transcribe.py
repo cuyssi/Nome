@@ -18,18 +18,6 @@ from services.date_parser import combine_date_and_time
 from utils.helpers.date_helpers import is_today
 import asyncio
 from datetime import datetime, timedelta
-from .notifications import send_push, subscriptions
-
-
-async def schedule_task_notification(task_time: datetime, title: str, body: str):
-    notify_time = task_time - timedelta(minutes=15)
-    delay = (notify_time - datetime.utcnow()).total_seconds()
-
-    if delay > 0:
-        await asyncio.sleep(delay)
-
-    for sub in subscriptions:
-        send_push(sub, title, body)
 
 
 router = APIRouter()
@@ -62,15 +50,6 @@ async def transcribe_audio(background_tasks: BackgroundTasks, file: UploadFile =
         "hour": hour_info,  # hora "HH:MM"
         "isToday": is_today(combined_dt),  # si es hoy
     }
-
-    if combined_dt:
-        background_tasks.add_task(
-            schedule_task_notification,
-            combined_dt,
-            "Tarea próxima",
-            f"Tienes la tarea: {texto_final}"
-        )
-
     # DEBUG
     print(f"Transcribe raw: {texto_raw}")
     print(f"Texto limpio: {texto_final}")

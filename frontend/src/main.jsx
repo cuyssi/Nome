@@ -18,11 +18,14 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js")
-      .then(() => console.log("✅ Service Worker registrado"))
-      .catch((err) => console.error("❌ Error SW:", err));
+      .then(registration => {
+        console.log("✅ Service Worker registrado:", registration);
+      })
+      .catch(error => {
+        console.error("❌ Error al registrar el Service Worker:", error);
+      });
   });
 }
-
 
 createRoot(document.getElementById('root')).render(
    <StrictMode>

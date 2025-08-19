@@ -8,9 +8,11 @@ CORRECTIONS = {
     "quebec": "quedé",
     "que de": "quedé",
     "quede": "quedé",
-    "que": "quéde",
+    "que": "quedé",
     "para la tarde": "por la tarde",
-    "ve": "quéde"
+    "ve": "quedé",
+    "ede": "quedé",
+    "ver": "quedé"
 }
 
 def fix_transcription(text: str) -> str:

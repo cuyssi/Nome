@@ -1,210 +1,170 @@
-import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { buildDateTimeFromManual } from "../../utils/dateUtils";
-import { v4 as uuidv4 } from "uuid";
+import { useTaskForm } from "../../hooks/useTaskForm";
+import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
 
-const tiposDisponibles = ["deberes", "trabajo", "medico", "cita", "otro"];
-const coloresDisponibles = [
-  { value: "red-400", label: "Rojo" },
-  { value: "blue-400", label: "Azul" },
-  { value: "yellow-400", label: "Amarillo" },
-  { value: "purple-400", label: "Morado" },
-  { value: "pink-400", label: "Rosa" },
-  { value: "orange-400", label: "Naranja" },
-  { value: "gray-300", label: "Gris" },
-  { value: "green-400", label: "Verde" },
-];
-
-// Genera intervalos de 5 min
-const generarHoras = () => {
-  const result = [];
-  for (let h = 0; h < 24; h++) {
-    for (let m = 0; m < 60; m += 5) {
-      result.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-    }
-  }
-  return result;
-};
-const horasDisponibles = generarHoras();
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
+const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 
 export function Form({ task, onClose, onSubmit }) {
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [formData, setFormData] = useState({
-    text: "",
-    date: "",
-    hour: "",
-    color: coloresDisponibles[0].value,
-    type: tiposDisponibles[0],
-  });
+    const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
 
-  // Convierte dd/MM o YYYY-MM-DD a formato ISO para input date
-  const parseFechaParaInput = (fechaStr) => {
-    if (!fechaStr) return "";
-    if (/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return fechaStr;
-    if (/^\d{1,2}\/\d{1,2}$/.test(fechaStr)) {
-      const [d, m] = fechaStr.split("/").map(Number);
-      const year = new Date().getFullYear();
-      return `${year}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    }
-    return "";
-  };
+    return (
+        <form className="relative bg-white rounded-xl p-6 w-[90%] h-[62%]">
+            {showConfirmation && (
+                <p className="text-green-600 text-center mb-3 font-semibold">✅ Changes saved successfully</p>
+            )}
 
-  useEffect(() => {
-    if (task) {
-      setFormData({
-        text: task.text || task.text_raw || "",
-        date: parseFechaParaInput(task.date),
-        hour: task.hour || "00:00",
-        color: task.color || coloresDisponibles[0].value,
-        type: task.type || tiposDisponibles[0],
-      });
-    }
-  }, [task]);
+            <button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-900 hover:text-red-700">
+                <X className="w-8 h-8" />
+            </button>
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+            <div className="flex flex-col justify-between h-full text-gray-600 mt-6 font-semibold">
+                <label>
+                    Texto:
+                    <input
+                        name="text"
+                        value={formData.text}
+                        onChange={handleChange}
+                        className="border border-blue-400 rounded-lg w-full p-1 font-normal"
+                    />
+                </label>
 
-  const normalizarFecha = (fechaStr) => {
-    if (!fechaStr) return "";
-    const [year, month, day] = fechaStr.split("-");
-    return `${Number(day)}/${Number(month)}`;
-  };
+                <label>
+                    Fecha:
+                    <input
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        className="border w-full border-blue-400 rounded-lg p-1 font-normal"
+                    />
+                </label>
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+                <label>
+                    Hora:
+                    <div className="flex justify-between px-8 items-center mt-2">
+                        {/* Hour */}
+                        <div className="flex items-center border border-blue-400 rounded">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleChange({
+                                        target: {
+                                            name: "hour",
+                                            value: String((+formData.hour + 1) % 24).padStart(2, "0"),
+                                        },
+                                    })
+                                }
+                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                            >
+                                +
+                            </button>
+                            <input
+                                type="number"
+                                name="hour"
+                                value={formData.hour}
+                                onChange={(e) => {
+                                    let val = Math.max(0, Math.min(23, Number(e.target.value)));
+                                    handleChange({ target: { name: "hour", value: String(val).padStart(2, "0") } });
+                                }}
+                                className="text-center w-12 border-x border-blue-400 rounded  font-normal"
+                            />
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleChange({
+                                        target: {
+                                            name: "hour",
+                                            value: String((+formData.hour + 23) % 24).padStart(2, "0"),
+                                        },
+                                    })
+                                }
+                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                            >
+                                –
+                            </button>
+                        </div>
 
-    let dateTime = null;
-    try {
-      dateTime = buildDateTimeFromManual(formData.date, formData.hour);
-    } catch (err) {
-      console.error("Error al construir dateTime:", err, formData.date, formData.hour);
-      return;
-    }
+                        {/* Minute */}
+                        <div className="flex items-center border border-blue-400 rounded">
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleChange({
+                                        target: {
+                                            name: "minute",
+                                            value: String((+formData.minute + 1) % 60).padStart(2, "0"),
+                                        },
+                                    })
+                                }
+                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                            >
+                                +
+                            </button>
+                            <input
+                                type="number"
+                                name="minute"
+                                value={formData.minute}
+                                onChange={(e) => {
+                                    let val = Math.max(0, Math.min(59, Number(e.target.value)));
+                                    handleChange({ target: { name: "minute", value: String(val).padStart(2, "0") } });
+                                }}
+                                className="text-center w-12 border-x border-blue-400 rounded font-normal"
+                            />
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    handleChange({
+                                        target: {
+                                            name: "minute",
+                                            value: String((+formData.minute + 59) % 60).padStart(2, "0"),
+                                        },
+                                    })
+                                }
+                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                            >
+                                –
+                            </button>
+                        </div>
+                    </div>
+                </label>
 
-    const finalTask = task?.id
-      ? {
-          ...task,
-          text: formData.text,
-          text_raw: formData.text,
-          date: normalizarFecha(formData.date),
-          hour: formData.hour,
-          color: formData.color,
-          type: formData.type,
-          dateTime,
-        }
-      : {
-          id: uuidv4(),
-          completed: false,
-          text: formData.text,
-          text_raw: formData.text,
-          date: normalizarFecha(formData.date),
-          hour: formData.hour,
-          color: formData.color,
-          type: formData.type,
-          dateTime,
-        };
+                <label>
+                    Color:
+                    <select
+                        name="color"
+                        value={formData.color}
+                        onChange={handleChange}
+                        className="border w-full border-blue-400 rounded-lg p-1 font-normal"
+                    >
+                        {AVAILABLE_COLORS.map((c) => (
+                            <option key={c.value} value={c.value}>
+                                {c.label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-    onSubmit(finalTask);
-    setShowConfirmation(true);
-    setTimeout(() => onClose(), 1500);
-  };
+                <label>
+                    Tipo:
+                    <select
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        className="border w-full border-blue-400 rounded-lg p-1 font-normal"
+                    >
+                        {AVAILABLE_TYPES.map((t) => (
+                            <option key={t} value={t}>
+                                {t}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-  return (
-    <form className="relative bg-white rounded-xl p-6 w-[90%] h-[62%]">
-      {showConfirmation && (
-        <p className="text-green-600 text-center mb-3 font-semibold">
-          ✅ Cambios guardados con éxito
-        </p>
-      )}
-
-      <button
-        type="button"
-        onClick={onClose}
-        className="absolute top-4 right-4 text-red-900 hover:text-red-700"
-      >
-        <X className="w-8 h-8" />
-      </button>
-
-      <div className="flex flex-col gap-3 text-gray-900 mt-4">
-        <label>
-          Texto:
-          <input
-            name="text"
-            value={formData.text}
-            onChange={handleChange}
-            className="border border-blue-400 rounded-lg w-full p-1"
-          />
-        </label>
-
-        <label>
-          Fecha:
-          <input
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className="border w-full border-blue-400 rounded-lg p-1"
-          />
-        </label>
-
-        <label>
-          Hora:
-          <select
-            name="hour"
-            value={formData.hour}
-            onChange={handleChange}
-            className="border w-full border-blue-400 rounded-lg p-1"
-          >
-            {horasDisponibles.map((h) => (
-              <option key={h} value={h}>
-                {h}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Color:
-          <select
-            name="color"
-            value={formData.color}
-            onChange={handleChange}
-            className="border w-full border-blue-400 rounded-lg p-1"
-          >
-            {coloresDisponibles.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Tipo:
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="border w-full border-blue-400 rounded-lg p-1"
-          >
-            {tiposDisponibles.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <button
-          type="button"
-          onClick={handleSubmit}
-          className="bg-blue-600 text-white py-1 rounded mt-4"
-        >
-          Guardar cambios
-        </button>
-      </div>
-    </form>
-  );
+                <button type="button" onClick={handleSubmit} className="bg-blue-600 text-white py-2 rounded mb-4">
+                    Guardar cambios
+                </button>
+            </div>
+        </form>
+    );
 }

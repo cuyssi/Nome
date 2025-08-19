@@ -12,6 +12,7 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from api.transcribe import router as transcribe_router
+from api.notifications import router as notifications_router
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -33,3 +34,4 @@ app.add_middleware(
 )
 
 app.include_router(transcribe_router)
+app.include_router(notifications_router)
