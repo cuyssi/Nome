@@ -1,4 +1,5 @@
 import "./App.css";
+import { useEffect } from "react"
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Task from "./pages/Task";
@@ -7,15 +8,21 @@ import { Footer } from "./components/commons/Footer";
 import Completed_tasks from "./pages/Completed_tasks";
 import Pending_tasks from "./pages/Pending_tasks";
 import Today_tasks from "./pages/Today_tasks";
+import { ensureDeviceId } from "./utils/ensureDeviceId"
+import { subscribeUser } from "./hooks/usePushNotifications";
 import clsx from "clsx";
 
 function App() {
-   
+    useEffect(() => {
+    ensureDeviceId();
+    subscribeUser();
+  }, []);
+
     return (
         <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400">
 <div
   className={clsx(
-    "relative", // 👈 para que el modal se posicione respecto a este div
+    "relative",
     "w-full h-full bg-white flex flex-col",
     "sm:max-w-[360px] sm:h-[90%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
   )}

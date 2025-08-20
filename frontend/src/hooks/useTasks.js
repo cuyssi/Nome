@@ -2,7 +2,7 @@ import { useStorageStore } from "../store/storageStore";
 import { filterTasksSmart } from "../utils/taskFilter";
 import { useState, useEffect } from "react";
 import { isToday } from "../utils/dateUtils";
-import { notifyBackend } from "../utils/notifyBackend";
+import { notifyBackend } from "../services/notifyBackend";
 import { formatDateForBackend } from "../utils/formatDateForBackend";
 
 export const useTasks = (type, exclude = false) => {
@@ -27,17 +27,29 @@ export const useTasks = (type, exclude = false) => {
         if (updatedFields.dateTime && updatedFields.text) {
             const isoDate = formatDateForBackend(updatedFields.dateTime);
             console.log(`Task updated: ${updatedFields.text} at ${isoDate}`);
-            await notifyBackend(updatedFields.text, isoDate);
+            const deviceId = localStorage.getItem("deviceId");
+            if (!deviceId) {
+                console.warn("⚠️ No hay deviceId en localStorage");
+                return;
+            }
+            await notifyBackend(updatedFields.text, isoDate, deviceId);
         }
     };
 
+
     const wrappedAddTask = async (task) => {
         baseAddTask(task);
-        if (task.dateTime) {
+        if (task.dateTime && task.text) {
             const isoDate = formatDateForBackend(task.dateTime);
-            await notifyBackend(task.text, isoDate);
+            const deviceId = localStorage.getItem("deviceId");
+            if (!deviceId) {
+                console.warn("⚠️ No hay deviceId en localStorage");
+                return;
+            }
+            await notifyBackend(task.text, isoDate, deviceId);
         }
     };
+
 
     return {
         tasks,

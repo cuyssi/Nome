@@ -45,9 +45,17 @@ export const useTranscription = () => {
 
             const baseURL = import.meta.env.VITE_API_URL;
 
+            const deviceId = localStorage.getItem("deviceId");
+
+            if (!deviceId) {
+                console.warn("⚠️ No se encontró deviceId en localStorage");
+                return;
+            }
+
             await axios.post(`${baseURL}/schedule-task`, {
                 text: text,
                 dateTime: dateTime,
+                deviceId: deviceId,
             });
         } catch (err) {
             console.error("❌ Error al enviar:", err);

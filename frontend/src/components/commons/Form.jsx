@@ -9,7 +9,7 @@ export function Form({ task, onClose, onSubmit }) {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
 
     return (
-        <form className="relative bg-white flex items-center justify-center rounded-xl p-3 w-[90%] h-[62%]">
+        <form className="relative bg-white flex items-center justify-center rounded-xl h-auto p-5">
             {showConfirmation && (
                 <p className="text-green-600 mb-3 font-semibold">✅ Changes saved successfully</p>
             )}

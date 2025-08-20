@@ -14,7 +14,6 @@ export async function subscribeUser() {
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return;
 
-
   const vapidKeyRes = await axios.get(`${baseURL}/vapid-public-key`);
   const applicationServerKey = urlBase64ToUint8Array(vapidKeyRes.data);
 
@@ -23,7 +22,18 @@ export async function subscribeUser() {
     userVisibleOnly: true,
     applicationServerKey
   });
+ 
+  let deviceId = localStorage.getItem("deviceId");
+  if (!deviceId) {
+    deviceId = crypto.randomUUID();
+    localStorage.setItem("deviceId", deviceId);
+  }
 
-  await axios.post(`${baseURL}/subscribe`, subscription);
+  await axios.post(`${baseURL}/subscribe`, {
+    deviceId,
+    subscription
+  });
+
   console.log("✅ Usuario suscrito a notificaciones push");
 }
+

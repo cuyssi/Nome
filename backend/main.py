@@ -35,3 +35,4 @@ app.add_middleware(
 
 app.include_router(transcribe_router)
 app.include_router(notifications_router)
+
