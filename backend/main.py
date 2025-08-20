@@ -14,10 +14,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.transcribe import router as transcribe_router
 from api.notifications import router as notifications_router
 from dotenv import load_dotenv
+from api.notifications import active_timers
 load_dotenv()
 import os
 
 app = FastAPI()
+
+@app.on_event("shutdown")
+def shutdown_event():
+    print("🛑 Apagando servidor, cancelando timers...")
+    for timer in active_timers:
+        if timer.is_alive():
+            timer.cancel()
+    print("✅ Todos los timers cancelados")
 
 allowed_origins = os.getenv("CORS_ORIGINS", "").split(",")
 
@@ -35,4 +44,3 @@ app.add_middleware(
 
 app.include_router(transcribe_router)
 app.include_router(notifications_router)
-
