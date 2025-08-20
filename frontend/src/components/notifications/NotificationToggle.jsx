@@ -5,11 +5,10 @@ import { Bell, BellOff } from "lucide-react";
 
 function NotificationToggle() {
   const [isSubscribed, setIsSubscribed] = useState(false);
-
+  const [message, setMessage] = useState(""); 
   useEffect(() => {
     checkSubscription().then(setIsSubscribed);
   }, []);
-  
 
   const checkSubscription = async () => {
     const registration = await navigator.serviceWorker.ready;
@@ -28,23 +27,39 @@ function NotificationToggle() {
       });
       await subscription.unsubscribe();
       setIsSubscribed(false);
-      console.log("🔕 Notificaciones desactivadas");
+      showMessage("🔕 Notificaciones desactivadas");
     } else {
       await subscribeUser();
       setIsSubscribed(true);
-      console.log("🔔 Notificaciones activadas");
+      showMessage("🔔 Notificaciones activadas");
     }
   };
 
+  const showMessage = (msg, duration = 2000) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(""), duration);
+  };
+
   return (
-    <button onClick={() => {
-    if (navigator.vibrate) {
-      navigator.vibrate(150);
-      handleToggle();
-    }
-  }} style={{ fontSize: "1.5rem" }} className="absolute top-6 right-6">
-      {isSubscribed ? <Bell className="text-green-500" /> : <BellOff className="text-red-500" />}
-    </button>
+    <div style={{ fontSize: "1.5rem" }} className="absolute top-0 right-0">
+      <button
+        onClick={() => {
+          if (navigator.vibrate) navigator.vibrate(150);
+          handleToggle();
+        }}
+        style={{ fontSize: "1.5rem" }}
+        className="absolute top-6 right-6"
+      >
+        {isSubscribed ? <Bell className="text-green-500" /> : <BellOff className="text-red-500" />}
+      </button>
+
+      {/* mensaje flotante */}
+      {message && (
+        <p className="absolute top-16 right-6 bg-white text-black px-3 py-1 rounded-lg shadow-md animate-fadeIn">
+          {message}
+        </p>
+      )}
+    </div>
   );
 }
 

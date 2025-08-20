@@ -9,16 +9,16 @@ export function Form({ task, onClose, onSubmit }) {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
 
     return (
-        <form className="relative bg-white rounded-xl p-6 w-[90%] h-[62%]">
+        <form className="relative bg-white flex items-center justify-center rounded-xl p-3 w-[90%] h-[62%]">
             {showConfirmation && (
-                <p className="text-green-600 text-center mb-3 font-semibold">✅ Changes saved successfully</p>
+                <p className="text-green-600 mb-3 font-semibold">✅ Changes saved successfully</p>
             )}
 
             <button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-900 hover:text-red-700">
                 <X className="w-8 h-8" />
             </button>
 
-            <div className="flex flex-col justify-between h-full text-gray-600 mt-6 font-semibold">
+            <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-6 font-semibold">
                 <label>
                     Texto:
                     <input
@@ -42,7 +42,7 @@ export function Form({ task, onClose, onSubmit }) {
 
                 <label>
                     Hora:
-                    <div className="flex justify-between px-8 items-center mt-2">
+                    <div className="flex justify-between px-4 items-center mt-2">
                         {/* Hour */}
                         <div className="flex items-center border border-blue-400 rounded">
                             <button
@@ -55,12 +55,12 @@ export function Form({ task, onClose, onSubmit }) {
                                         },
                                     })
                                 }
-                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 +
                             </button>
                             <input
-                                type="number"
+                                type="tel"
                                 name="hour"
                                 value={formData.hour}
                                 onChange={(e) => {
@@ -86,7 +86,7 @@ export function Form({ task, onClose, onSubmit }) {
                         </div>
 
                         {/* Minute */}
-                        <div className="flex items-center border border-blue-400 rounded">
+                        <div className="flex items-center justify-center border border-blue-400 rounded">
                             <button
                                 type="button"
                                 onClick={() =>
@@ -97,17 +97,17 @@ export function Form({ task, onClose, onSubmit }) {
                                         },
                                     })
                                 }
-                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 +
                             </button>
                             <input
-                                type="number"
+                                type="tel"
                                 name="minute"
                                 value={formData.minute}
                                 onChange={(e) => {
                                     let val = Math.max(0, Math.min(59, Number(e.target.value)));
-                                    handleChange({ target: { name: "minute", value: String(val).padStart(2, "0") } });
+                                    handleChange({ target: { name: "minute", value: String(val).padStart(2) } });
                                 }}
                                 className="text-center w-12 border-x border-blue-400 rounded font-normal"
                             />
@@ -121,7 +121,7 @@ export function Form({ task, onClose, onSubmit }) {
                                         },
                                     })
                                 }
-                                className="px-2 text-blue-900  bg-gray-200 hover:bg-gray-400"
+                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 –
                             </button>

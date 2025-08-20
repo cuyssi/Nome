@@ -13,8 +13,9 @@ function App() {
    
     return (
         <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400">
-            <div
+<div
   className={clsx(
+    "relative", // 👈 para que el modal se posicione respecto a este div
     "w-full h-full bg-white flex flex-col",
     "sm:max-w-[360px] sm:h-[90%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
   )}
