@@ -33,8 +33,8 @@ RUN curl -L -o model.zip "https://alphacephei.com/vosk/models/vosk-model-es-0.42
     && rm model.zip
 
 
-# Descargar modelos spaCy (es_core_news_sm y es_core_news_md)
-RUN python -m spacy download es_core_news_sm \
+# Descargar modelos spaCy (es_core_news_md y es_core_news_md)
+RUN python -m spacy download es_core_news_md \
     && python -m spacy download es_core_news_md
 
 # Puerto expuesto

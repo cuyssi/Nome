@@ -5,7 +5,7 @@ import re
 from constants.number_map import number_map
 import spacy
 
-nlp = spacy.load("es_core_news_sm")  # para capitalizar nombres propios
+nlp = spacy.load("es_core_news_md")  # para capitalizar nombres propios
 
 MINUTE_KEYWORDS = {
     "y cuarto": 15,

@@ -2,7 +2,7 @@
 import re
 import spacy
 
-nlp = spacy.load("es_core_news_sm")
+nlp = spacy.load("es_core_news_md")
 
 CORRECTIONS = {
     "quebec": "quedé",
