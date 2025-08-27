@@ -124,11 +124,20 @@ def notify_device(task):
         except Exception as e:
             print("🔥 Error en notify_device:", repr(e))
 
+MAX_DELAY = 60 * 60 * 24 * 30  # 30 días en segundos
+
 def calcular_delay(task_time_str):
     task_time = datetime.strptime(task_time_str, "%Y-%m-%dT%H:%M:%S")
     now = datetime.now()
     delay = (task_time - now).total_seconds() - 15 * 60
+
+    # Limitar el delay para evitar OverflowError
+    if delay > MAX_DELAY:
+        print(f"⚠️ Delay demasiado largo ({delay}s), se limita a {MAX_DELAY}s")
+        delay = MAX_DELAY
+
     return max(delay, 1)
+
 
 def schedule_notification(task):
     device_id = task.get("deviceId")

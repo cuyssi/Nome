@@ -6,7 +6,7 @@ from utils.normalize_text import normalize_text
 from typing import Optional
 import re
 
-def is_today(dt: Optional[datetime]) -> bool:
+def is_today(dt):
     if not dt:
         return False
     result = dt.date() == datetime.now().date()

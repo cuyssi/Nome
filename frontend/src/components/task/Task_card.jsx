@@ -72,9 +72,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                                 : "text-white"
                         }`}
                     >
-                        {["deberes", "ejercicios", "trabajo"].includes(task.type)
-                            ? task.text_raw || task.text
-                            : task.text}
+                        {task.text}
                     </div>
                 </Container_task>
             </div>

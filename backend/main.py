@@ -11,7 +11,7 @@
 
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from api.transcribe import router as transcribe_router
+from api.transcribe2 import router as transcribe_router
 from api.notifications import router as notifications_router
 from dotenv import load_dotenv
 from api.notifications import active_timers
