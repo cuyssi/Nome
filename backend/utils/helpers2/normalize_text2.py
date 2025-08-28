@@ -1,5 +1,6 @@
 from text_to_num import alpha2digit
 from constants.corrections import CORRECTIONS
+from constants.patterns import PATTERNS
 from utils.helpers2.time_helpers2 import corregir_menos_expresiones
 import spacy
 import re
@@ -24,14 +25,17 @@ def es_secuencia_valida(secuencia):
     tokens = secuencia.lower().split()
     return any(token.isdigit() or token in numericas for token in tokens)
 
-def extraer_deberes(texto):
-    match = re.search(r"\bej:\s*((?:\w+\s+)*\w+)", texto)
-    if match:
-        secuencia = match.group(1)
-        if es_secuencia_valida(secuencia):
-            texto_sin_deberes = re.sub(r"\bej:\s*((?:\w+\s+)*\w+)", "__DEBERES__", texto)
-            return texto_sin_deberes, secuencia
-    return texto, None
+def extract_patterns(texto):
+    resultados = {}
+    for nombre, regla in PATTERNS.items():
+        match = re.search(regla["regex"], texto, flags=re.IGNORECASE)
+        if match:
+            valor = match.group(1)
+            texto = re.sub(regla["regex"], regla["placeholder"], texto, flags=re.IGNORECASE)
+            resultados[nombre] = valor
+
+    print(f"[EXTRACT PATTERS] text: {texto}, result: {resultados}")
+    return texto, resultados
 
 # ⏰ Normalización de expresiones horarias
 def normalize_time(text):
@@ -53,26 +57,21 @@ def normalize_time(text):
     return text
 
 
-def insertar_deberes(texto, secuencia):
-    print(f"[INSERTAR] secuencia: {secuencia}")
-    print(f"[INSERTAR] text antes: {texto}")
-    if secuencia:
-        numeros = alpha2digit(secuencia, "es")
-        lista = " ".join(numeros.split())
+def insert_patterns(texto, resultados):
+    for nombre, valor in resultados.items():
+        if valor:
+            placeholder = PATTERNS[nombre]["placeholder"]
 
-        # 1) Normaliza cualquier variante: "_ DEBERES _", "_ _ DEBERES _ _", "__DEBERES__", "- DEBERES -", etc.
-        #    Captura múltiples grupos de guiones/guiones bajos con espacios intercalados.
-        texto = re.sub(r"(?:[-_]+\s*)*DEBERES(?:\s*[-_]+)*", "__DEBERES__", texto)
+            # Normaliza cualquier variante de guiones/espacios
+            texto = re.sub(rf"(?:[-_]+\s*)*{nombre}(?:\s*[-_]+)*", placeholder, texto, flags=re.IGNORECASE)
 
-        # 2) Inserta la lista
-        texto = texto.replace("__DEBERES__", f"ej: {lista}")
+            # Inserta usando el formateador definido
+            texto = texto.replace(placeholder, PATTERNS[nombre]["formatter"](valor))
 
-        # 3) Limpia espacios múltiples
-        texto = re.sub(r"\s{2,}", " ", texto).strip()
-
-        print(f"[INSERTAR] text despues: {texto}")
+            # Limpia espacios dobles
+            texto = re.sub(r"\s{2,}", " ", texto).strip()
+    print(f"[INSERT PATTERNS] text: {texto}")
     return texto
-
 
 # 🔠 Capitalización inteligente
 def capitalize(text):
@@ -91,7 +90,7 @@ def normalize(text):
     text = fix_transcription(text)
     print(f"[NORMALIZE] fix: {text}")
 
-    text, deberes = extraer_deberes(text)
+    text, deberes = extract_patterns(text)
     print(f"[NORMALIZE] deberes extraídos: {deberes}")
     print(f"[NORMALIZE] texto sin deberes: {text}")
 

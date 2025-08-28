@@ -1,4 +1,4 @@
-from utils.helpers2.normalize_text2 import normalize, insertar_deberes
+from utils.helpers2.normalize_text2 import normalize, insert_patterns
 from utils.helpers2.datetime_helpers2 import detect_dates
 from utils.helpers2.clean_text_helpers2 import limpiar_fecha_y_fragmento, formatear_listas_con_comas, eliminar_comas_innecesarias
 
@@ -9,7 +9,7 @@ def combine_date_and_time2(text):
     text, secuencia = normalize(text)
     dt, data, fragmento_horario = detect_dates(text)
     text = limpiar_fecha_y_fragmento(text, data, fragmento_horario)
-    text = insertar_deberes(text, secuencia)
+    text = insert_patterns(text, secuencia)
     text = formatear_listas_con_comas(text)
     text = eliminar_comas_innecesarias(text)
 
