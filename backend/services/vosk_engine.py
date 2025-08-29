@@ -1,3 +1,14 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Servicio de transcripción de audio usando Vosk y ffmpeg. Combierte el audio que nos
+# envia el frontend en texto.
+# - Carga el modelo Vosk español.
+# - Convierte cualquier archivo a WAV mono 16kHz.
+# - Aplica denoise rápido con ffmpeg (afftdn) para limpiar ruidos y que solo utilice la voz.
+# - Procesa el audio en chunks para extraer texto con KaldiRecognizer, para que la transcrición
+#   sea mas rápida y limpia.
+# Devuelve la transcripción limpia como string.
+# ──────────────────────────────────────────────────────────────────────────────
+
 import os
 import tempfile
 import subprocess
@@ -16,19 +27,15 @@ if not os.path.exists(MODEL_PATH):
 
 @lru_cache(maxsize=1)
 def get_model():
-    print("📦 Cargando modelo Vosk...")
+    print("Cargando modelo Vosk...")
     return Model(MODEL_PATH)
 
-
 def clean_audio(input_path: str, output_path: str) -> None:
-    """
-    Limpia el audio usando ffmpeg (denoise rápido con afftdn).
-    """
     cmd = [
         "ffmpeg", "-y", "-i", input_path,
-        "-ac", "1",  # mono
-        "-ar", "16000",  # 16kHz (recomendado por Vosk)
-        "-af", "afftdn",  # filtro denoise rápido
+        "-ac", "1",
+        "-ar", "16000",
+        "-af", "afftdn",
         output_path
     ]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -44,37 +51,29 @@ def convert_to_wav_mono16k(input_path: str, output_path: str):
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Error al convertir a WAV: {e}")
 
-
 async def transcribe_audio_file(file: UploadFile) -> str:
     audio_bytes = await file.read()
 
     with tempfile.TemporaryDirectory() as tmpdir:
         temp_audio_path = os.path.join(tmpdir, "input.webm")
         wav_path = os.path.join(tmpdir, "input.wav")
-        clean_path = os.path.join(tmpdir, "clean.wav")  # <-- salida limpia
+        clean_path = os.path.join(tmpdir, "clean.wav")
 
-        # Guardar archivo temporal
         with open(temp_audio_path, "wb") as f:
             f.write(audio_bytes)
 
-        # Convertir a WAV mono 16k
         convert_to_wav_mono16k(temp_audio_path, wav_path)
-
-        # 🔊 Limpiar con ffmpeg (afftdn)
         clean_audio(wav_path, clean_path)
 
-        # Leer WAV limpio
         wf, sr = sf.read(clean_path, dtype="int16")
         if sr != 16000:
             raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {sr}")
 
-        # Inicializar reconocedor
-        print("🔍 Preparando para cargar modelo Vosk...")
+        print("Preparando para cargar modelo Vosk...")
         rec = KaldiRecognizer(get_model(), sr)
         print("✅ Modelo Vosk listo")
         rec.SetWords(True)
 
-        # Procesar en chunks
         final_text = ""
         step = 4000
         for i in range(0, len(wf), step):
@@ -83,7 +82,5 @@ async def transcribe_audio_file(file: UploadFile) -> str:
                 result = json.loads(rec.Result())
                 final_text += result.get("text", "") + " "
 
-        # Resultado final
         final_text += json.loads(rec.FinalResult()).get("text", "")
         return final_text.strip()
-

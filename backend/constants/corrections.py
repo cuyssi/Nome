@@ -1,3 +1,10 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Diccionario de correcciones automáticas para transcripciones de audio.
+# Clave: error común detectado en la transcripción
+# Valor: corrección que debe aplicarse
+# Útil para normalizar texto antes de procesar fechas, horas o tareas.
+# ──────────────────────────────────────────────────────────────────────────────
+
 CORRECTIONS = {
     "quebec": "quedé",
     "que de": "quedé",

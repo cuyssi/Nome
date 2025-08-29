@@ -1,3 +1,10 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Patrones para normalizar textos de tareas escolares.
+# - PAG: detecta números de página y los convierte a dígitos, añadiendo coma al final.
+# - EJ: detecta ejercicios y los convierte a dígitos.
+# La función alpha2digit transforma números escritos en palabras a números.
+# ──────────────────────────────────────────────────────────────────────────────
+
 from text_to_num import alpha2digit
 
 PATTERNS = {

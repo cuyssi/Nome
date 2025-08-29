@@ -1,3 +1,26 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Gestión de notificaciones push para tareas programadas para que te llegue
+# una nortificación programada 15 minutos antes.
+# - Administra suscripciones por dispositivo (subscribe/unsubscribe)
+# - Controla timers activos para evitar duplicados
+# - Envía notificaciones push usando VAPID keys
+# - Mantiene tareas y suscripciones en memoria
+#
+# Funciones principales:
+#   get_vapid_public_key()         : Devuelve la clave pública VAPID para suscribirse
+#   subscribe(request)             : Registra suscripción y reprograma tareas pendientes
+#   unsubscribe(request)           : Elimina una suscripción existente
+#   send_push_notification(sub, p) : Envía notificación push a una suscripción
+#   notify_device(task)            : Notifica un dispositivo y elimina tarea ejecutada
+#   calcular_delay(task_time_str)  : Calcula segundos hasta la tarea menos 15 minutos
+#   schedule_notification(task)    : Programa una tarea para enviar notificación
+#   schedule_task(request)         : Endpoint para crear y programar nueva tarea
+#
+# Integrado como router '/notifications' en FastAPI
+#
+# @author: Ana Castro
+# ──────────────────────────────────────────────────────────────────────────────
+
 import os
 import json
 import time
@@ -79,7 +102,6 @@ async def unsubscribe(request: Request):
     to_remove = [k for k, v in subscriptions.items() if v.get("endpoint") == endpoint]
     for k in to_remove:
         del subscriptions[k]
-        # ❗ No eliminamos las tareas programadas para conservarlas
 
     print(f"🗑️ Suscripción eliminada: {endpoint}")
     return {"status": "unsubscribed"}
@@ -115,7 +137,7 @@ def notify_device(task):
 
             send_push_notification(subscription, payload)
 
-            # Eliminar tarea ejecutada con doble verificación
+            # Eliminar tarea ejecutada
             if device_id in scheduled_tasks:
                 scheduled_tasks[device_id] = [
                     t for t in scheduled_tasks[device_id]
@@ -131,13 +153,11 @@ def calcular_delay(task_time_str):
     now = datetime.now()
     delay = (task_time - now).total_seconds() - 15 * 60
 
-    # Limitar el delay para evitar OverflowError
     if delay > MAX_DELAY:
         print(f"⚠️ Delay demasiado largo ({delay}s), se limita a {MAX_DELAY}s")
         delay = MAX_DELAY
 
     return max(delay, 1)
-
 
 def schedule_notification(task):
     device_id = task.get("deviceId")

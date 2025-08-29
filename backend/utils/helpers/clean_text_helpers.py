@@ -1,62 +1,43 @@
-# # helpers/clean_text_helpers.py
-# import re
-# import spacy
-# from constants.corrections import CORRECTIONS
+# ──────────────────────────────────────────────────────────────────────────────
+# Utilidades para limpiar texto de referencias temporales y formatear listas.
+# - `clean_date_and_fragment` elimina horas, fragmentos como "por la tarde",
+#   y palabras de referencia temporal como "mañana", "hoy".
+# - `format_lists_with_commas` coloca comas correctas en listas de elementos
+#   o números, evitando errores como comas antes de artículos y duplicadas.
+# Devuelven el texto limpio y listo para procesar fechas o transcripciones.
+# ──────────────────────────────────────────────────────────────────────────────
 
-# nlp = spacy.load("es_core_news_md")
+import re
 
-# def fix_transcription(text: str) -> str:
-#     text_lower = text.lower()
-#     for wrong, correct in CORRECTIONS.items():
-#         text_lower = re.sub(rf"\b{re.escape(wrong)}\b", correct, text_lower)
-#     return text_lower
+def clean_date_and_fragment(text, fragment):
+    if fragment:
+        fragment_base = re.escape(fragment.split()[-1])
+        pattern = (
+            r"\b"
+            r"(mañana|pasado mañana|hoy)?\s*"
+            r"(a\s+la|a\s+las)?\s*"
+            r"\d{1,2}(:\d{2})?\s*"
+            r"(de|por)\s+" + fragment_base + r"\b")
+        text = re.sub(pattern, "", text, flags=re.IGNORECASE)
 
-# def remove_relative_dates(text: str) -> str:
-#     """Elimina palabras tipo 'hoy', 'mañana', 'pasado mañana' tras detectar la fecha"""
-#     return re.sub(r"\b(hoy|mañana|pasado mañana)\b", "", text, flags=re.IGNORECASE).strip()
+    text = re.sub(r"\b(a\s+la|a\s+las)\s+\d{1,2}(:\d{2})?\b", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\b\d{1,2}(:\d{2})?\b", "", text)
+    text = re.sub(
+        r"\b(por|de)\s+la\s+(mañana|tarde|noche|madrugada)\b", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\b(mañana|hoy|pasado mañana|esta noche|esta tarde|esta mañana)\b", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s{2,}", " ", text).strip()
+    text = text[0].upper() + text[1:] if text else text
 
-# def clean_text(text: str) -> str:
-#     """Normalize text and correct common mistakes."""
-#     text = fix_transcription(text)
-#     text = remove_relative_dates(text)
-#     print(f"remove_ralative_dates: {text}")
-#     text = text.lower().strip()
-#     text = re.sub(r"\s+", " ", text)
-#     text = re.sub(r"\bmanana\b", "mañana", text)
-#     print(f"[clean_text] {text}")
-#     return text
+    return text
 
-# def capitalize_proper_names(text: str) -> str:
-#     """Capitaliza la primera letra y los nombres propios detectados por spaCy"""
-#     doc = nlp(text)
-#     tokens = []
-#     for token in doc:
-#         if token.ent_type_ in ("PER", "LOC", "ORG"):  # personas, lugares, organizaciones
-#             tokens.append(token.text.capitalize())
-#         else:
-#             tokens.append(token.text)
-#     # Primera letra del texto en mayúscula
-#     result = " ".join(tokens)
-#     return result[0].upper() + result[1:]
 
-# def remove_detected_dates(text: str) -> str:
-#     """
-#     Elimina:
-#       - días de la semana: lunes, martes...
-#       - fechas manuales tipo 'el 25 de septiembre'
-#     """
-#     # Días de la semana
-#     text = re.sub(r"\b(lunes|martes|miércoles|jueves|viernes|sábado|domingo)\b", "", text, flags=re.IGNORECASE)
+def format_lists_with_commas(text):
+    text = re.sub(r'(\b(?:el|la|los|las)\b),\s+', r'\1 ', text)
+    text = re.sub(r'(?<!^)(\b(?:el|la|los|las)\b)\s+(\w+)\s+(?=\b(?:el|la|los|las)\b)', r'\1 \2, ', text)
+    text = re.sub(r'\b(\d+)\s+(?=\d+\s+y\b)', r'\1, ', text)
+    text = re.sub(r'\b(\d+)\s+(?=\d+\b)', r'\1, ', text)
+    text = re.sub(r'\by,\s*', 'y ', text)
+    text = re.sub(r'\s+([.,:])', r'\1', text)
+    text = re.sub(r'\s{2,}', ' ', text)
 
-#     # Fechas manuales tipo 'el 25 de septiembre'
-#     text = re.sub(
-#         r"(?:el\s+)?\d{1,2}\s+de\s+"
-#         r"(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)",
-#         "",
-#         text,
-#         flags=re.IGNORECASE
-#     )
-
-#     # Quitar posibles espacios extra
-#     text = re.sub(r"\s+", " ", text).strip()
-#     return text
+    return text.strip()
