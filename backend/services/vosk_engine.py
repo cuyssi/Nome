@@ -2,6 +2,7 @@ import os
 import tempfile
 import subprocess
 import soundfile as sf
+from pathlib import Path
 from fastapi import UploadFile
 from vosk import Model, KaldiRecognizer
 from functools import lru_cache
@@ -18,6 +19,19 @@ def get_model():
     print("📦 Cargando modelo Vosk...")
     return Model(MODEL_PATH)
 
+
+def clean_audio(input_path: str, output_path: str) -> None:
+    """
+    Limpia el audio usando ffmpeg (denoise rápido con afftdn).
+    """
+    cmd = [
+        "ffmpeg", "-y", "-i", input_path,
+        "-ac", "1",  # mono
+        "-ar", "16000",  # 16kHz (recomendado por Vosk)
+        "-af", "afftdn",  # filtro denoise rápido
+        output_path
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def convert_to_wav_mono16k(input_path: str, output_path: str):
     try:
@@ -37,6 +51,7 @@ async def transcribe_audio_file(file: UploadFile) -> str:
     with tempfile.TemporaryDirectory() as tmpdir:
         temp_audio_path = os.path.join(tmpdir, "input.webm")
         wav_path = os.path.join(tmpdir, "input.wav")
+        clean_path = os.path.join(tmpdir, "clean.wav")  # <-- salida limpia
 
         # Guardar archivo temporal
         with open(temp_audio_path, "wb") as f:
@@ -45,8 +60,11 @@ async def transcribe_audio_file(file: UploadFile) -> str:
         # Convertir a WAV mono 16k
         convert_to_wav_mono16k(temp_audio_path, wav_path)
 
-        # Leer WAV
-        wf, sr = sf.read(wav_path, dtype="int16")
+        # 🔊 Limpiar con ffmpeg (afftdn)
+        clean_audio(wav_path, clean_path)
+
+        # Leer WAV limpio
+        wf, sr = sf.read(clean_path, dtype="int16")
         if sr != 16000:
             raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {sr}")
 
@@ -68,3 +86,4 @@ async def transcribe_audio_file(file: UploadFile) -> str:
         # Resultado final
         final_text += json.loads(rec.FinalResult()).get("text", "")
         return final_text.strip()
+

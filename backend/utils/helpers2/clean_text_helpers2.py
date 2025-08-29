@@ -50,7 +50,7 @@ def formatear_listas_con_comas(texto):
     texto = re.sub(r'(\b(?:el|la|los|las)\b),\s+', r'\1 ', texto)
 
     # Paso 2: Insertar comas entre elementos repetidos con artículos definidos
-    texto = re.sub(r'(\bla\b|\blas\b|\blo\b|\blos\b|\bel\b)\s+(\w+)\s+(?=\bla\b|\blas\b|\blo\b|\blos\b|\bel\b)', r'\1 \2, ', texto)
+    texto = re.sub(r'(?<!^)(\b(?:el|la|los|las)\b)\s+(\w+)\s+(?=\b(?:el|la|los|las)\b)', r'\1 \2, ', texto)
 
     # Paso 3: Insertar comas en listas numéricas tipo "2 3 5 y 6"
     texto = re.sub(r'\b(\d+)\s+(?=\d+\s+y\b)', r'\1, ', texto)  # antes de penúltimo número
@@ -67,15 +67,3 @@ def formatear_listas_con_comas(texto):
 
     print(f"[PONER COMAS] text: {texto.strip()}")
     return texto.strip()
-
-
-def eliminar_comas_innecesarias(texto):
-    # Paso 1: Eliminar coma después de estructuras como "en la mochila", "en el bolso", etc.
-    texto = re.sub(r'\b(en (la|el|los|las) \w+),\s+', r'\1 ', texto)
-
-    # Paso 2: Eliminar espacios duplicados
-    texto = re.sub(r'\s{2,}', ' ', texto)
-    print(f"[ELIMINIAR COMAS] text: {texto.strip()}")
-
-    return texto.strip()
-

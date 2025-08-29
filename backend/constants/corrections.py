@@ -10,6 +10,7 @@ CORRECTIONS = {
     "las mañanas": "las Meanas",    
     "y media": "30",
     "y cuarto": "15",
+    "ajena": "pág.",
     "pagina": "pág.",
     "paginas": "pág.",
     "página": "pág.",

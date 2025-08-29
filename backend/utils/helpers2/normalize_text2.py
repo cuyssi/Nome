@@ -76,14 +76,22 @@ def insert_patterns(texto, resultados):
 # 🔠 Capitalización inteligente
 def capitalize(text):
     doc = nlp(text)
-    tokens = []
-    for token in doc:
+    result = ""
+
+    for i, token in enumerate(doc):
         if token.ent_type_ in ("PER", "LOC", "ORG"):
-            tokens.append(token.text.capitalize())
+            token_text = token.text.capitalize()
         else:
-            tokens.append(token.text)
-    result = " ".join(tokens)
-    return result[0].upper() + result[1:]
+            token_text = token.text
+
+        # Mantener espacios originales
+        result += token_text + token.whitespace_
+
+    # Primera letra del texto en mayúscula
+    if result:
+        result = result[0].upper() + result[1:]
+    return result
+
 
 # 🧼 Pipeline completo
 def normalize(text):
