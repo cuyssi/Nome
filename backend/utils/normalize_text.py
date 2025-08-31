@@ -63,8 +63,14 @@ def normalize_time(text):
     text = re.sub(r'\ba las una\b', 'a las 1', text)
     text = re.sub(r'(\d{1,2})\s+y\s+media\b', r'\1:30', text)
     text = re.sub(r'(\d{1,2})\s+y\s+cuarto\b', r'\1:15', text)
+
+    # Minutos con padding
+    def y_replacer(match):
+        h, m = match.groups()
+        return f"{h}:{int(m):02d}"  # <--- Aquí forzamos dos dígitos
+    text = re.sub(r'\b(\d{1,2})\s+y\s+(\d{1,2})\b', y_replacer, text)
+
     text = re.sub(r'\b(\d{1,2})\s+(\d{2})\b', r'\1:\2', text)
-    text = re.sub(r'\b(\d{1,2})\s+y\s+(\d{1,2})\b', r'\1:\2', text)
     text = re.sub(r'\ba las (\d{1,2})(?!:\d{2})\b', r'a las \1:00', text)
     text = re.sub(r'\ba la (\d{1,2})(?!:\d{2})\b', r'a la \1:00', text)
 

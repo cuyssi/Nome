@@ -12,7 +12,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
-
 from api.transcribe import router as transcribe_router
 from api.notifications import router as notifications_router, active_timers
 
