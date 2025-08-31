@@ -149,6 +149,10 @@ def notify_device(task):
 MAX_DELAY = 60 * 60 * 24 * 30  # 30 días en segundos
 
 def calcular_delay(task_time_str):
+    # quitar microsegundos si los hay
+    if "." in task_time_str:
+        task_time_str = task_time_str.split(".")[0]
+
     task_time = datetime.strptime(task_time_str, "%Y-%m-%dT%H:%M:%S")
     now = datetime.now()
     delay = (task_time - now).total_seconds() - 15 * 60
@@ -158,6 +162,7 @@ def calcular_delay(task_time_str):
         delay = MAX_DELAY
 
     return max(delay, 1)
+
 
 def schedule_notification(task):
     device_id = task.get("deviceId")

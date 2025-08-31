@@ -27,4 +27,15 @@ CORRECTIONS = {
     "a las dos": "2",
     "de las dos": "2",
     "en las dos": "2",
+    "compac y": " con Paqui",
+    "compacta": "con Paqui",
+    "compa que": "con Paqui",
+    "compartía": "con Paqui a",
+    "le compartí": "quede con Paqui",
+    "combatí": "con Paqui",
+    "compañia": "con Paqui a",
+    "compartí": "quede con Paqui",
+    "johann": "Joan",
+    "joanne": "Joan",
+    "johan": "Joan"
 }

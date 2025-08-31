@@ -9,13 +9,21 @@
 # - normalize(text): Pipeline completo que combina todas las funciones anteriores.
 # ──────────────────────────────────────────────────────────────────────────────
 
-
 import re
 import spacy
 from text_to_num import alpha2digit
 from constants.corrections import CORRECTIONS
 from constants.patterns import PATTERNS
 from utils.helpers.time_helpers import correct_minus_expressions
+import json
+import os
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CUSTOM_WORDS_PATH = os.path.join(BASE_DIR, "../services/custom_words.json")
+
+with open(CUSTOM_WORDS_PATH, "r", encoding="utf-8") as f:
+    CUSTOM_WORDS = json.load(f)
 
 nlp = spacy.load("es_core_news_md")
 
@@ -73,6 +81,11 @@ def insert_patterns(text, results):
 
     return text
 
+def capitalize_custom_words(text, custom_words):
+    for w in custom_words["words"]:
+        pattern = re.compile(rf"\b{re.escape(w.lower())}\b", flags=re.IGNORECASE)
+        text = pattern.sub(w, text)
+    return text
 
 def capitalize_text(text):
     doc = nlp(text)
@@ -86,10 +99,18 @@ def capitalize_text(text):
 
 def normalize_text(text):
     text = fix_transcription(text)
+    print(f"[NORMALIZE] fix: {text}")
     text, extracted = extract_patterns(text)
+    print(f"[NORMALIZE] extract: {text}")
     text = alpha2digit(text, "es")
+    print(f"[NORMALIZE] 2num: {text}")
     text = correct_minus_expressions(text)
+    print(f"[NORMALIZE] menos: {text}")
     text = normalize_time(text)
+    print(f"[NORMALIZE] normaTime: {text}")
+    text = capitalize_custom_words(text, CUSTOM_WORDS)
+    print(f"[NORMALIZE] capitalize custom_words: {text}")
     text = capitalize_text(text)
+    print(f"[NORMALIZE] capitalize: {text}")
 
     return text, extracted

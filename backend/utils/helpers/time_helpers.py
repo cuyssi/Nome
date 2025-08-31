@@ -6,12 +6,17 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def adjust_ambiguous_hour(dt: datetime, now: datetime):
+    if dt.date() != now.date():
+        return dt
+
     if dt.hour < 12 and dt.hour + 12 > now.hour:
         dt = dt.replace(hour=dt.hour + 12)
+
     return dt
+
 
 def correct_minus_expressions(text):
     def replacement(match):
@@ -56,5 +61,6 @@ def adjust_time_context(dt: datetime, text: str):
         used_fragment = "de la madrugada"
         if not explicit_hour:
             dt = dt.replace(hour=3, minute=0, second=0, microsecond=0)
+    print(f"[AJUST TIME] dt: {dt} fragment: {used_fragment}")
 
     return dt, used_fragment

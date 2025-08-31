@@ -18,15 +18,24 @@ router = APIRouter()
 
 @router.post("/transcribe/")
 async def transcribe_audio(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    texto_raw = await transcribe_audio_file(file)
-    doc = nlp(texto_raw)
+    text_raw = await transcribe_audio_file(file)
+    doc = nlp(text_raw)
     tipo = infer_task_type(doc.text)
-    text, dt, hour, minutes, time = combine_date_and_time(texto_raw)
-    return {
-        "text_raw": texto_raw,
+    text, dt, hour, minutes, time = combine_date_and_time(doc.text)
+
+    response = {
+        "text_raw": text_raw,
         "text": text,
         "datetime": dt,
         "type": tipo,
         "hour": time,
-        "isToday": is_today(dt)
+        "isToday": is_today(dt),
     }
+
+    # DEBUG
+    print(f"Transcribe raw: {text_raw}")
+    print(f"Texto limpio: {text}")
+    print(f"Datetime: {dt}")
+    print(f"Hour: {time}, Is today: {response['isToday']}")
+
+    return response

@@ -8,22 +8,34 @@
 #   sea mas rápida y limpia.
 # Devuelve la transcripción limpia como string.
 # ──────────────────────────────────────────────────────────────────────────────
+# ──────────────────────────────────────────────────────────────────────────────
+# Servicio de transcripción de audio usando Vosk y ffmpeg.
+# ──────────────────────────────────────────────────────────────────────────────
 
 import os
 import tempfile
 import subprocess
-import soundfile as sf
-from pathlib import Path
+import wave
 from fastapi import UploadFile
 from vosk import Model, KaldiRecognizer
 from functools import lru_cache
+from constants.corrections import CORRECTIONS
 import json
+import re
+import difflib
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
+CUSTOM_WORDS_PATH = os.path.join(BASE_DIR, "custom_words.json")
 
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"No se encontró el modelo en {MODEL_PATH}")
+
+if not os.path.exists(CUSTOM_WORDS_PATH):
+    raise FileNotFoundError(f"No se encontró el archivo custom_words.json en {CUSTOM_WORDS_PATH}")
+
+with open(CUSTOM_WORDS_PATH, "r", encoding="utf-8") as f:
+    custom_words = json.load(f)
 
 @lru_cache(maxsize=1)
 def get_model():
@@ -51,6 +63,25 @@ def convert_to_wav_mono16k(input_path: str, output_path: str):
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Error al convertir a WAV: {e}")
 
+def fix_transcription_fuzzy(text, custom_words_list):
+    words = text.split()
+    fixed_words = []
+
+    for w in words:
+        match = difflib.get_close_matches(w, custom_words_list, n=1, cutoff=0.75)
+        if match:
+            fixed_words.append(match[0])
+        else:
+            fixed_words.append(w)
+
+    fixed_text = " ".join(fixed_words)
+
+    text_lower = fixed_text.lower()
+    for wrong, correct in CORRECTIONS.items():
+        text_lower = re.sub(rf"\b{re.escape(wrong)}\b", correct, text_lower)
+
+    return text_lower[:1].upper() + text_lower[1:]
+
 async def transcribe_audio_file(file: UploadFile) -> str:
     audio_bytes = await file.read()
 
@@ -65,22 +96,25 @@ async def transcribe_audio_file(file: UploadFile) -> str:
         convert_to_wav_mono16k(temp_audio_path, wav_path)
         clean_audio(wav_path, clean_path)
 
-        wf, sr = sf.read(clean_path, dtype="int16")
-        if sr != 16000:
-            raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {sr}")
+        wf = wave.open(clean_path, "rb")
+        try:
+            if wf.getframerate() != 16000:
+                raise ValueError(f"La tasa de muestreo debe ser 16kHz, pero es {wf.getframerate()}")
 
-        print("Preparando para cargar modelo Vosk...")
-        rec = KaldiRecognizer(get_model(), sr)
-        print("✅ Modelo Vosk listo")
-        rec.SetWords(True)
+            rec = KaldiRecognizer(get_model(), wf.getframerate(), json.dumps(custom_words))
+            rec.SetWords(True)
 
-        final_text = ""
-        step = 4000
-        for i in range(0, len(wf), step):
-            chunk_bytes = wf[i:i + step].tobytes()
-            if rec.AcceptWaveform(chunk_bytes):
-                result = json.loads(rec.Result())
-                final_text += result.get("text", "") + " "
+            while True:
+                data = wf.readframes(4000)
+                if len(data) == 0:
+                    break
+                rec.AcceptWaveform(data)
 
-        final_text += json.loads(rec.FinalResult()).get("text", "")
+            result = json.loads(rec.FinalResult())
+            final_text = result.get("text", "")
+        finally:
+            wf.close()
+
+        final_text = fix_transcription_fuzzy(final_text, custom_words["words"])
+
         return final_text.strip()

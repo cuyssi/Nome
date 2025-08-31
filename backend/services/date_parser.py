@@ -7,17 +7,21 @@
 
 from utils.normalize_text import normalize_text, insert_patterns
 from utils.helpers.datetime_helpers import detect_dates_in_text
-from utils.helpers.clean_text_helpers import clean_date_and_fragment, format_lists_with_commas
+from utils.helpers.clean_text_helpers import clean_date_and_fragment, remove_weekday_phrases, format_lists_with_commas
+import uuid
 
 def combine_date_and_time(text):
-    import uuid
-    print(f"[DATEPARSER] Call ID: {uuid.uuid4()}")
-
     text, sequence = normalize_text(text)
-    dt, data, time_fragment = detect_dates_in_text(text)
-    text = clean_date_and_fragment(text, time_fragment)
+    print(f"[COMBINE] normalize: {text}")
+    dt, data, time_fragment, day_fragment = detect_dates_in_text(text)
+    print(f"[COMBINE] detect dates: {text}")
+    text = clean_date_and_fragment(text, fragments=[time_fragment, day_fragment])
+    print(f"[COMBINE] clean fragment: {text}")
+    text = remove_weekday_phrases(text)
     text = insert_patterns(text, sequence)
+    print(f"[COMBINE] insert: {text}")
     text = format_lists_with_commas(text)
+    print(f"[COMBINE] comas: {text}")
 
     if dt is None:
         print(f"[DATEPARSER] No date detected in text: {text}")
