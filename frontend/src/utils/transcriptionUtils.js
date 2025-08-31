@@ -26,8 +26,8 @@ export const dateAndTime = (data) => {
         const day = formattedDate.getDate();
         const month = formattedDate.getMonth() + 1;
         const year = formattedDate.getFullYear();
-        const date = `${day}/${month}`; // formato actual
-        const dateWithYear = `${day}/${month}/${year}`; // para guardar con año
+        const date = `${day}/${month}`;
+        const dateWithYear = `${day}/${month}/${year}`;
 
         const hours = formattedDate.getHours();
         const mins = formattedDate.getMinutes();

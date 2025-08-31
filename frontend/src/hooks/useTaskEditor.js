@@ -23,7 +23,6 @@ export function useTaskEditor() {
         if (!updatedTask) return;
 
         if (updatedTask.id && selectedTask?.id) {
-            // ⚡ Conservar todos los campos existentes y sobrescribir con cambios
             const mergedTask = { ...selectedTask, ...updatedTask };
             const { id, ...updatedFields } = mergedTask;
             updateTask(id, updatedFields);

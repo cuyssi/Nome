@@ -1,11 +1,12 @@
 import { X } from "lucide-react";
 import { useTaskForm } from "../../hooks/useTaskForm";
 import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
+import { Button } from "./Button"
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 
-export function Form({ task, onClose, onSubmit }) {
+export const Form = ({ task, onClose, onSubmit }) => {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
 
     return (
@@ -14,9 +15,9 @@ export function Form({ task, onClose, onSubmit }) {
                 <p className="text-green-600 mb-3 font-semibold">✅ Changes saved successfully</p>
             )}
 
-            <button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-900 hover:text-red-700">
+            <Button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-900 hover:text-red-700">
                 <X className="w-8 h-8" />
-            </button>
+            </Button>
 
             <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-6 font-semibold">
                 <label>
@@ -43,9 +44,8 @@ export function Form({ task, onClose, onSubmit }) {
                 <label>
                     Hora:
                     <div className="flex justify-between px-4 items-center mt-2">
-                        {/* Hour */}
                         <div className="flex items-center border border-blue-400 rounded">
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() =>
                                     handleChange({
@@ -58,7 +58,7 @@ export function Form({ task, onClose, onSubmit }) {
                                 className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 +
-                            </button>
+                            </Button>
                             <input
                                 type="tel"
                                 name="hour"
@@ -69,7 +69,7 @@ export function Form({ task, onClose, onSubmit }) {
                                 }}
                                 className="text-center w-12 border-x border-blue-400 rounded  font-normal"
                             />
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() =>
                                     handleChange({
@@ -82,12 +82,11 @@ export function Form({ task, onClose, onSubmit }) {
                                 className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 –
-                            </button>
+                            </Button>
                         </div>
-
-                        {/* Minute */}
+                        
                         <div className="flex items-center justify-center border border-blue-400 rounded">
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() =>
                                     handleChange({
@@ -100,7 +99,7 @@ export function Form({ task, onClose, onSubmit }) {
                                 className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 +
-                            </button>
+                            </Button>
                             <input
                                 type="tel"
                                 name="minute"
@@ -111,7 +110,7 @@ export function Form({ task, onClose, onSubmit }) {
                                 }}
                                 className="text-center w-12 border-x border-blue-400 rounded font-normal"
                             />
-                            <button
+                            <Button
                                 type="button"
                                 onClick={() =>
                                     handleChange({
@@ -124,7 +123,7 @@ export function Form({ task, onClose, onSubmit }) {
                                 className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
                             >
                                 –
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </label>
@@ -161,9 +160,9 @@ export function Form({ task, onClose, onSubmit }) {
                     </select>
                 </label>
 
-                <button type="button" onClick={handleSubmit} className="bg-blue-600 text-white py-2 rounded mb-4">
+                <Button type="button" onClick={handleSubmit} className="bg-blue-600 text-white py-2 rounded mb-4">
                     Guardar cambios
-                </button>
+                </Button>
             </div>
         </form>
     );

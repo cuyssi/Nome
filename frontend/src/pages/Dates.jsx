@@ -3,6 +3,7 @@ import { Tasks_list } from "../components/task/Tasks_list";
 import { useTasks } from "../hooks/useTasks";
 import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTaskEditor } from "../hooks/useTaskEditor";
+import { Button } from "../components/commons/Button"
 
 const Dates = ({ type, exclude = false }) => {
     const [activeTab, setActiveTab] = useState("citas");
@@ -30,22 +31,22 @@ const Dates = ({ type, exclude = false }) => {
             </h2>
 
             <div className="w-full">
-                <button
+                <Button
                     onClick={() => setActiveTab("citas")}
                     className={`relative px-6 py-2 border border-purple-400 border-l-black rounded-tr-xl font-semibold transition ${
                         activeTab === "citas" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
                     }`}
                 >
                     Citas
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={() => setActiveTab("medico")}
                     className={`relative px-6 py-2 border border-purple-400 rounded-t-xl font-semibold transition ${
                         activeTab === "medico" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
                     }`}
                 >
                     Médicos
-                </button>
+                </Button>
             </div>
 
             <div

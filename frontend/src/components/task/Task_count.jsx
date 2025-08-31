@@ -26,7 +26,7 @@ const Task_count = ({ tasks = [] }) => {
 
                         <div className="w-full pl-2 pr-4">
                             <Container className="w-[100%] py-3">
-                                <Link to="./tasks" className="flex justify-center items-center gap-1 py-2">
+                                <Link to="./schedule" className="flex justify-center items-center gap-1 py-2">
                                     <CalendarDays className="w-7 text-white" />
                                     <p className="text-white font-poppins text-lg">Calendario</p>
                                 </Link>

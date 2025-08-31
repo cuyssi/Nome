@@ -3,9 +3,9 @@ export const useTaskType = () => {
         return text
             .toLowerCase()
             .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "") // elimina tildes
-            .replace(/\b(el|la|los|las|un|una|unos|unas|de|del|al)\b/g, "") // artículos
-            .replace(/\s+/g, " ") // espacios dobles
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\b(el|la|los|las|un|una|unos|unas|de|del|al)\b/g, "")
+            .replace(/\s+/g, " ")
             .trim();
     };
 

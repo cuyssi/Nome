@@ -19,6 +19,7 @@ import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTasks } from "../hooks/useTasks";
 import { useTaskEditor } from "../hooks/useTaskEditor";
 import { filterTasksSmart } from "../utils/taskFilter";
+import { Button } from "../components/commons/Button"
 
 const Task = ({ type, exclude }) => {
     const [activeTab, setActiveTab] = useState("deberes");
@@ -48,22 +49,22 @@ const Task = ({ type, exclude }) => {
             <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-14 mb-10">Tareas</h2>
 
             <div className="w-full">
-                <button
+                <Button
                     onClick={() => setActiveTab("deberes")}
                     className={`relative px-6 py-2 border border-purple-400 border-l-black rounded-tr-xl font-semibold transition ${
                         activeTab === "deberes" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
                     }`}
                 >
                     Deberes
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={() => setActiveTab("trabajo")}
                     className={`relative px-6 py-2 border border-purple-400 rounded-t-xl font-semibold transition ${
                         activeTab === "trabajo" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
                     }`}
                 >
                     Trabajos
-                </button>
+                </Button>
             </div>
 
             <div

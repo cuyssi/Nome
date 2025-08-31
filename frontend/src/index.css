@@ -7,27 +7,29 @@ html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* evita scroll que rompe h-full */
-
-  /* 🔮 Ajustes de tipografía para consistencia cross-browser */
-  font-family: "Inter", "Arial", sans-serif; /* pon la que uses */
-  -webkit-font-smoothing: antialiased; /* Chrome / Safari */
-  -moz-osx-font-smoothing: grayscale;  /* Firefox */
-  text-rendering: optimizeLegibility;  /* mejora kerning y ligaduras */
+  overflow: hidden; 
+  font-family: "Inter", "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
 .hide-scrollbar {
-  -ms-overflow-style: none;  /* IE y Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* 🔒 Asegura que el contenedor móvil no se deforme */
+
 .mobile-frame {
   max-width: 330px;
   width: 100%;
   height: 80%;
-  aspect-ratio: 9 / 16; /* típico formato móvil */
+  aspect-ratio: 9 / 16;
+}
+
+.fc-day-today {
+  background-color: rgba(172, 166, 166, 0.428) !important;
 }

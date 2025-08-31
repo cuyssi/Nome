@@ -1,4 +1,4 @@
-import Button from "../commons/Button";
+import { Button } from "../commons/Button";
 import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
 import { useTranscription } from "../../hooks/useTranscription";
@@ -32,7 +32,6 @@ const Voice_rec = ({ openModalWithTask }) => {
                     </Button>
                 </div>
                 <div className="relative w-full flex justify-end items-center px-4 mt-4">
-                    {/* Texto de estado */}
                     <p
                         className={`text-sm transition-opacity duration-500 ${
                             isProcessing ? "opacity-100 text-yellow-300 animate-pulse" : "opacity-0"
@@ -42,7 +41,6 @@ const Voice_rec = ({ openModalWithTask }) => {
                         Espera por favor, procesando audio...
                     </p>
 
-                    {/* Botón de añadir tarea */}
                     <div className="ml-4">
                         <div className="flex justify-center items-center w-10 h-10 sm:w-8 sm:h-8 p-[1.8px] bg-gradient-to-br from-yellow-400 to-purple-600 rounded-xl">
                             <Button

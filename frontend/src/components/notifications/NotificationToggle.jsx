@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { subscribeUser } from "../../hooks/usePushNotifications";
 import { Bell, BellOff } from "lucide-react";
+import { Button } from "../commons/Button"
 
 function NotificationToggle() {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -42,7 +43,7 @@ function NotificationToggle() {
 
   return (
     <div style={{ fontSize: "1.5rem" }} className="absolute top-0 right-0">
-      <button
+      <Button
         onClick={() => {
           if (navigator.vibrate) navigator.vibrate(150);
           handleToggle();
@@ -51,9 +52,8 @@ function NotificationToggle() {
         className="absolute top-6 right-6"
       >
         {isSubscribed ? <Bell className="text-green-500" /> : <BellOff className="text-red-500" />}
-      </button>
+      </Button>
 
-      {/* mensaje flotante */}
       {message && (
         <p className="absolute top-16 right-6 bg-white text-black px-3 py-1 rounded-lg shadow-md animate-fadeIn">
           {message}
