@@ -8,11 +8,11 @@
  └─────────────────────────────────────────────────────────────────────────────*/
 import axios from "axios";
 import { useState } from "react";
-import { sendAudioFile } from "../services/Task_services";
-import { getFormattedTasks, dateAndTime } from "../utils/transcriptionUtils";
-import { getTaskColor } from "./useTaskColor";
-import { useStorageStore } from "../store/storageStore";
-import { useTaskType } from "./useTaskType";
+import { sendAudioFile } from "../../services/Task_services";
+import { getFormattedTasks, dateAndTime } from "../../utils/transcriptionUtils";
+import { getTaskColor } from "../task/useTaskColor";
+import { useStorageStore } from "../../store/storageStore";
+import { useTaskType } from "../task/useTaskType";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);

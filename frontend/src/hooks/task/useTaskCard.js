@@ -1,5 +1,5 @@
-import { useSwipeActions } from "./useSwipeActions";
-import { getTaskColor } from "./useTaskColor";
+import { useSwipeActions } from "../commons/useSwipeActions";
+import { getTaskColor } from "../task/useTaskColor";
 
 export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
     const handleEditTask = () => onEdit?.(task);

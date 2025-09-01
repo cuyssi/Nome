@@ -4,7 +4,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { Button} from "./Button";
 import { Modal } from "./Modal";
 import { X, Trash2, Pencil } from "lucide-react";
-import { useCalendarTasks } from "../../hooks/useCalendarTasks";
+import { useCalendarTasks } from "../../hooks/calendar/useCalendarTasks";
 
 export const Calendar = ({ openModalWithTask }) => {
     const {

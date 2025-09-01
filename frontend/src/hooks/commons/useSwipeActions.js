@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useStorageStore } from "../store/storageStore";
+import { useStorageStore } from "../../store/storageStore";
 
 export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => {
     const [dragStartX, setDragStartX] = useState(null);

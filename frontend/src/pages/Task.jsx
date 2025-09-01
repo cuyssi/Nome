@@ -15,9 +15,9 @@
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { Modal } from "../components/commons/Modal";
-import { TaskModalManager } from "../components/task/TaskModalManager";
-import { useTasks } from "../hooks/useTasks";
-import { useTaskEditor } from "../hooks/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager"
+import { useTasks } from "../hooks/task/useTasks";
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { filterTasksSmart } from "../utils/taskFilter";
 import { Button } from "../components/commons/Button"
 

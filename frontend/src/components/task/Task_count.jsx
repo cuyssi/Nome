@@ -1,6 +1,6 @@
 import Container from "../commons/Container";
 import { Link } from "react-router-dom";
-import { useTasks } from "../../hooks/useTasks";
+import { useTasks } from "../../hooks/task/useTasks";
 
 import { NotebookPen, CalendarDays } from "lucide-react";
 
@@ -28,7 +28,7 @@ const Task_count = ({ tasks = [] }) => {
                             <Container className="w-[100%] py-3">
                                 <Link to="./schedule" className="flex justify-center items-center gap-1 py-2">
                                     <CalendarDays className="w-7 text-white" />
-                                    <p className="text-white font-poppins text-lg">Calendario</p>
+                                    <p className="text-white font-poppins text-lg">Horario</p>
                                 </Link>
                             </Container>
                         </div>

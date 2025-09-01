@@ -72,8 +72,9 @@ async def subscribe(request: Request):
     if device_id in scheduled_tasks:
         now = time.time()
         for task in scheduled_tasks[device_id]:
-            task_time = time.strptime(task["time"], "%Y-%m-%dT%H:%M:%S")
-            timestamp = time.mktime(task_time)
+            time_str = task["time"].split(".")[0]  # corta justo antes del "."
+            task_time = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
+            timestamp = task_time.timestamp()
             delay = timestamp - now - 15 * 60
             if delay > 0 and not task.get("rescheduled"):
                 cancelar_timer_existente(task)

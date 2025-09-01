@@ -1,8 +1,9 @@
 import { Calendar } from "../components/commons/Calendar";
-import { useTaskEditor } from "../hooks/useTaskEditor";
-import { TaskModalManager } from "../components/task/TaskModalManager";
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskSearch } from "../components/task/TaskSearch"
-const Schedule = () => {
+
+export const Calendar_page = () => {
   const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();
 
   return (
@@ -21,4 +22,3 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;

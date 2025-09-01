@@ -9,8 +9,10 @@ import Completed_tasks from "./pages/Completed_tasks";
 import Pending_tasks from "./pages/Pending_tasks";
 import Today_tasks from "./pages/Today_tasks";
 import { ensureDeviceId } from "./utils/ensureDeviceId"
-import { subscribeUser } from "./hooks/usePushNotifications";
-import Schedule from "./pages/Schedule";
+import { subscribeUser } from "./hooks/notification/usePushNotifications";
+import { Schedule_page } from "./pages/Schedule_page";
+import { Calendar_page } from "./pages/Calendar_page";
+import { Bags } from "./pages/Bags";
 import clsx from "clsx";
 
 function App() {
@@ -36,7 +38,9 @@ function App() {
                         <Route path="/today" element={<Today_tasks />} />
                         <Route path="/completed" element={<Completed_tasks />} />
                         <Route path="/pending" element={<Pending_tasks />} />
-                        <Route path="/schedule" element={<Schedule />} />
+                        <Route path="/calendar" element={<Calendar_page />} />
+                        <Route path="/schedule" element={<Schedule_page />} />
+                        <Route path="/bags" element={<Bags />} />
                     </Routes>
                 </main>
                 <Footer />

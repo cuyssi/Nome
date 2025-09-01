@@ -8,7 +8,7 @@
 
 import { Link } from "react-router-dom";
 import { Notebook, CalendarCheck, Home, Backpack } from "lucide-react";
-import useActivePath from "../../hooks/useActivePath.js";
+import useActivePath from "../../hooks/commons/useActivePath.js";
 
 export const Footer = () => {
     const { getIconClass } = useActivePath();
@@ -19,8 +19,8 @@ export const Footer = () => {
             <Link to="./dates">
                 <Notebook className={getIconClass("/dates")} />
             </Link>
-            <Link to="./schedule">
-                <CalendarCheck className={getIconClass("/schedule")} />
+            <Link to="./calendar">
+                <CalendarCheck className={getIconClass("/calendar")} />
             </Link>
             <Link to="./">
                 <Home className={getIconClass("/")} />

@@ -1,6 +1,6 @@
-import { useTasks } from "../hooks/useTasks";
-import { useTaskEditor } from "../hooks/useTaskEditor";
-import { TaskModalManager } from "../components/task/TaskModalManager";
+import { useTasks } from "../hooks/task/useTasks";
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskPageLayout } from "../components/task/TaskPageLayout";
 import { Tasks_list } from "../components/task/Tasks_list";
 

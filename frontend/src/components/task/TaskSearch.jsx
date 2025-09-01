@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTasks } from "../../hooks/useTasks";
+import { useTasks } from "../../hooks/task/useTasks";
 import { X, Trash2, Pencil } from "lucide-react";
 
 export const TaskSearch = ({ openModalWithTask }) => {

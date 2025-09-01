@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
-import beep_start from "./../assets/beep_start.mp3";
-import beep_end from "./../assets/beep_end.mp3";
+import beep_start from "../../assets/beep_start.mp3";
+import beep_end from "../../assets/beep_end.mp3";
 
 export const useVoiceRecorder = () => {
   const [recording, setRecording] = useState(false);

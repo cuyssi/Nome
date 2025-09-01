@@ -1,12 +1,12 @@
 import { X } from "lucide-react";
-import { useTaskForm } from "../../hooks/useTaskForm";
+import { useTaskForm } from "../../hooks/task/useTaskForm";
 import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
-import { Button } from "./Button"
+import { Button } from "../commons/Button"
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
 const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
 
-export const Form = ({ task, onClose, onSubmit }) => {
+export const Form_Task = ({ task, onClose, onSubmit }) => {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
 
     return (

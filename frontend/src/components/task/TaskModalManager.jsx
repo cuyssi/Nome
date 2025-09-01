@@ -1,5 +1,5 @@
 import { Modal } from "../commons/Modal";
-import { Form } from "../commons/Form";
+import { Form_Task } from "./Form_Task";
 
 export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdit, onClose }) => {
   return (
@@ -9,7 +9,7 @@ export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdi
           ✅ Cambios guardados con éxito
         </p>
       ) : (
-        <Form task={selectedTask} onSubmit={onEdit} onClose={onClose} />
+        <Form_Task task={selectedTask} onSubmit={onEdit} onClose={onClose} />
       )}
     </Modal>
   );

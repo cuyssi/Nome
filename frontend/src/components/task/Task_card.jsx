@@ -1,6 +1,6 @@
 import Container_task from "../commons/Container_task";
 import { Trash2, Pencil } from "lucide-react";
-import { useTaskCard } from "../../hooks/useTaskCard";
+import { useTaskCard } from "../../hooks/task/useTaskCard";
 import { useStorageStore } from "../../store/storageStore";
 
 export const Task_card = ({ task, onDelete, onEdit }) => {

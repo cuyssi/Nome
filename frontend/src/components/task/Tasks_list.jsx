@@ -8,7 +8,7 @@
  └─────────────────────────────────────────────────────────────────────────────*/
 
 import { Task_card } from "./Task_card";
-import { useTasks } from "../../hooks/useTasks";
+import { useTasks } from "../../hooks/task/useTasks";
 
 export const Tasks_list = ({ tasks = [], openModalWithTask, className = "" }) => {
     const { deleteTask } = useTasks();

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { subscribeUser } from "../../hooks/usePushNotifications";
+import { subscribeUser } from "../../hooks/notification/usePushNotifications";
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "../commons/Button"
 

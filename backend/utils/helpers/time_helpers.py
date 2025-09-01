@@ -12,9 +12,11 @@ def adjust_ambiguous_hour(dt: datetime, now: datetime):
     if dt.date() != now.date():
         return dt
 
-    if dt.hour < 12 and dt.hour + 12 > now.hour:
+    # Si la hora es ambigua (AM) y ya ha pasado hoy, convertirla a PM
+    if dt.hour < 12 and dt < now:
         dt = dt.replace(hour=dt.hour + 12)
 
+    print(f"[AMBIGUOUS] dt: {dt}")
     return dt
 
 

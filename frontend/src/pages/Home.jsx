@@ -10,8 +10,8 @@
 import Welcome from "../components/commons/Wellcome";
 import Voice_rec from "../components/audio/Voice_rec";
 import Task_count from "../components/task/Task_count";
-import { useTaskEditor } from "../hooks/useTaskEditor";
-import { TaskModalManager } from "../components/task/TaskModalManager";
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager"
 
 const Home = () => {
     const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();

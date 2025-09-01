@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
-import { useTasks } from "../hooks/useTasks";
-import { TaskModalManager } from "../components/task/TaskModalManager";
-import { useTaskEditor } from "../hooks/useTaskEditor";
+import { useTasks } from "../hooks/task/useTasks";
+import { TaskModalManager } from "../components/task/TaskModalManager"
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { Button } from "../components/commons/Button"
 
 const Dates = ({ type, exclude = false }) => {

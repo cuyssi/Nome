@@ -1,7 +1,7 @@
 import { Button } from "../commons/Button";
 import { Mic, SquarePen } from "lucide-react";
-import { useVoiceRecorder } from "../../hooks/useVoiceRecorder";
-import { useTranscription } from "../../hooks/useTranscription";
+import { useVoiceRecorder } from "../../hooks/audio/useVoiceRecorder";
+import { useTranscription } from "../../hooks/commons/useTranscription";
 import { useEffect } from "react";
 
 const Voice_rec = ({ openModalWithTask }) => {

@@ -1,8 +1,8 @@
 import { Tasks_list } from "../components/task/Tasks_list";
-import { useTasks } from "../hooks/useTasks";
+import { useTasks } from "../hooks/task/useTasks";
 import { useStorageStore } from "../store/storageStore";
-import { useTaskEditor } from "../hooks/useTaskEditor";
-import { TaskModalManager } from "../components/task/TaskModalManager";
+import { useTaskEditor } from "../hooks/task/useTaskEditor";
+import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskPageLayout } from "../components/task/TaskPageLayout";
 
 const Today_tasks = () => {
