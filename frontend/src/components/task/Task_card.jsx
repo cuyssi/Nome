@@ -1,4 +1,4 @@
-import Container_task from "../commons/Container_task";
+import { Container_Card } from "../commons/Container_Card";
 import { Trash2, Pencil } from "lucide-react";
 import { useTaskCard } from "../../hooks/task/useTaskCard";
 import { useStorageStore } from "../../store/storageStore";
@@ -58,7 +58,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                 }`}
                 style={{ transform: `translateX(${dragOffset}px)` }}
             >
-                <Container_task outerClass={`${color.bg}`} innerClass={`${color.border}`}>
+                <Container_Card outerClass={`${color.bg}`} innerClass={`${color.border}`}>
                     {task.date || task.time ? (
                         <div className="flex flex-1 flex-col border border-black border-r-gray-900 rounded-l-xl h-full w-full px-3 gap-1 justify-center text-center">
                             <p className="text-gray-400 font-semibold text-3xl">{task.date}</p>
@@ -74,7 +74,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                     >
                         {task.text}
                     </div>
-                </Container_task>
+                </Container_Card>
             </div>
         </div>
     );

@@ -7,7 +7,7 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-const Container = ({ children, outerClass = "", innerClass = "" }) => {
+export const Container_Card = ({ children, outerClass = "", innerClass = "" }) => {
     return (
         <div
             className={`flex w-[100%] justify-end items-center border border-black p-[1px] rounded-xl pl-2 ${outerClass} `}
@@ -21,4 +21,4 @@ const Container = ({ children, outerClass = "", innerClass = "" }) => {
     );
 };
 
-export default Container;
+

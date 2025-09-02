@@ -5,7 +5,7 @@ export const useScheduleStore = create(
   persist(
     (set, get) => ({
       dias: ["L", "M", "X", "J", "V"],
-      horas: ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25"],
+      horas: ["08:15", "09:10", "10:05","11:00", "11:30", "12:25"],
       asignaturas: {},
 
       addHora: (hora) =>
