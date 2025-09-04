@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useBagsStore } from "../../store/useBagsStore";
 import { Modal } from "../commons/Modal";
+import { Plus, X } from "lucide-react"
 
 const predefinedBags = [
   {
@@ -17,7 +18,7 @@ const predefinedBags = [
   },
   {
     name: "Piscina",
-    color: "cyan-400",
+    color: "orange-400",
     type: "personalizada",
     items: ["Gorro", "Bañador", "Toalla", "Sandalias"],
   },
@@ -55,17 +56,17 @@ export const CreateBagModal = ({ isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="bg-black border border-purple-400 rounded-xl p-6 w-[90%] max-w-md text-white shadow-lg">
-        <h2 className="text-2xl font-bold text-purple-400 mb-4 text-center">Crear nueva mochila</h2>
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+        <h2 className="text-2xl font-bold text-purple-600 mt-8 mb-6 text-center">Crear nueva mochila</h2>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-2">Mochilas sugeridas</h3>
+          <h3 className="text-lg text-gray-600 font-semibold mb-2">Mochilas sugeridas:</h3>
           <div className="flex flex-col gap-3">
             {predefinedBags.map((bag, i) => (
               <button
                 key={i}
                 onClick={() => handleAddPredefined(bag)}
-                className={`bg-${bag.color} text-white px-4 py-2 rounded-lg hover:opacity-80 transition`}
+                className={`bg-${bag.color} text-gray-600 px-4 py-2 rounded-lg hover:opacity-80 transition`}
               >
                 {bag.name}
               </button>
@@ -74,13 +75,13 @@ export const CreateBagModal = ({ isOpen, onClose }) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Personalizada</h3>
+          <h3 className="text-lg text-gray-600 font-semibold mb-2">Personalizada: </h3>
           <input
             type="text"
             placeholder="Nombre de la mochila"
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
-            className="w-full mb-2 px-3 py-2 rounded bg-gray-800 text-white"
+            className="w-full mb-2 px-3 py-2 rounded bg-gray-200 text-white"
           />
           <div className="flex gap-2 mb-2">
             <input
@@ -88,13 +89,13 @@ export const CreateBagModal = ({ isOpen, onClose }) => {
               placeholder="Añadir ítem"
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
-              className="flex-1 px-3 py-2 rounded bg-gray-800 text-white"
+              className="flex-1 px-3 py-2 rounded bg-gray-200 text-white"
             />
             <button
               onClick={handleAddCustomItem}
-              className="bg-purple-600 px-3 py-2 rounded hover:bg-purple-700"
+              className="bg-purple-500 px-3 py-2 rounded hover:bg-purple-500"
             >
-              ➕
+              <Plus className="inline mr-1" />
             </button>
           </div>
           <ul className="list-disc list-inside text-sm text-purple-300 mb-4">
@@ -104,7 +105,7 @@ export const CreateBagModal = ({ isOpen, onClose }) => {
           </ul>
           <button
             onClick={handleCreateCustomBag}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition w-full"
+            className="mt-6 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition w-full"
           >
             Crear mochila personalizada
           </button>
@@ -114,7 +115,7 @@ export const CreateBagModal = ({ isOpen, onClose }) => {
           onClick={onClose}
           className="absolute top-4 right-4 text-red-400 hover:text-red-700"
         >
-          ✖
+          <X className="w-8 h-8" />
         </button>
       </div>
     </Modal>

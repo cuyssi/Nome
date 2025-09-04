@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Modal } from "../commons/Modal";
+import { X, Trash2 } from "lucide-react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
 
 export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
@@ -39,19 +40,18 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
+    <Modal isOpen={isOpen}>
+      <div className="bg-white relative bg-white rounded-xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto hide-scrollbar">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-black"
         >
-          <X size={24} />
+          <X className="w-8 h-8 text-red-400" />
         </button>
 
-        <h2 className="text-xl font-bold mb-4">Editar Mochila</h2>
+        <h2 className="text-xl text-center text-purple-600 font-bold mt-4 mb-4">Editar Mochila</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nombre */}
           <div>
             <label className="block font-semibold mb-1">Nombre</label>
             <input
@@ -63,16 +63,15 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
             />
           </div>
 
-          {/* Color */}
           <div>
             <label className="block font-semibold mb-1">Color</label>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-1 justify-between flex-wrap mt-2">
               {AVAILABLE_COLORS.map((color) => (
                 <button
                   key={color.value}
                   type="button"
                   onClick={() => setSelectedColor(color.value)}
-                  className={`w-8 h-8 rounded-full border-4 ${
+                  className={`w-8 h-8 rounded-full border-2 ${
                     selectedColor === color.value ? "border-black" : "border-transparent"
                   } bg-${color.value}`}
                   title={color.label}
@@ -100,7 +99,7 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
                     onClick={() => handleRemoveItem(index)}
                     className="text-red-500 hover:text-red-700"
                   >
-                    <X size={20} />
+                    <Trash2 size={20} />
                   </button>
                 </div>
               ))}
@@ -116,21 +115,14 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
 
           <div className="flex justify-end gap-2 pt-4">
             <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-md border border-gray-300 hover:bg-gray-100"
-            >
-              Cancelar
-            </button>
-            <button
               type="submit"
-              className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+              className="px-4 py-2 w-full rounded-md bg-purple-600 text-white hover:bg-purple-900"
             >
               Guardar
             </button>
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 };

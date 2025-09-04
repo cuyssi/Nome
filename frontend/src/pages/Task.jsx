@@ -74,7 +74,7 @@ const Task = ({ type, exclude }) => {
             >
                 <Tasks_list key={renderKey} tasks={filteredTasks} openModalWithTask={openModalWithTask} />
             </div>
-
+                
             <TaskModalManager
                 isOpen={isOpen}
                 selectedTask={selectedTask}

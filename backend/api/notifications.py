@@ -23,13 +23,13 @@
 
 import os
 import json
-import time
 import threading
+from datetime import datetime
 from fastapi import APIRouter, Request, HTTPException
 from pywebpush import webpush, WebPushException
+from typing import Dict, Union, cast
 from dotenv import load_dotenv
-from typing import Dict, cast, Union
-from datetime import datetime
+from pathlib import Path
 
 load_dotenv()
 router = APIRouter()
@@ -38,10 +38,34 @@ VAPID_PUBLIC_KEY = os.getenv("VAPID_PUBLIC_KEY")
 VAPID_PRIVATE_KEY = os.getenv("VAPID_PRIVATE_KEY")
 VAPID_CLAIMS = {"sub": "mailto:cuyssi@hotmail.com"}
 
-active_timers = []  # 🧹 Lista global para guardar los timers activos
-subscriptions: Dict[str, Dict] = {}
-scheduled_tasks: Dict[str, list] = {}
+JSON_FILE = Path(__file__).parent / "subscriptions.json"
+if not JSON_FILE.exists():
+    with open(JSON_FILE, "w") as f:
+        json.dump({"subscriptions": {}, "scheduled_tasks": {}}, f, indent=2)
+
+def load_data():
+    with open(JSON_FILE, "r") as f:
+        return json.load(f)
+
+def save_data():
+    """Guarda en JSON eliminando timers y flags internos para que sea serializable."""
+    clean_scheduled_tasks = {}
+    for device_id, tasks in scheduled_tasks.items():
+        clean_scheduled_tasks[device_id] = []
+        for t in tasks:
+            t_copy = t.copy()
+            t_copy.pop("timer", None)
+            t_copy.pop("rescheduled", None)
+            clean_scheduled_tasks[device_id].append(t_copy)
+    with open(JSON_FILE, "w") as f:
+        json.dump({"subscriptions": subscriptions, "scheduled_tasks": clean_scheduled_tasks}, f, indent=2)
+
+data = load_data()
+subscriptions: Dict[str, Dict] = data.get("subscriptions", {})
+scheduled_tasks: Dict[str, list] = data.get("scheduled_tasks", {})
+active_timers = []
 task_lock = threading.Lock()
+MAX_DELAY = 60 * 60 * 24 * 30
 
 @router.get("/vapid-public-key")
 def get_vapid_public_key():
@@ -56,56 +80,6 @@ def cancelar_timer_existente(task):
                 active_timers.remove(timer)
                 print(f"🧹 Timer cancelado para tarea '{t['title']}' del dispositivo {t['deviceId']}")
                 break
-
-@router.post("/subscribe")
-async def subscribe(request: Request):
-    body = await request.json()
-    device_id = body.get("deviceId")
-    subscription = body.get("subscription")
-
-    if not device_id or not subscription:
-        raise HTTPException(status_code=400, detail="Faltan deviceId o subscription")
-
-    subscriptions[device_id] = subscription
-
-    # Reprogramar tareas pendientes
-    if device_id in scheduled_tasks:
-        now = time.time()
-        for task in scheduled_tasks[device_id]:
-            time_str = task["time"].split(".")[0]  # corta justo antes del "."
-            task_time = datetime.strptime(time_str, "%Y-%m-%dT%H:%M:%S")
-            timestamp = task_time.timestamp()
-            delay = timestamp - now - 15 * 60
-            if delay > 0 and not task.get("rescheduled"):
-                cancelar_timer_existente(task)
-
-                def run_notification():
-                    notify_device(task.copy())
-
-                timer = threading.Timer(delay, run_notification)
-                task["timer"] = timer
-                timer.start()
-                task["rescheduled"] = True
-                active_timers.append(timer)
-                print(f"🔄 Tarea reprogramada para deviceId {device_id}")
-
-    print(f"📬 Suscripción registrada para deviceId: {device_id}")
-    return {"status": "subscribed"}
-
-@router.post("/unsubscribe")
-async def unsubscribe(request: Request):
-    body = await request.json()
-    endpoint = body.get("endpoint")
-
-    if not endpoint:
-        raise HTTPException(status_code=400, detail="Endpoint no proporcionado")
-
-    to_remove = [k for k, v in subscriptions.items() if v.get("endpoint") == endpoint]
-    for k in to_remove:
-        del subscriptions[k]
-
-    print(f"🗑️ Suscripción eliminada: {endpoint}")
-    return {"status": "unsubscribed"}
 
 def send_push_notification(subscription, payload):
     try:
@@ -123,53 +97,36 @@ def send_push_notification(subscription, payload):
 
 def notify_device(task):
     with task_lock:
-        try:
-            device_id = task.get("deviceId")
-            subscription = subscriptions.get(device_id)
-
-            if not subscription:
-                print(f"⚠️ No hay suscripción para deviceId: {device_id}")
-                return
-
-            payload = {
-                "title": "⏰ Recordatorio de tarea",
-                "body": f'Tu tarea \"{task["title"]}\" es en 15 minutos',
-            }
-
-            send_push_notification(subscription, payload)
-
-            # Eliminar tarea ejecutada
-            if device_id in scheduled_tasks:
-                scheduled_tasks[device_id] = [
-                    t for t in scheduled_tasks[device_id]
-                    if not (t["title"] == task["title"] and t["time"] == task["time"])
-                ]
-        except Exception as e:
-            print("🔥 Error en notify_device:", repr(e))
-
-MAX_DELAY = 60 * 60 * 24 * 30  # 30 días en segundos
+        device_id = task.get("deviceId")
+        subscription = subscriptions.get(device_id)
+        if not subscription:
+            print(f"⚠️ No hay suscripción para deviceId: {device_id}")
+            return
+        payload = {
+            "title": "⏰ Recordatorio de tarea",
+            "body": f'Tu tarea "{task["title"]}" es en 15 minutos',
+        }
+        send_push_notification(subscription, payload)
+        if device_id in scheduled_tasks:
+            scheduled_tasks[device_id] = [
+                t for t in scheduled_tasks[device_id]
+                if not (t["title"] == task["title"] and t["time"] == task["time"])
+            ]
+            save_data()
 
 def calcular_delay(task_time_str):
-    # quitar microsegundos si los hay
     if "." in task_time_str:
         task_time_str = task_time_str.split(".")[0]
-
     task_time = datetime.strptime(task_time_str, "%Y-%m-%dT%H:%M:%S")
-    now = datetime.now()
-    delay = (task_time - now).total_seconds() - 15 * 60
-
+    delay = (task_time - datetime.now()).total_seconds() - 15 * 60
     if delay > MAX_DELAY:
-        print(f"⚠️ Delay demasiado largo ({delay}s), se limita a {MAX_DELAY}s")
         delay = MAX_DELAY
-
     return max(delay, 1)
-
 
 def schedule_notification(task):
     device_id = task.get("deviceId")
     if not device_id:
         return
-
     if device_id not in scheduled_tasks:
         scheduled_tasks[device_id] = []
 
@@ -179,28 +136,77 @@ def schedule_notification(task):
             return
 
     scheduled_tasks[device_id].append(task)
+    save_data()
 
     delay = calcular_delay(task["time"])
     timer = threading.Timer(delay, notify_device, args=[task])
     active_timers.append(timer)
     timer.start()
 
+def reprogram_all_tasks():
+    """Reprograma todas las tareas de dispositivos suscritos al iniciar backend"""
+    for device_id, tasks in scheduled_tasks.items():
+        if device_id not in subscriptions:
+            continue
+        for task in tasks:
+            delay = calcular_delay(task["time"])
+            if delay > 0:
+                timer = threading.Timer(delay, notify_device, args=[task])
+                timer.start()
+                active_timers.append(timer)
+                task["timer"] = timer
+                print(f"🔄 Reprogramada tarea '{task['title']}' para deviceId {device_id}")
+
+@router.post("/subscribe")
+async def subscribe(request: Request):
+    body = await request.json()
+    device_id = body.get("deviceId")
+    subscription = body.get("subscription")
+    if not device_id or not subscription:
+        raise HTTPException(status_code=400, detail="Faltan deviceId o subscription")
+    subscriptions[device_id] = subscription
+    save_data()
+
+    if device_id in scheduled_tasks:
+        for task in scheduled_tasks[device_id]:
+            delay = calcular_delay(task["time"])
+            if delay > 0 and not task.get("rescheduled"):
+                cancelar_timer_existente(task)
+                timer = threading.Timer(delay, notify_device, args=[task])
+                timer.start()
+                task["timer"] = timer
+                task["rescheduled"] = True
+                active_timers.append(timer)
+                print(f"🔄 Tarea reprogramada para deviceId {device_id}")
+
+    print(f"📬 Suscripción registrada para deviceId: {device_id}")
+    return {"status": "subscribed"}
+
+@router.post("/unsubscribe")
+async def unsubscribe(request: Request):
+    body = await request.json()
+    endpoint = body.get("endpoint")
+    if not endpoint:
+        raise HTTPException(status_code=400, detail="Endpoint no proporcionado")
+    to_remove = [k for k, v in subscriptions.items() if v.get("endpoint") == endpoint]
+    for k in to_remove:
+        del subscriptions[k]
+    save_data()
+    print(f"🗑️ Suscripción eliminada: {endpoint}")
+    return {"status": "unsubscribed"}
+
 @router.post("/schedule-task")
 async def schedule_task(request: Request):
     task = await request.json()
-
     if "text" not in task or "dateTime" not in task:
         raise HTTPException(status_code=400, detail="Faltan text o dateTime")
-
     device_id = task.get("deviceId")
     if not device_id:
         raise HTTPException(status_code=400, detail="Falta deviceId")
-
     task_data = {
         "title": task["text"],
         "time": task["dateTime"],
         "deviceId": device_id
     }
-
     schedule_notification(task_data)
     return {"status": "scheduled"}

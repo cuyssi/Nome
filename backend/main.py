@@ -1,10 +1,11 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Archivo principal de la aplicación FastAPI para procesamiento de audio y notificaciones.
+# Archivo principal de la aplicación FastAPI
 # - Configura CORS según variables de entorno.
 # - Incluye routers:
 #     • /transcribe/ para transcripción de audio.
 #     • /notifications/ para gestionar notificaciones push.
-# - Gestiona el cierre limpio del servidor cancelando timers activos.
+# - Reprograma automáticamente todas las tareas pendientes al iniciar
+# - Cancela timers activos al cerrar el servidor
 # ──────────────────────────────────────────────────────────────────────────────
 
 import os
@@ -13,13 +14,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from api.transcribe import router as transcribe_router
-from api.notifications import router as notifications_router, active_timers
+from api.notifications import (
+    router as notifications_router,
+    active_timers,
+    reprogram_all_tasks,
+)
 
 load_dotenv()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
+    reprogram_all_tasks()
     yield
+
     for timer in active_timers:
         if timer.is_alive():
             timer.cancel()
