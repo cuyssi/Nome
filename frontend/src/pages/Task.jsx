@@ -15,15 +15,20 @@
 import { useState, useEffect } from "react";
 import { Tasks_list } from "../components/task/Tasks_list";
 import { Modal } from "../components/commons/Modal";
-import { TaskModalManager } from "../components/task/TaskModalManager"
+import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTasks } from "../hooks/task/useTasks";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { filterTasksSmart } from "../utils/taskFilter";
-import { Button } from "../components/commons/Button"
+import { Button } from "../components/commons/Button";
 
 const Task = ({ type, exclude }) => {
     const [activeTab, setActiveTab] = useState("deberes");
     const { tasks, reload } = useTasks(type, exclude);
+    const trabajoTypes = "trabajo";
+    const deberesTypes = ["deberes", "ejercicios", "estudiar"];
+    const filteredTasks =
+        activeTab === "trabajo" ? filterTasksSmart(tasks, trabajoTypes) : filterTasksSmart(tasks, deberesTypes);
+
     const {
         isOpen,
         selectedTask,
@@ -37,12 +42,6 @@ const Task = ({ type, exclude }) => {
     useEffect(() => {
         reload();
     }, []);
-
-    const deberesTypes = ["deberes", "ejercicios", "estudiar"];
-    const trabajoTypes = "trabajo";
-
-    const filteredTasks =
-        activeTab === "trabajo" ? filterTasksSmart(tasks, trabajoTypes) : filterTasksSmart(tasks, deberesTypes);
 
     return (
         <div className="flex flex-col h-full items-center overflow-hidden">
@@ -74,7 +73,7 @@ const Task = ({ type, exclude }) => {
             >
                 <Tasks_list key={renderKey} tasks={filteredTasks} openModalWithTask={openModalWithTask} />
             </div>
-                
+
             <TaskModalManager
                 isOpen={isOpen}
                 selectedTask={selectedTask}

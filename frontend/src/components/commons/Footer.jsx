@@ -15,8 +15,7 @@ export const Footer = () => {
 
     return (
         <div className="h-[56px] w-full bg-black flex justify-between items-center px-4 border border-black">
-
-            <Link to="./dates">
+            <Link to="./dates">                
                 <Notebook className={getIconClass("/dates")} />
             </Link>
             <Link to="./calendar">
@@ -31,5 +30,3 @@ export const Footer = () => {
         </div>
     );
 };
-
-

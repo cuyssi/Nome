@@ -9,7 +9,7 @@ export const AVAILABLE_COLORS = [
     { value: "orange-400", label: "Naranja" },
     { value: "gray-300", label: "Gris" },
     { value: "green-400", label: "Verde" },
-    { value: "brown-400", label: "Marrón" },
-    { value: "cyan-400", label: "Cian" },
-    { value: "teal-400", label: "Verde azulado" },
+    { value: "stone-600", label: "Marrón" },
+    { value: "cyan-600", label: "Cian" },
+    { value: "teal-400", label: "Verde azulado" },    
 ];

@@ -4,51 +4,51 @@ import { persist } from "zustand/middleware";
 export const useScheduleStore = create(
   persist(
     (set, get) => ({
-      dias: ["L", "M", "X", "J", "V"],
-      horas: ["08:15", "09:10", "10:05","11:00", "11:30", "12:25"],
-      asignaturas: {},
+      days: ["L", "M", "X", "J", "V"],
+      hours: ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"],
+      subjects: {},
 
-      addHora: (hora) =>
+      addHour: (hour) =>
         set((state) => ({
-          horas: [...state.horas, hora].sort((a, b) => {
+          hours: [...state.hours, hour].sort((a, b) => {
             const [h1, m1] = a.split(":").map(Number);
             const [h2, m2] = b.split(":").map(Number);
             return h1 - h2 || m1 - m2;
           }),
         })),
 
-      removeHora: (hora) =>
+      removeHour: (hour) =>
         set((state) => {
-          const asignaturas = { ...state.asignaturas };
-          state.dias.forEach((dia) => delete asignaturas[`${dia}-${hora}`]);
+          const subjects = { ...state.subjects };
+          state.days.forEach((day) => delete subjects[`${day}-${hour}`]);
           return {
-            horas: state.horas.filter((h) => h !== hora),
-            asignaturas,
+            hours: state.hours.filter((h) => h !== hour),
+            subjects,
           };
         }),
 
-      setAsignatura: (dia, hora, nombre, color) =>
+      setSubject: (day, hour, name, color) =>
         set((state) => ({
-          asignaturas: {
-            ...state.asignaturas,
-            [`${dia}-${hora}`]: { nombre, color },
+          subjects: {
+            ...state.subjects,
+            [`${day}-${hour}`]: { name, color },
           },
         })),
 
-      setHora: (oldHora, newHora) =>
+      updateHour: (oldHour, newHour) =>
         set((state) => {
-          const horas = state.horas.map((h) => (h === oldHora ? newHora : h));
-          const asignaturas = {};
-          Object.entries(state.asignaturas).forEach(([key, value]) => {
-            const [dia, hora] = key.split("-");
-            const nuevaHora = hora === oldHora ? newHora : hora;
-            asignaturas[`${dia}-${nuevaHora}`] = value;
+          const hours = state.hours.map((h) => (h === oldHour ? newHour : h));
+          const subjects = {};
+          Object.entries(state.subjects).forEach(([key, value]) => {
+            const [day, hour] = key.split("-");
+            const updatedHour = hour === oldHour ? newHour : hour;
+            subjects[`${day}-${updatedHour}`] = value;
           });
-          return { horas, asignaturas };
+          return { hours, subjects };
         }),
     }),
     {
-      name: "horario-storage",
+      name: "schedule-storage",
     }
   )
 );

@@ -27,6 +27,8 @@ export function useTaskForm(task, onSubmit, onClose) {
         minute: "00",
         color: "red-400",
         type: "homework",
+        repeat: "once",
+        customDays: [],
     });
 
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -41,6 +43,8 @@ export function useTaskForm(task, onSubmit, onClose) {
                 minute: m,
                 color: task.color || "red-400",
                 type: task.type || "homework",
+                repeat: task.repeat || "once",
+                customDays: task.customDays || [],
             });
         }
     }, [task]);
@@ -72,10 +76,11 @@ export function useTaskForm(task, onSubmit, onClose) {
                   color: formData.color,
                   type: formData.type,
                   dateTime,
+                  repeat: formData.repeat,
+                  customDays: formData.customDays,
               }
             : {
-                  id: uuidv4(),
-                  completed: false,
+                  id: uuidv4(),                  
                   text: formData.text,
                   text_raw: formData.text,
                   date: normalizeDate(formData.date),
@@ -83,6 +88,8 @@ export function useTaskForm(task, onSubmit, onClose) {
                   color: formData.color,
                   type: formData.type,
                   dateTime,
+                  repeat: formData.repeat,
+                  customDays: formData.customDays,
               };
 
         onSubmit(finalTask);

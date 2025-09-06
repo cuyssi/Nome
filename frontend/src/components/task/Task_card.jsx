@@ -2,15 +2,22 @@ import { Container_Card } from "../commons/Container_Card";
 import { Trash2, Pencil } from "lucide-react";
 import { useTaskCard } from "../../hooks/task/useTaskCard";
 import { useStorageStore } from "../../store/storageStore";
+import { toLocalYMD } from "../../utils/toLocalYMD";
+import { getRepeatLabel } from "../../utils/getRepeatLabel"
 
 export const Task_card = ({ task, onDelete, onEdit }) => {
+    const isCompleted = useStorageStore.getState().isTaskCompletedForDate(task.id, toLocalYMD(new Date()));
     const { markAsCompleted } = useStorageStore();
     const {
         gestureHandlers,
         state: { dragOffset, isRemoving },
         color,
+        
     } = useTaskCard(task, onDelete, onEdit, markAsCompleted);
 
+
+
+    
     return (
         <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
             <div
@@ -39,7 +46,6 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                     <p className="text-white"> ¿Editar?</p>
                 </div>
             </div>
-
             <div
                 onTouchStart={gestureHandlers.handleTouchStart}
                 onTouchMove={gestureHandlers.handleTouchMove}
@@ -59,15 +65,15 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                 style={{ transform: `translateX(${dragOffset}px)` }}
             >
                 <Container_Card outerClass={`${color.bg}`} innerClass={`${color.border}`}>
-                    {task.date || task.time ? (
+                    {(task.date || task.hour) && (
                         <div className="flex flex-1 flex-col border border-black border-r-gray-900 rounded-l-xl h-full w-full px-3 gap-1 justify-center text-center">
-                            <p className="text-gray-400 font-semibold text-3xl">{task.date}</p>
+                            <p className="text-gray-400 font-semibold text-3xl flex justify-center">{getRepeatLabel(task)}</p>
                             <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
                         </div>
-                    ) : null}
+                    )}
                     <div
                         className={`flex flex-2 text-center justify-center items-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
-                            task.completed
+                            isCompleted
                                 ? "line-through text-white decoration-4 decoration-red-400 scale-[0.97]"
                                 : "text-white"
                         }`}

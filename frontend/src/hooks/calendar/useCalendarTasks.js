@@ -1,46 +1,55 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useStorageStore } from "../../store/storageStore";
+import { toLocalYMD } from "../../utils/toLocalYMD";
 
 export const useCalendarTasks = () => {
-  const tasks = useStorageStore((state) => state.tasks);
-  const deleteTask = useStorageStore((state) => state.deleteTask);
+    const tasks = useStorageStore((state) => state.tasks);
+    const deleteTask = useStorageStore((state) => state.deleteTask);
+    const toggleCompletedForDate = useStorageStore((state) => state.toggleCompletedToday);
+    const isTaskCompletedForDate = useStorageStore((state) => state.isTaskCompletedForDate);
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const tasksByDate = tasks.reduce((acc, task) => {
-    const date = new Date(task.dateTime);
-    const localDate = date.toLocaleDateString("sv-SE");
-    if (!acc[localDate]) acc[localDate] = [];
-    acc[localDate].push(task);
-    return acc;
-  }, {});
+    const getTasksForDate = (date) => {
+        const dateStr = toLocalYMD(date);
+        const day = date.getDay();
 
-  const selectedDateTasks = selectedDate ? tasksByDate[selectedDate] || [] : [];
+        return tasks.filter((task) => {
+            const taskDate = new Date(task.dateTime);
 
-  const handleDateClick = (info) => {
-    const localDate = info.date.toLocaleDateString("sv-SE");
-    setSelectedDate(localDate);
-    setIsModalOpen(true);
-  };
+            if (task.repeat === "once") return toLocalYMD(taskDate) === dateStr;
+            if (task.repeat === "daily") return true;
+            if (task.repeat === "weekdays") return day >= 1 && day <= 5;
+            if (task.repeat === "custom") {
+                const customIndex = day === 0 ? 6 : day - 1;
+                return task.customDays?.includes(customIndex);
+            }
 
-  const handleDeleteTask = (id) => {
-    deleteTask(id);
-    if (selectedDate) {      
-      const updated = (tasksByDate[selectedDate] || []).filter((t) => t.id !== id);
-      tasksByDate[selectedDate] = updated;
-    }
-  };
+            return false;
+        });
+    };
 
-  const toLocalYMD = (date) => date.toLocaleDateString("sv-SE");
+    const selectedDateTasks = useMemo(() => {
+        return selectedDate ? getTasksForDate(new Date(selectedDate)) : [];
+    }, [selectedDate, tasks]);
 
-  return {
-    tasksByDate,
-    selectedDateTasks,
-    isModalOpen,
-    setIsModalOpen,
-    handleDateClick,
-    handleDeleteTask,
-    toLocalYMD,
-  };
+    const handleDateClick = (info) => {
+        setSelectedDate(toLocalYMD(info.date));
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteTask = (id) => deleteTask(id);
+
+    return {
+        tasksByDate: getTasksForDate,
+        selectedDateTasks,
+        isModalOpen,
+        setIsModalOpen,
+        handleDateClick,
+        handleDeleteTask,
+        selectedDate,
+        toggleCompletedForDate,
+        isTaskCompletedForDate,
+    };
 };

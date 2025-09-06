@@ -1,14 +1,14 @@
 import { Item_List } from "../components/commons/Item_List";
-import { useBagEditor } from "../hooks/bag/useBagEditor";
+import { useBagModalManager } from "../hooks/bag/useBagModalManager";
 import { BagModalManager } from "../components/bags/BagModalManager";
 import { useBagsStore } from "../store/useBagsStore";
 import { Bag_card } from "../components/bags/Bag_card";
-import { CreateBagModal } from "../components/bags/CreateBagModal";
+// import { CreateBag } from "../components/bags/CreateBag";
 import { useState } from "react";
 
 export const Bags = () => {
-    const { isOpen, selectedBag, openModalWithBag, handleEdit, handleClose, renderKey, showConfirmation, deleteBag } =
-        useBagEditor();
+    const { isOpen, selectedBag, openModalWithBag, handleEdit, handleClose, showConfirmation, deleteBag, mode } =
+        useBagModalManager();
     const { bags } = useBagsStore();
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
@@ -22,24 +22,25 @@ export const Bags = () => {
                         key={bag.id}
                         bag={bag}
                         onDelete={() => deleteBag(bag.id)}
-                        onEdit={() => openModalWithBag(bag)}
+                        onOpenModal={(bag, mode) => openModalWithBag(bag, mode)}
                     />
                 )}
             />
             <button
-                onClick={() => setIsCreateModalOpen(true)}
+                onClick={() => openModalWithBag(null, "create")}
                 className="bg-purple-400 text-white px-4 py-2 rounded-lg mb-6 hover:bg-purple-700 transition"
             >
                 ➕ Crear mochila
             </button>
             <BagModalManager
                 isOpen={isOpen}
-                selectedBag={selectedBag}
+                selected={selectedBag}
                 showConfirmation={showConfirmation}
                 onEdit={handleEdit}
                 onClose={handleClose}
+                mode={mode}
             />
-            <CreateBagModal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
+            {/* <CreateBag isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} /> */}
         </div>
     );
 };

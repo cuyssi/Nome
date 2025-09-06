@@ -1,16 +1,27 @@
-import React from "react";
 import { Modal } from "../commons/Modal";
-import { Form_Bag } from "./Form_Bag";
-import { useBagEditor } from "../../hooks/bag/useBagEditor";
+import { CreateBag } from "./CreateBag";
+import { EditBag } from "./EditBag";
+import { BagItems } from "./BagItems";
+import { TomorrowSubjects } from "./TomorrowSubjects";
 
-export const BagModalManager = () => {
-    const { isOpen, selectedBag, handleEdit, handleClose, showConfirmation } = useBagEditor();
+export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, onClose, mode }) => {
+    if (!isOpen) return null;
 
     return (
-        <Modal open={isOpen} onClose={handleClose}>
-            {showConfirmation && <div className="confirmation-toast">✅ Mochila actualizada</div>}
-            <h2>Editar Mochila</h2>
-            {selectedBag && <Form_Bag initialData={selectedBag} onSubmit={handleEdit} onCancel={handleClose} />}
+        <Modal isOpen={isOpen}>
+            {showConfirmation ? (
+                <p className="text-green-500 text-center font-semibold animate-fadeIn">
+                    ✅ Cambios guardados con éxito
+                </p>
+            ) : mode === "create" ? (
+                <CreateBag onClose={onClose} onSubmit={(newBag) => {onEdit(newBag)}} />
+            ) : mode === "edit" ? (
+                <EditBag bag={selected} onUpdateBag={onEdit} onClose={onClose} />
+            ) : mode === "items" ? (
+                <BagItems bag={selected} onClose={onClose} onUpdateBag={onEdit} />
+            ) : mode === "school" ? (
+                <TomorrowSubjects bag={selected} onClose={onClose} onUpdateBag={onEdit} />
+            ) : null}
         </Modal>
     );
 };

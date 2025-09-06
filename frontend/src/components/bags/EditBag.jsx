@@ -1,47 +1,24 @@
-import { useState, useEffect } from "react";
-import { Modal } from "../commons/Modal";
 import { X, Trash2 } from "lucide-react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
+import { useBagEditor } from "../../hooks/bag/useBagEditor"
 
-export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
-  const [name, setName] = useState("");
-  const [items, setItems] = useState([]);
-  const [selectedColor, setSelectedColor] = useState(AVAILABLE_COLORS[0].value);
-
-  useEffect(() => {
-    if (bag) {
-      setName(bag.name || "");
-      setItems(Array.isArray(bag.items) ? bag.items : []);
-      setSelectedColor(bag.color || AVAILABLE_COLORS[0].value);
-    }
-  }, [bag]);
-
-  const handleItemChange = (index, value) => {
-    const updated = [...items];
-    updated[index] = value;
-    setItems(updated);
-  };
-
-  const handleAddItem = () => setItems([...items, ""]);
-  const handleRemoveItem = (index) => setItems(items.filter((_, i) => i !== index));
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedBag = {
-      ...bag,
-      name,
-      items,
-      color: selectedColor,
-    };
-    onUpdateBag(updatedBag);
-    onClose();
-  };
-
-  if (!isOpen) return null;
+export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
+  const {
+    handleItemChange,
+    handleAddItem,
+    handleRemoveItem,
+    handleSubmit,
+    name,
+    setName,
+    items,    
+    selectedColor,
+    setSelectedColor
+  } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
 
   return (
-    <Modal isOpen={isOpen}>
-      <div className="bg-white relative bg-white rounded-xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto hide-scrollbar">
+    <div className="space-y-4">
+        
+      <div className="relative bg-white rounded-xl p-5 max-w-md w-full max-h-[80vh] overflow-y-auto hide-scrollbar">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-black"
@@ -65,22 +42,19 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
 
           <div>
             <label className="block font-semibold mb-1">Color</label>
-            <div className="flex gap-1 justify-between flex-wrap mt-2">
+            <div className="flex gap-1 flex-wrap mt-2">
               {AVAILABLE_COLORS.map((color) => (
                 <button
                   key={color.value}
                   type="button"
                   onClick={() => setSelectedColor(color.value)}
                   className={`w-8 h-8 rounded-full border-2 ${
-                    selectedColor === color.value ? "border-black" : "border-transparent"
+                    selectedColor === color.value ? "border-gray-500 border-4" : "border-transparent"
                   } bg-${color.value}`}
                   title={color.label}
                 />
               ))}
-            </div>
-            <p className="text-sm text-gray-600 mt-1">
-              Color seleccionado: {AVAILABLE_COLORS.find(c => c.value === selectedColor)?.label}
-            </p>
+            </div>            
           </div>
 
           <div>
@@ -123,6 +97,6 @@ export const EditBagModal = ({ bag, isOpen, onClose, onUpdateBag }) => {
           </div>
         </form>
       </div>
-    </Modal>
+    </div>
   );
 };

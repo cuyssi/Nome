@@ -20,5 +20,3 @@ export const Container_Card = ({ children, outerClass = "", innerClass = "" }) =
         </div>
     );
 };
-
-

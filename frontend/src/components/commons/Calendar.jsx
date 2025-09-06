@@ -1,10 +1,11 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Button} from "./Button";
+import { Button } from "./Button";
 import { Modal } from "./Modal";
 import { X, Trash2, Pencil } from "lucide-react";
 import { useCalendarTasks } from "../../hooks/calendar/useCalendarTasks";
+import { toLocalYMD } from "../../utils/toLocalYMD";
 
 export const Calendar = ({ openModalWithTask }) => {
     const {
@@ -13,8 +14,10 @@ export const Calendar = ({ openModalWithTask }) => {
         isModalOpen,
         setIsModalOpen,
         handleDateClick,
-        toLocalYMD,
         handleDeleteTask,
+        selectedDate,
+        toggleCompletedForDate,
+        isTaskCompletedForDate,
     } = useCalendarTasks();
 
     return (
@@ -25,14 +28,12 @@ export const Calendar = ({ openModalWithTask }) => {
                 headerToolbar={{ right: "prev,next" }}
                 titleFormat={{ year: "numeric", month: "long" }}
                 dayCellClassNames={(arg) =>
-                    arg.isToday
-                        ? "text-white font-poppins bg-gray-600"
-                        : "text-purple-400 font-bold font-poppins"
+                    arg.isToday ? "text-white font-poppins bg-gray-600" : "text-purple-400 font-bold font-poppins"
                 }
                 dayCellContent={(arg) => {
+                    const tasks = tasksByDate(arg.date) || [];
                     const dateStr = toLocalYMD(arg.date);
-                    const tasks = tasksByDate[dateStr] || [];                   
-                    const allCompleted = tasks.length > 0 && tasks.every((t) => t.completed);
+                    const allCompleted = tasks.length > 0 && tasks.every((t) => isTaskCompletedForDate(t.id, dateStr));
                     const pointColor = allCompleted ? "bg-green-500" : "bg-red-500";
 
                     return (
@@ -47,9 +48,9 @@ export const Calendar = ({ openModalWithTask }) => {
                 height="auto"
                 dateClick={handleDateClick}
             />
-            
+
             <Modal isOpen={isModalOpen}>
-                <div className="relative bg-white p-4 rounded-md w-80 flex flex-col gap-2">                    
+                <div className="relative bg-white p-4 rounded-md w-80 flex flex-col gap-2">
                     <Button
                         className="absolute top-2 right-2 text-red-400 hover:text-red-700"
                         onClick={() => setIsModalOpen(false)}
@@ -63,32 +64,50 @@ export const Calendar = ({ openModalWithTask }) => {
                         <p>No hay tareas</p>
                     ) : (
                         <ul className="flex flex-col gap-1">
-                            {selectedDateTasks.map((task) => (
-                                <li key={task.id} className="border-b py-1 text-gray-400">
-                                    <div className="flex justify-between items-center">
-                                        <span className={`${task.completed ? "line-through text-gray-400" : ""}`}>
-                                            [{task.hour}] {task.text}
-                                        </span>
-                                        <div className="flex gap-2">
-                                            <Button
-                                                onClick={() => openModalWithTask(task)}
-                                                className="text-blue-400 hover:text-blue-700"
+                            {selectedDateTasks.map((task) => {
+                                const completedToday = isTaskCompletedForDate(task.id, selectedDate);
+                                console.log("🔹 Rendering task", task.id, "completedToday:", completedToday);
+                                return (
+                                    <li key={task.id} className="border-b py-1 text-gray-400">
+                                        <div className="flex justify-between items-center">
+                                            <span
+                                                className={
+                                                    isTaskCompletedForDate(task.id, selectedDate)
+                                                        ? "line-through text-gray-400"
+                                                        : ""
+                                                }
                                             >
-                                                <Pencil className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                className="text-red-400 hover:text-red-700"
-                                                onClick={() => handleDeleteTask(task.id)}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                                [{task.hour}] {task.text}
+                                            </span>
+                                            <div className="flex gap-2">
+                                                <Button
+                                                    onClick={() => openModalWithTask(task)}
+                                                    className="text-blue-400 hover:text-blue-700"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </Button>
+                                                <Button
+                                                    className="text-green-400 hover:text-green-700"
+                                                    onClick={() =>
+                                                        toggleCompletedForDate(task.id, toLocalYMD(new Date()))
+                                                    }
+                                                >
+                                                    ✓
+                                                </Button>
+                                                <Button
+                                                    className="text-red-400 hover:text-red-700"
+                                                    onClick={() => handleDeleteTask(task.id)}
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            ))}
+                                    </li>
+                                );
+                            })}
                         </ul>
                     )}
-                    
+
                     <button
                         onClick={() => openModalWithTask({})}
                         className="mt-4 w-full px-4 py-2 bg-purple-600 text-white rounded-md"

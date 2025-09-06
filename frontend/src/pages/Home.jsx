@@ -18,7 +18,7 @@ const Home = () => {
 
     return (
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
-            <div className="flex flex-col w-full h-full items-center bg-black">
+            <div className="flex flex-col  w-full h-full items-center bg-black">
                 <Welcome />
                 <Task_count />
                 <Voice_rec openModalWithTask={openModalWithTask}/>

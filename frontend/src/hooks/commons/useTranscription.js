@@ -6,7 +6,7 @@
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
-import axios from "axios";
+
 import { useState } from "react";
 import { sendAudioFile } from "../../services/Task_services";
 import { getFormattedTasks, dateAndTime } from "../../utils/transcriptionUtils";
@@ -16,13 +16,13 @@ import { useTaskType } from "../task/useTaskType";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
-    const [confirmationMessage, setConfirmationMessage] = useState(false);
     const { addTask } = useStorageStore();
     const { getTaskType } = useTaskType();
 
-    const sendFile = async (file) => {
+    const sendFile = async (file, options = {}) => {
         try {
             setIsProcessing(true);
+
             const response = await sendAudioFile(file);
             const { text_raw, text, dateTime } = getFormattedTasks(response);
             const { date, hour, dateWithYear } = dateAndTime(dateTime);
@@ -40,31 +40,16 @@ export const useTranscription = () => {
                 hour,
                 type,
                 color,
-                completed: false,
+                repeat: options.repeat || "once",
+                customDays: options.customDays || [],
             });
 
-            const baseURL = import.meta.env.VITE_API_URL;
-
-            const deviceId = localStorage.getItem("deviceId");
-
-            if (!deviceId) {
-                console.warn("⚠️ No se encontró deviceId en localStorage");
-                return;
-            }
-
-            await axios.post(`${baseURL}/schedule-task`, {
-                text: text,
-                dateTime: dateTime,
-                deviceId: deviceId,
-            });
         } catch (err) {
             console.error("❌ Error al enviar:", err);
         } finally {
             setIsProcessing(false);
-            setConfirmationMessage(true);
-            setTimeout(() => setConfirmationMessage(false), 3000);
         }
     };
 
-    return { sendFile, isProcessing, confirmationMessage };
+    return { sendFile, isProcessing };
 };

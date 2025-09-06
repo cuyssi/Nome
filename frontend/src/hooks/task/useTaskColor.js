@@ -10,8 +10,9 @@
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
+import { AVAILABLE_COLORS } from "../../utils/constants"
 
-const COLOR_POOL = ["blue-400", "purple-400", "orange-400", "pink-400", "red-400", "teal-400", "green-400"];
+const COLOR_POOL = AVAILABLE_COLORS.map((c) => c.value);
 
 let colorIndex = 0;
 export const getTaskColor = () => {

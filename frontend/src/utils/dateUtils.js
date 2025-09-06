@@ -5,8 +5,6 @@ export const buildDateTimeFromManual = (date, hour) => {
     return d.toISOString();
 };
 
-
-
 export const isToday = (dateString) => {
     const date = new Date(dateString);
     const today = new Date();

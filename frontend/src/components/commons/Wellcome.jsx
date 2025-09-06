@@ -6,17 +6,16 @@
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-
 import logo_nome from "../../assets/logo_nome.png";
-import NotificationToggle from "../notifications/NotificationToggle"
+import NotificationToggle from "../notifications/NotificationToggle";
 
 const Welcome = () => {
     return (
         <div className="flex w-full h-full justify-center items-center">
-        <div className="flex flex-col w-full justify-center items-center px-4"> 
-            <NotificationToggle />
-            <img src={logo_nome} className="w-[100%] mt-6 mb-4"/>            
-        </div>
+            <div className="flex flex-col w-full justify-center items-center px-4">
+                <NotificationToggle />
+                <img src={logo_nome} className="w-[90%] mt-2"/>
+            </div>
         </div>
     );
 };

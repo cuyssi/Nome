@@ -1,5 +1,6 @@
 import { useSwipeActions } from "../commons/useSwipeActions";
-import { getTaskColor } from "../task/useTaskColor";
+import { getTaskColor } from "./useTaskColor";
+import { RefreshCw } from "lucide-react";
 
 export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
     const handleEditTask = () => onEdit?.(task);
@@ -52,6 +53,6 @@ export const useTaskCard = (task, onDelete, onEdit, markAsCompleted) => {
             isEdited,
             dragOffset,
         },
-        color,
+        color,        
     };
 };

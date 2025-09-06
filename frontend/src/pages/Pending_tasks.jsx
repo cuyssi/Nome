@@ -4,11 +4,15 @@ import { useStorageStore } from "../store/storageStore";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskPageLayout } from "../components/task/TaskPageLayout";
+import { toLocalYMD } from "../utils/toLocalYMD";
 
 const Pending_tasks = () => {
     const { todayTasks, reload } = useTasks();
-    const { updateTask } = useStorageStore();
-    const pendingTasks = todayTasks.filter((task) => !task.completed);
+    const { updateTask, isTaskCompletedForDate } = useStorageStore();
+    const todayYMD = toLocalYMD(new Date());
+    const pendingTasks = todayTasks.filter(
+    (task) => !isTaskCompletedForDate(task.id, todayYMD)
+    );
 
     const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
         useTaskEditor(reload, updateTask);

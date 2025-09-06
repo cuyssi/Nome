@@ -1,14 +1,23 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Store global que sincroniza tareas con `localStorage` usando Zustand.        │
- * Proporciona funciones para añadir, actualizar y eliminar tareas guardadas.   │
- * Ideal para mantener consistencia entre estado en memoria y persistencia local│
- * Facilita edición desde componentes sin duplicar lógica de almacenamiento.    │
- *                                                                              │
- * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
-
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { toLocalYMD } from "../utils/toLocalYMD";
+
+export const isTaskActiveOnDate = (task, dateStr) => {
+    const date = new Date(dateStr);
+    const day = date.getDay();
+    const taskDate = new Date(task.dateTime);
+    const taskDateStr = toLocalYMD(taskDate);
+
+    if (task.repeat === "once") return taskDateStr === dateStr;
+    if (task.repeat === "daily") return true;
+    if (task.repeat === "weekdays") return day >= 1 && day <= 5;
+    if (task.repeat === "custom") {
+        const customIndex = day === 0 ? 6 : day - 1;
+        return task.customDays?.includes(customIndex);
+    }
+
+    return false;
+};
 
 const sortTasks = (tasks) => {
     return [...tasks].sort((a, b) => {
@@ -28,6 +37,7 @@ export const useStorageStore = create(
     persist(
         (set, get) => ({
             tasks: [],
+            completedToday: [],
 
             addTask: (newTask) => {
                 const tasks = [...get().tasks, newTask];
@@ -35,38 +45,55 @@ export const useStorageStore = create(
             },
 
             updateTask: (id, updatedFields) => {
-    const updatedTasks = get().tasks.map((task) =>
-        task.id === id ? { ...task, ...updatedFields } : task
-    );
-    set({ tasks: sortTasks(updatedTasks) });
-},
-
+                const updatedTasks = get().tasks.map((task) => (task.id === id ? { ...task, ...updatedFields } : task));
+                set({ tasks: sortTasks(updatedTasks) });
+            },
 
             deleteTask: (id) => {
                 const tasks = get().tasks.filter((task) => task.id !== id);
                 set({ tasks: sortTasks(tasks) });
             },
 
-            clearAllTasks: () => set({ tasks: [] }),
+            clearAllTasks: () => set({ tasks: [], completedToday: [] }),
 
-            getSortedTasks: () => {
-                return sortTasks(get().tasks);
+            getSortedTasks: () => sortTasks(get().tasks),
+
+            toggleCompletedToday: (id, dateStr) => {
+                if (!dateStr) {
+                    console.warn("⚠️ toggleCompletedToday llamado sin fecha, usando hoy por defecto");
+                    dateStr = toLocalYMD(new Date());
+                }
+
+                set((state) => {
+                    const task = state.tasks.find((t) => t.id === id);
+                    if (!task) return {};
+
+                    if (!isTaskActiveOnDate(task, dateStr)) {
+                        console.warn("⛔ La tarea no está activa en esta fecha:", dateStr);
+                        return {};
+                    }
+
+                    const completedDates = task.completedDates ? [...task.completedDates] : [];
+
+                    const alreadyCompleted = completedDates.includes(dateStr);
+                    const newCompletedDates = alreadyCompleted
+                        ? completedDates.filter((d) => d !== dateStr)
+                        : [...completedDates, dateStr];
+
+                    const updatedTasks = state.tasks.map((t) =>
+                        t.id === id ? { ...t, completedDates: newCompletedDates } : t
+                    );
+
+                    console.log("✅ updated completedDates:", newCompletedDates);
+                    return { tasks: updatedTasks };
+                });
             },
 
-            markAsCompleted: (id) => {
-                const tasks = get().tasks.map((task) => (task.id === id ? { ...task, completed: true } : task));
-                set({ tasks });
-            },
-
-            toggleCompleted: (id) => {
-                const tasks = get().tasks.map((task) =>
-                    task.id === id ? { ...task, completed: !task.completed } : task
-                );
-                set({ tasks });
+            isTaskCompletedForDate: (id, dateStr) => {
+                const task = get().tasks.find((t) => t.id === id);
+                return task?.completedDates?.includes(dateStr) || false;
             },
         }),
-        {
-            name: "tasks-storage",
-        }
+        { name: "tasks-storage" }
     )
 );

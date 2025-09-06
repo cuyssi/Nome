@@ -1,4 +1,3 @@
-import React from "react";
 import { useSchedule } from "../../hooks/schedule/useSchedule";
 import { ScheduleModalManager } from "./ScheduleModalManager";
 

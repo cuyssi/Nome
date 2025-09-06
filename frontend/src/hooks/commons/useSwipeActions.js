@@ -12,7 +12,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => 
 
     const pressTimer = useRef(null);
     const hasMoved = useRef(false);
-    const toggleCompleted = useStorageStore((state) => state.toggleCompleted);
+    const toggleCompletedToday = useStorageStore((state) => state.toggleCompletedToday);
 
     const handleStart = (clientX) => {
         setDragStartX(clientX);
@@ -24,7 +24,8 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task }) => 
             if (!hasMoved.current) {
                 navigator.vibrate(150);
                 setIsChecked((prev) => !prev);
-                toggleCompleted(task.id);
+                console.log("🔹 Toggling completed for", task.id);
+                toggleCompletedToday(task.id, new Date().toLocaleDateString("sv-SE"));
             }
         }, 550);
     };

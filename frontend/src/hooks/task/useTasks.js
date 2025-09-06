@@ -1,9 +1,10 @@
 import { useStorageStore } from "../../store/storageStore";
 import { filterTasksSmart } from "../../utils/taskFilter";
 import { useState, useEffect } from "react";
-import { isToday } from "../../utils/dateUtils";
 import { notifyBackend } from "../../services/notifyBackend";
 import { formatDateForBackend } from "../../utils/formatDateForBackend";
+import { isTaskActiveOnDate } from "../../store/storageStore";
+import { toLocalYMD } from "../../utils/toLocalYMD";
 
 export const useTasks = (type, exclude = false) => {
     const { tasks: rawTasks, deleteTask, updateTask: baseUpdateTask, addTask: baseAddTask } = useStorageStore();
@@ -20,7 +21,9 @@ export const useTasks = (type, exclude = false) => {
         setTasks(filtered);
     };
 
-    const todayTasks = tasks.filter((task) => isToday(task.dateTime));
+    const todayYMD = toLocalYMD(new Date());
+    const todayTasks = tasks.filter((task) => isTaskActiveOnDate(task, todayYMD));
+
 
     const wrappedUpdateTask = async (id, updatedFields) => {
         baseUpdateTask(id, updatedFields);

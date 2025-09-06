@@ -4,13 +4,10 @@ import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
 import { Button } from "../commons/Button";
 import { useState } from "react";
 
-const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, "0"));
-const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
-
 export const Form_Task = ({ task, onClose, onSubmit }) => {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
     const [selectedColor, setSelectedColor] = useState(AVAILABLE_COLORS[0].value);
-    
+
     return (
         <form className="relative bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] overflow-y-auto hide-scrollbar">
             {showConfirmation && <p className="text-green-600 mb-3 font-semibold">✅ Cambios guardados</p>}
@@ -20,6 +17,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
             </Button>
 
             <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-6 font-semibold">
+                <h2 className="text-2xl font-extrabold text-purple-500 text-center font-poppins">Editar tarea</h2>
                 <label>
                     Texto:
                     <input
@@ -130,7 +128,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
 
                 <label className="font-semibold">
                     Color
-                    <div className="flex gap-1 justify-between flex-wrap mt-2">
+                    <div className="flex gap-1 justify-start flex-wrap mt-2">
                         {AVAILABLE_COLORS.map((color) => (
                             <button
                                 key={color.value}
@@ -141,10 +139,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                                 } bg-${color.value}`}
                             />
                         ))}
-                    </div>
-                    <p className="text-sm text-gray-600">
-                        Color seleccionado: {AVAILABLE_COLORS.find((c) => c.value === selectedColor)?.label}
-                    </p>
+                    </div>                   
                 </label>
                 <label>
                     Tipo:

@@ -8,7 +8,10 @@ export default {
     "bg-pink-400", "bg-orange-400", "bg-gray-300", "bg-green-400",
     "border-red-400", "border-blue-400", "border-yellow-400",
     "border-purple-400", "border-pink-400", "border-orange-400", "border-gray-300", "border-green-400",
+    "bg-stone-600", "bg-cyan-600", "bg-teal-400",
+    "border-stone-600", "border-cyan-600", "border-teal-400",
   ],
+
   theme: {
     extend: {
       fontFamily: {

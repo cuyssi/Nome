@@ -1,13 +1,15 @@
 import Container from "../commons/Container";
 import { Link } from "react-router-dom";
-import { useTasks } from "../../hooks/task/useTasks";
-
 import { NotebookPen, CalendarDays } from "lucide-react";
+import { useStorageStore, isTaskActiveOnDate } from "../../store/storageStore";
+import { toLocalYMD } from "../../utils/toLocalYMD";
 
-const Task_count = ({ tasks = [] }) => {
-    const { todayTasks } = useTasks();
-    const completedTodayCount = todayTasks.filter((t) => t.completed).length;
-    const pendingTodayCount = todayTasks.filter((t) => !t.completed).length;
+const Task_count = () => {
+    const { tasks, isTaskCompletedForDate } = useStorageStore();
+    const todayYMD = toLocalYMD(new Date());
+    const todayTasks = tasks.filter((t) => isTaskActiveOnDate(t, todayYMD));
+    const completedTodayCount = todayTasks.filter((t) => isTaskCompletedForDate(t.id, todayYMD)).length;
+    const pendingTodayCount = todayTasks.length - completedTodayCount;
     const totalTodayCount = todayTasks.length;
 
     return (
@@ -36,25 +38,28 @@ const Task_count = ({ tasks = [] }) => {
                 </div>
 
                 <div className="flex w-[100%] justify-center items-center px-4 mt-4">
-                    <Container innerClass="flex justify-between items-center" outerClass="w-[100%]">
-                        <Link to="./today" className="flex-1 flex-col p-2 no-underline justify-center items-center">
-                            <p className="text-yellow-200 text-center font-extrabold drop-shadow-[0_0_1px_black] text-2xl">
-                                {totalTodayCount}
-                            </p>
-                            <p className="text-white text-center font-poppins text-sm mt-2">Para hoy</p>
-                        </Link>
-                        <Link to="./pending" className="flex-1 flex-col p-2 no-underline justify-center items-center">
-                            <p className="text-transparent bg-clip-text text-center bg-gradient-to-br from-yellow-400 to-purple-600 drop-shadow-[0_0_1px_black] font-extrabold text-2xl">
-                                {pendingTodayCount}
-                            </p>
-                            <p className="text-white text-center font-poppins text-sm mt-2">Pendientes</p>
-                        </Link>
-                        <Link to="./completed" className="flex-1 flex-col p-2 no-underline justify-center items-center">
-                            <p className="text-purple-400 font-extrabold text-center drop-shadow-[0_0_1px_black] text-2xl">
-                                {completedTodayCount}
-                            </p>
-                            <p className="text-white text-center font-poppins text-sm mt-2">Completas</p>
-                        </Link>
+                    <Container innerClass="flex flex-col" outerClass="w-[100%]">
+                        <h3 className="text-white font-poppins text-lg mb-2">Tareas para hoy</h3>
+                        <div className="w-full flex justify-between items-center">
+                            <Link to="./today" className="flex-1 flex-col no-underline justify-center items-center">
+                                <p className="text-yellow-200 text-center font-extrabold drop-shadow-[0_0_1px_black] text-3xl">
+                                    {totalTodayCount}
+                                </p>
+                                <p className="text-white text-center font-poppins text-xs">Totales</p>
+                            </Link>
+                            <Link to="./pending" className="flex-1 flex-col no-underline justify-center items-center">
+                                <p className="text-transparent bg-clip-text text-center bg-gradient-to-br from-yellow-400 to-purple-600 drop-shadow-[0_0_1px_black] font-extrabold text-3xl">
+                                    {pendingTodayCount}
+                                </p>
+                                <p className="text-white text-center font-poppins text-xs">Pendientes</p>
+                            </Link>
+                            <Link to="./completed" className="flex-1 flex-col no-underline justify-center items-center">
+                                <p className="text-purple-400 font-extrabold text-center drop-shadow-[0_0_1px_black] text-3xl">
+                                    {completedTodayCount}
+                                </p>
+                                <p className="text-white text-center font-poppins text-xs">Completas</p>
+                            </Link>
+                        </div>
                     </Container>
                 </div>
             </div>

@@ -8,17 +8,13 @@ import { Button } from "../components/commons/Button"
 const Dates = ({ type, exclude = false }) => {
     const [activeTab, setActiveTab] = useState("citas");
     const { tasks, reload } = useTasks(type, exclude);
-
     const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
         useTaskEditor(reload);
-
     const tiposExcluir = ["medico", "deberes", "trabajo"];
-
     const citasTasks = tasks.filter((t) => {
         const tipos = Array.isArray(t.type) ? t.type : [t.type];
         return !tipos.some((tipo) => tiposExcluir.includes(tipo));
     });
-
     const medicoTasks = tasks.filter((t) => {
         const tipos = Array.isArray(t.type) ? t.type : [t.type];
         return tipos.includes("medico");

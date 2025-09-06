@@ -8,8 +8,7 @@ import { TaskPageLayout } from "../components/task/TaskPageLayout";
 const Today_tasks = () => {
     const { todayTasks, reload } = useTasks();
     const { updateTask } = useStorageStore();
-    const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
-        useTaskEditor(reload, updateTask);
+    const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } = useTaskEditor(reload, updateTask);
 
     return (
         <TaskPageLayout title="Tareas para Hoy">

@@ -1,15 +1,29 @@
 {
   "subscriptions": {
     "e9d3a534-9ea5-4756-ab03-1932678440a4": {
-      "endpoint": "https://fcm.googleapis.com/fcm/send/dJIfSmsIpcM:APA91bEb-zVzz7svKMGz_xrt45EV1k--uq5jYuxCYcsVLZ0HhQa7eaJRd9gzZ2Fvo1aD3zckQVt4mLf945Zt9yWgImyi0I5dL8cpjzMF6ITB2x8oE1o2z2jFUjPSA-P96CqIXQyB5Gnx",
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d9eJMmMDHIg:APA91bE7lNNJrdUHIBbT4xdpbbbWi5xUrPQFR9v5I9XBNbKHk_NXt9uiPvUD5mT6t-J7_e-y1qBxsMPcqNtBcwDmTHS5Tk52PkOAnHWbESiTo6iWILnU8DVCLf6NNe5CwzkS9okwonqL",
       "expirationTime": null,
       "keys": {
-        "p256dh": "BBlKrjndiByixoboaKD6qP8FxHcr_d4X7QsO0z99_bLg95CIXb7jyGi11JCDOfRcKWoUZRuEpSRBHrn88iNkBzU",
-        "auth": "bsh0yfH5uG3uxfY1clfp-g"
+        "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
+        "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
+      }
+    },
+    "30985a71-e594-4cfd-bb40-7e059a8d4026": {
+      "endpoint": "https://updates.push.services.mozilla.com/wpush/v2/gAAAAABoo_nZqK1r0KTOLMcqZ2UGFtuWRsRnOo4rBhLJ0qFCZRKxDJGt0PjJCzRHD9TOrIALGf549fw-HQfz9dlhMEXYTvXWPGz6O07idIfPPiDoy4Y6cZ8LGyU-5YIC4JNo_H55SbfZLMU9LL1E1Y3TZKLBLJZnCAzU2mfDjJVcw6InepFv6Xs",
+      "expirationTime": null,
+      "keys": {
+        "auth": "m3475jVBzcZxppMwiDz2_w",
+        "p256dh": "BDPBoGm1e0Hn-0_KgIkpHzh6YZRFauzmqUpGMa2mKQr99hopiFCRI4bdq1F7GmFhJKvJy_hFUOZWZY8jKepmxhU"
       }
     }
   },
   "scheduled_tasks": {
-    "e9d3a534-9ea5-4756-ab03-1932678440a4": []
+    "e9d3a534-9ea5-4756-ab03-1932678440a4": [
+      {
+        "title": "Quede con Joaqu\u00edn en las Meanas",
+        "time": "2025-09-06T16:30:00",
+        "deviceId": "e9d3a534-9ea5-4756-ab03-1932678440a4"
+      }
+    ]
   }
 }
