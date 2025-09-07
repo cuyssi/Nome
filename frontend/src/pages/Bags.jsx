@@ -9,21 +9,10 @@ import { BagItems } from "../components/bags/BagItems";
 import { TomorrowSubjects } from "../components/bags/TomorrowSubjects";
 
 export const Bags = () => {
-    const {
-        isOpen,
-        selectedBag: modalBag,
-        openModalWithBag,
-        handleEdit,
-        handleClose,
-        showConfirmation,
-        deleteBag,
-        mode,
-    } = useBagModalManager();
+    const { isOpen, openModalWithBag, handleEdit, handleClose, showConfirmation, deleteBag, mode } =
+        useBagModalManager();
     const { bags, editBag } = useBagsStore();
 
-
-
-    // Actualiza la mochila en store y en local state
     const handleUpdateBag = (updatedBag) => {
         editBag(updatedBag);
         setSelectedBag(updatedBag);
@@ -43,12 +32,18 @@ export const Bags = () => {
                         key={bag.id}
                         bag={bag}
                         onDelete={() => deleteBag(bag.id)}
-                        onOpenModal={(bag) => {
+                        onOpenModal={(bag, modalMode) => {
                             setSelectedBag(bag);
                             if (bag.name === "Escolar") {
-                                setTomorrowOpen(true);
+                                if (modalMode === "school") {
+                                    setTomorrowOpen(true);
+                                } else if (modalMode === "edit") {
+                                    openModalWithBag(bag, "edit");
+                                }
+                            } else if (modalMode === "items") {
+                                setItemsOpen(true);
                             } else {
-                                setItemsOpen(true); // abrir BagItems
+                                openModalWithBag(bag, modalMode);
                             }
                         }}
                     />
@@ -67,7 +62,7 @@ export const Bags = () => {
                     isOpen={isItemsOpen}
                     bag={selectedBag}
                     onClose={() => setItemsOpen(false)}
-                    onUpdateBag={handleUpdateBag} // opcional: persistir cambios
+                    onUpdateBag={handleUpdateBag}
                 />
             )}
             <button
@@ -79,7 +74,7 @@ export const Bags = () => {
             console.log("modalBag", modalBag);
             <BagModalManager
                 isOpen={isOpen}
-                selected={modalBag} // ✅ usar modalBag
+                selected={selectedBag}
                 showConfirmation={showConfirmation}
                 onEdit={handleEdit}
                 onClose={handleClose}
