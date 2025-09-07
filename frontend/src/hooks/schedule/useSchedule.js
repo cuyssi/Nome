@@ -4,14 +4,14 @@ import { useScheduleStore } from "../../store/useScheduleStore";
 const lightColors = ["yellow-400", "gray-300", "pink-400"];
 
 export const useSchedule = () => {
-    const { dias, horas, asignaturas, setAsignatura, setHora, addHora, removeHora } = useScheduleStore();
+    const { days, hours, subjects, setSubject, updateHour, addHour, removeHour } = useScheduleStore();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
 
-    const handleEdit = ({ dia, hora, nombre, color }) => {
-        setAsignatura(dia, hora, nombre, color);
+    const handleEdit = ({ day, hour, name, color }) => {
+        setSubject(day, hour, name, color);
         setShowConfirmation(true);
         setTimeout(() => {
             setShowConfirmation(false);
@@ -22,9 +22,9 @@ export const useSchedule = () => {
     const getTextClass = (bgColor) => (lightColors.includes(bgColor) ? "text-black" : "text-white");
 
     return {
-        dias,
-        horas,
-        asignaturas,
+        days,
+        hours,
+        subjects,
         isModalOpen,
         selectedSubject,
         showConfirmation,
@@ -32,8 +32,8 @@ export const useSchedule = () => {
         setSelectedSubject,
         handleEdit,
         getTextClass,
-        setHora,
-        addHora,
-        removeHora,
+        updateHour,
+        addHour,
+        removeHour,
     };
 };

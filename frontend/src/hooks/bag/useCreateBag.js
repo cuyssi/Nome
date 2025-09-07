@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useBagsStore } from "../../store/useBagsStore";
 
-
 export const useCreateBag = ({ onClose }) => {
     const { addBag } = useBagsStore();
     const [customName, setCustomName] = useState("");
     const [customItems, setCustomItems] = useState([]);
     const [newItem, setNewItem] = useState("");
 
-    const handleAddPredefined = (bag) => {   
+    const handleAddPredefined = (bag) => {
         addBag({ id: crypto.randomUUID(), ...bag });
         onClose();
     };
@@ -43,4 +42,4 @@ export const useCreateBag = ({ onClose }) => {
         handleAddCustomItem,
         handleCreateCustomBag,
     };
-}
+};

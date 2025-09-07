@@ -9,18 +9,29 @@ export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, on
 
     return (
         <Modal isOpen={isOpen}>
-            {showConfirmation ? (
+            {mode !== "school" && showConfirmation ? (
                 <p className="text-green-500 text-center font-semibold animate-fadeIn">
                     ✅ Cambios guardados con éxito
                 </p>
             ) : mode === "create" ? (
-                <CreateBag onClose={onClose} onSubmit={(newBag) => {onEdit(newBag)}} />
+                <CreateBag
+                    onClose={onClose}
+                    onSubmit={(newBag) => {
+                        onEdit(newBag);
+                    }}
+                />
             ) : mode === "edit" ? (
                 <EditBag bag={selected} onUpdateBag={onEdit} onClose={onClose} />
             ) : mode === "items" ? (
                 <BagItems bag={selected} onClose={onClose} onUpdateBag={onEdit} />
             ) : mode === "school" ? (
-                <TomorrowSubjects bag={selected} onClose={onClose} onUpdateBag={onEdit} />
+                <TomorrowSubjects
+                    bag={selected}
+                    onClose={onClose}
+                    onUpdateBag={(updatedBag) => {
+                        onEdit(updatedBag, { skipConfirmation: true });
+                    }}
+                />
             ) : null}
         </Modal>
     );

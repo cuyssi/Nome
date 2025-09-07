@@ -11,8 +11,8 @@ export const ScheduleModalManager = ({ isOpen, selectedSubject, showConfirmation
             ) : (
                 <Form_Schedule
                     subject={selectedSubject}
-                    dia={selectedSubject?.dia}
-                    hora={selectedSubject?.hora}
+                    day={selectedSubject?.day}
+                    hour={selectedSubject?.hour}
                     onSubmit={onEdit}
                     onClose={onClose}
                 />

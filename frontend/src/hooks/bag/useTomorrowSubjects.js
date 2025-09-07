@@ -5,25 +5,28 @@ import { useBagsStore } from "../../store/useBagsStore";
 const getTomorrowDay = () => {
     const today = new Date();
     const todayIndex = today.getDay();
-    const tomorrowIndex = (todayIndex + 1) % 7;
-
     const days = ["L", "M", "X", "J", "V"];
-    const finalIndex = tomorrowIndex >= 1 && tomorrowIndex <= 5 ? tomorrowIndex - 1 : 0;
 
-    return { dayKey: days[finalIndex] };
+    let tomorrowDayKey;
+    if (todayIndex >= 1 && todayIndex <= 4) {
+        tomorrowDayKey = days[todayIndex];
+    } else {
+        tomorrowDayKey = "L";
+    }
+
+    return { dayKey: tomorrowDayKey };
 };
 
-const getTomorrowSubjects = (subjects, dayKey) => {
-    return Object.entries(subjects || {})
+const getTomorrowSubjects = (subjects, dayKey) =>
+    Object.entries(subjects || {})
         .filter(([key, value]) => {
             const [subjectDay] = key.split("-");
-            return subjectDay === dayKey && value.name !== "Break";
+            return subjectDay === dayKey && value.name; // solo revisa que tenga name
         })
         .map(([key, value]) => {
             const [, hour] = key.split("-");
             return { ...value, hour };
         });
-};
 
 export const useTomorrowSubjects = ({ bag, isOpen, onUpdateBag }) => {
     const { subjects } = useScheduleStore();
@@ -34,18 +37,21 @@ export const useTomorrowSubjects = ({ bag, isOpen, onUpdateBag }) => {
     const prevCompleteRef = useRef(null);
 
     useEffect(() => {
+        if (!bag) return;
+
         const packedItems = bag.items?.[dayKey] || [];
         const subjectNames = subjectsForTomorrow.map((s) => s.name);
-
         const isComplete = subjectNames.length > 0 && subjectNames.every((s) => packedItems.includes(s));
 
         if (prevCompleteRef.current !== isComplete) {
             setTomorrowBagComplete(isComplete);
             prevCompleteRef.current = isComplete;
         }
-    }, [bag, subjectsForTomorrow]);
+    }, [bag, subjectsForTomorrow, dayKey, setTomorrowBagComplete]);
 
     const toggleSubject = (name) => {
+        if (!bag) return;
+
         const items = bag.items || {};
         const currentDayItems = items[dayKey] || [];
 
@@ -53,26 +59,16 @@ export const useTomorrowSubjects = ({ bag, isOpen, onUpdateBag }) => {
             ? currentDayItems.filter((i) => i !== name)
             : [...currentDayItems, name];
 
-        const updatedItems = {
-            ...items,
-            [dayKey]: updatedDayItems,
-        };
-
+        const updatedItems = { ...items, [dayKey]: updatedDayItems };
         const updatedBag = { ...bag, items: updatedItems };
         onUpdateBag(updatedBag);
 
-        if (navigator.vibrate) {
-            navigator.vibrate(100);
-        }
+        if (navigator.vibrate) navigator.vibrate(100);
     };
-
-    useEffect(() => {
-        console.log("TomorrowSubjects mounted, isOpen:", isOpen);
-    }, [isOpen]);
 
     return {
         subjects: subjectsForTomorrow,
-        isTomorrowBagComplete,
+        isTomorrowBagComplete: bag ? isTomorrowBagComplete : false,
         toggleSubject,
         dayKey,
     };

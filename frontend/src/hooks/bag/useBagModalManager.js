@@ -39,7 +39,7 @@ export const useBagModalManager = () => {
         handleClose,
         renderKey,
         showConfirmation,
-        deleteBag,        
-        mode,        
+        deleteBag,
+        mode,
     };
 };

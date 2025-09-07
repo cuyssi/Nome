@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
 
-export const useBagEditor = ({ bag, isOpen, onClose, onUpdateBag }) => {
+export const useBagEditor = ({ bag, onUpdateBag }) => {
     const [name, setName] = useState("");
     const [items, setItems] = useState([]);
     const [selectedColor, setSelectedColor] = useState(AVAILABLE_COLORS[0].value);
@@ -31,7 +31,7 @@ export const useBagEditor = ({ bag, isOpen, onClose, onUpdateBag }) => {
             items,
             color: selectedColor,
         };
-        onUpdateBag(updatedBag);        
+        onUpdateBag(updatedBag);
     };
 
     return {

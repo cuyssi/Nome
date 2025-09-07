@@ -3,14 +3,35 @@ import { useBagModalManager } from "../hooks/bag/useBagModalManager";
 import { BagModalManager } from "../components/bags/BagModalManager";
 import { useBagsStore } from "../store/useBagsStore";
 import { Bag_card } from "../components/bags/Bag_card";
-// import { CreateBag } from "../components/bags/CreateBag";
 import { useState } from "react";
+import { BagItems } from "../components/bags/BagItems";
+
+import { TomorrowSubjects } from "../components/bags/TomorrowSubjects";
 
 export const Bags = () => {
-    const { isOpen, selectedBag, openModalWithBag, handleEdit, handleClose, showConfirmation, deleteBag, mode } =
-        useBagModalManager();
-    const { bags } = useBagsStore();
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const {
+        isOpen,
+        selectedBag: modalBag,
+        openModalWithBag,
+        handleEdit,
+        handleClose,
+        showConfirmation,
+        deleteBag,
+        mode,
+    } = useBagModalManager();
+    const { bags, editBag } = useBagsStore();
+
+
+
+    // Actualiza la mochila en store y en local state
+    const handleUpdateBag = (updatedBag) => {
+        editBag(updatedBag);
+        setSelectedBag(updatedBag);
+    };
+
+    const [selectedBag, setSelectedBag] = useState(null);
+    const [isTomorrowOpen, setTomorrowOpen] = useState(false);
+    const [isItemsOpen, setItemsOpen] = useState(false);
 
     return (
         <div className="flex flex-col items-center h-full bg-black p-4">
@@ -22,25 +43,48 @@ export const Bags = () => {
                         key={bag.id}
                         bag={bag}
                         onDelete={() => deleteBag(bag.id)}
-                        onOpenModal={(bag, mode) => openModalWithBag(bag, mode)}
+                        onOpenModal={(bag) => {
+                            setSelectedBag(bag);
+                            if (bag.name === "Escolar") {
+                                setTomorrowOpen(true);
+                            } else {
+                                setItemsOpen(true); // abrir BagItems
+                            }
+                        }}
                     />
                 )}
             />
+            {selectedBag && selectedBag.name === "Escolar" && (
+                <TomorrowSubjects
+                    isOpen={isTomorrowOpen}
+                    bag={selectedBag}
+                    onClose={() => setTomorrowOpen(false)}
+                    onUpdateBag={handleUpdateBag}
+                />
+            )}
+            {selectedBag && selectedBag.name !== "Escolar" && (
+                <BagItems
+                    isOpen={isItemsOpen}
+                    bag={selectedBag}
+                    onClose={() => setItemsOpen(false)}
+                    onUpdateBag={handleUpdateBag} // opcional: persistir cambios
+                />
+            )}
             <button
                 onClick={() => openModalWithBag(null, "create")}
                 className="bg-purple-400 text-white px-4 py-2 rounded-lg mb-6 hover:bg-purple-700 transition"
             >
                 ➕ Crear mochila
             </button>
+            console.log("modalBag", modalBag);
             <BagModalManager
                 isOpen={isOpen}
-                selected={selectedBag}
+                selected={modalBag} // ✅ usar modalBag
                 showConfirmation={showConfirmation}
                 onEdit={handleEdit}
                 onClose={handleClose}
                 mode={mode}
             />
-            {/* <CreateBag isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} /> */}
         </div>
     );
 };

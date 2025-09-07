@@ -15,6 +15,14 @@
         "auth": "m3475jVBzcZxppMwiDz2_w",
         "p256dh": "BDPBoGm1e0Hn-0_KgIkpHzh6YZRFauzmqUpGMa2mKQr99hopiFCRI4bdq1F7GmFhJKvJy_hFUOZWZY8jKepmxhU"
       }
+    },
+    "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d9eJMmMDHIg:APA91bE7lNNJrdUHIBbT4xdpbbbWi5xUrPQFR9v5I9XBNbKHk_NXt9uiPvUD5mT6t-J7_e-y1qBxsMPcqNtBcwDmTHS5Tk52PkOAnHWbESiTo6iWILnU8DVCLf6NNe5CwzkS9okwonqL",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
+        "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
+      }
     }
   },
   "scheduled_tasks": {

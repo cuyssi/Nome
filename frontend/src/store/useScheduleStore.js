@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export const useScheduleStore = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       days: ["L", "M", "X", "J", "V"],
       hours: ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"],
       subjects: {},

@@ -1,12 +1,14 @@
 import { X } from "lucide-react";
 import { useItems } from "../../hooks/bag/useItems";
+import { Modal } from "../commons/Modal"
 
-export const BagItems = ({ bag, onClose, onUpdateBag }) => {
+export const BagItems = ({ bag,isOpen, onClose, onUpdateBag }) => {
     const { allItems, toggleItem, isComplete, packedItems } = useItems(bag, onUpdateBag);
 
     return (
-        <div className="relative w-full bg-black border border-purple-600 rounded-xl p-6 max-w-md text-white shadow-lg">
-            <h2 className="text-2xl text-center text-purple-400 font-bold mt-4">Items de {bag.name}</h2>
+        <Modal isOpen={isOpen} onClose={onClose}>
+            <div className="relative w-full bg-black border border-purple-600 rounded-xl p-6 max-w-md text-white shadow-lg">
+                <h2 className="text-2xl text-center text-purple-400 font-bold mt-4">Items de {bag.name}</h2>
 
             {isComplete && <p className="text-green-700 text-center mt-4 font-bold">¡Mochila lista! 🎒✅</p>}
 
@@ -34,5 +36,6 @@ export const BagItems = ({ bag, onClose, onUpdateBag }) => {
                 <X className="w-8 h-8" />
             </button>
         </div>
+    </Modal>
     );
 };

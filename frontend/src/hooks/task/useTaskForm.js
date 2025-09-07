@@ -80,7 +80,7 @@ export function useTaskForm(task, onSubmit, onClose) {
                   customDays: formData.customDays,
               }
             : {
-                  id: uuidv4(),                  
+                  id: uuidv4(),
                   text: formData.text,
                   text_raw: formData.text,
                   date: normalizeDate(formData.date),

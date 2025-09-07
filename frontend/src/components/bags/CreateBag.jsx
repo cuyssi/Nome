@@ -32,7 +32,12 @@ export const CreateBag = ({ onClose, onSubmit }) => {
         handleAddPredefined,
         handleAddCustomItem,
         handleCreateCustomBag,
-    } = useCreateBag({ onClose: () => {onClose()}, onSubmit});
+    } = useCreateBag({
+        onClose: () => {
+            onClose();
+        },
+        onSubmit,
+    });
 
     return (
         <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
