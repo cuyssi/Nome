@@ -24,21 +24,25 @@ export const useTasks = (type, exclude = false) => {
     const todayYMD = toLocalYMD(new Date());
     const todayTasks = tasks.filter((task) => isTaskActiveOnDate(task, todayYMD));
 
-
     const wrappedUpdateTask = async (id, updatedFields) => {
         baseUpdateTask(id, updatedFields);
+
         if (updatedFields.dateTime && updatedFields.text) {
             const isoDate = formatDateForBackend(updatedFields.dateTime);
             console.log(`Task updated: ${updatedFields.text} at ${isoDate}`);
+
             const deviceId = localStorage.getItem("deviceId");
-            if (!deviceId) {
-                console.warn("⚠️ No hay deviceId en localStorage");
-                return;
-            }
-            await notifyBackend(updatedFields.text, isoDate, deviceId);
+            if (!deviceId) return;
+
+            await notifyBackend(
+                updatedFields.text,
+                isoDate,
+                deviceId,
+                "task",
+                Number(updatedFields.reminder) || 15
+            );
         }
     };
-
 
     const wrappedAddTask = async (task) => {
         baseAddTask(task);
@@ -49,10 +53,9 @@ export const useTasks = (type, exclude = false) => {
                 console.warn("⚠️ No hay deviceId en localStorage");
                 return;
             }
-            await notifyBackend(task.text, isoDate, deviceId);
+            await notifyBackend(task.text, isoDate, deviceId, "taks", Number(task.reminder) || 15);
         }
     };
-
 
     return {
         tasks,

@@ -5,6 +5,7 @@ import { useBagsStore } from "../store/useBagsStore";
 import { Bag_card } from "../components/bags/Bag_card";
 import { useState } from "react";
 import { BagItems } from "../components/bags/BagItems";
+import { Plus } from "lucide-react";
 
 import { TomorrowSubjects } from "../components/bags/TomorrowSubjects";
 
@@ -67,9 +68,9 @@ export const Bags = () => {
             )}
             <button
                 onClick={() => openModalWithBag(null, "create")}
-                className="bg-purple-400 text-white px-4 py-2 rounded-lg mb-6 hover:bg-purple-700 transition"
+                className="bg-purple-400 text-white font-poppins px-4 py-2 rounded-lg mb-6 hover:bg-purple-700 transition"
             >
-                ➕ Crear mochila
+                <Plus className="inline-block mr-2" /> Crear mochila
             </button>
             console.log("modalBag", modalBag);
             <BagModalManager

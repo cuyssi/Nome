@@ -19,14 +19,17 @@ export const useBagsStore = create(
                     },
                 },
             ],
-
             addBag: (bag) => set({ bags: [...get().bags, bag] }),
-            deleteBag: (id) => set({ bags: get().bags.filter((b) => b.id !== id) }),
             editBag: (updatedBag) => {
-                const updatedBags = get().bags.map((b) => (b.id === updatedBag.id ? updatedBag : b));
+                const updatedBags = get().bags.map((b) =>
+                    b.id === updatedBag.id ? updatedBag : b
+                );
                 set({ bags: updatedBags });
             },
-
+            updateBag: (updatedBag) => {
+                get().editBag(updatedBag);
+            },
+            deleteBag: (id) => set({ bags: get().bags.filter((b) => b.id !== id) }),
             isTomorrowBagComplete: false,
             setTomorrowBagComplete: (value) => set({ isTomorrowBagComplete: value }),
         }),

@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { useItems } from "../../hooks/bag/useItems";
 import { Modal } from "../commons/Modal"
 
@@ -9,11 +9,10 @@ export const BagItems = ({ bag,isOpen, onClose, onUpdateBag }) => {
         <Modal isOpen={isOpen} onClose={onClose}>
             <div className="relative w-full bg-black border border-purple-600 rounded-xl p-6 max-w-md text-white shadow-lg">
                 <h2 className="text-2xl text-center text-purple-400 font-bold mt-4">Items de {bag.name}</h2>
-
-            {isComplete && <p className="text-green-700 text-center mt-4 font-bold">¡Mochila lista! 🎒✅</p>}
+            {isComplete && <p className="flex items-center gap-2 text-green-700 justify-center mt-4 font-bold">¡Mochila lista! <Check /></p>}
 
             {allItems.length === 0 ? (
-                <p className="text-center mt-6">No hay items en esta mochila.</p>
+                <p className="text-center text-red-400 mt-8">No hay items en esta mochila.</p>
             ) : (
                 <ul className="space-y-5 mt-10 ml-5">
                     {allItems.map((item, i) => (

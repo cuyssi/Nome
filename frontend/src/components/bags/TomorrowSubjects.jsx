@@ -27,11 +27,15 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                 </h2>
 
                 {isTomorrowBagComplete && (
-                    <p className="text-green-400 text-center mt-4 font-bold">¡Mochila lista para mañana! 🎒✅</p>
+                    <p className="flex items-center gap-2 text-green-700 justify-center mt-4 font-bold">
+                        ¡Mochila lista! <Check />
+                    </p>
                 )}
 
                 {subjects.length === 0 ? (
-                    <p className="font-poppins text-purple-400 text-sm">No hay asignaturas programadas para mañana.</p>
+                    <p className="font-poppins text-red-400 text-center text-sm mt-8">
+                        No hay asignaturas para mañana.
+                    </p>
                 ) : (
                     <ul className="space-y-5 mt-10 ml-5">
                         {subjects.map((subject, i) => (
@@ -40,7 +44,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                                     type="checkbox"
                                     checked={!!bag.items?.[dayKey]?.includes(subject.name)}
                                     onChange={() => toggleSubject(subject.name)}
-                                    className="accent-purple-400 w-5 h-5"
+                                    className="accent-blue-500 w-5 h-5"
                                 />
                                 <span
                                     className={`text-lg ${

@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
+import { useBag } from "../../hooks/bag/useBag";
 
 export const useBagEditor = ({ bag, onUpdateBag }) => {
+    const { updateBag } = useBag();
     const [name, setName] = useState("");
     const [items, setItems] = useState([]);
     const [selectedColor, setSelectedColor] = useState(AVAILABLE_COLORS[0].value);
+    const [reminderTime, setReminderTime] = useState(
+        bag?.reminderTime
+            ? { hour: bag.reminderTime.split(":")[0], minute: bag.reminderTime.split(":")[1] }
+            : { hour: "20", minute: "00" }
+    );
+    const [notifyDays, setNotifyDays] = useState(bag?.notifyDays || ["L", "M", "X", "J", "V"]);
 
     useEffect(() => {
         if (bag) {
@@ -14,30 +22,24 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
         }
     }, [bag]);
 
-    const handleItemChange = (index, value) => {
-        const updated = [...items];
-        updated[index] = value;
-        setItems(updated);
-    };
-
-    const handleAddItem = () => setItems([...items, ""]);
-    const handleRemoveItem = (index) => setItems(items.filter((_, i) => i !== index));
-
     const handleSubmit = (e) => {
         e.preventDefault();
+
         const updatedBag = {
             ...bag,
             name,
             items,
             color: selectedColor,
+            reminderTime: `${reminderTime.hour}:${reminderTime.minute}`,
+            notifyDays,
         };
-        onUpdateBag(updatedBag);
+
+        updateBag(updatedBag);
+
+        if (onUpdateBag) onUpdateBag(updatedBag);
     };
 
     return {
-        handleItemChange,
-        handleAddItem,
-        handleRemoveItem,
         handleSubmit,
         name,
         setName,
@@ -45,5 +47,9 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
         setItems,
         selectedColor,
         setSelectedColor,
+        reminderTime,
+        setReminderTime,
+        notifyDays,
+        setNotifyDays,
     };
 };

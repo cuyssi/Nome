@@ -32,7 +32,6 @@ async def transcribe_audio(background_tasks: BackgroundTasks, file: UploadFile =
         "isToday": is_today(dt),
     }
 
-    # DEBUG
     print(f"Transcribe raw: {text_raw}")
     print(f"Texto limpio: {text}")
     print(f"Datetime: {dt}")

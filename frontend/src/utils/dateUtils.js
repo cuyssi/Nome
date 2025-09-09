@@ -8,6 +8,7 @@ export const buildDateTimeFromManual = (date, hour) => {
 export const isToday = (dateString) => {
     const date = new Date(dateString);
     const today = new Date();
+    console.log("🔍 dateUtil:", dateString, "→", date, "vs", today);
     return (
         date.getFullYear() === today.getFullYear() &&
         date.getMonth() === today.getMonth() &&

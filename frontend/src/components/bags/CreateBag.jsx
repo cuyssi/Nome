@@ -1,5 +1,6 @@
 import { Plus, X } from "lucide-react";
 import { useCreateBag } from "../../hooks/bag/useCreateBag";
+import { DaySelector } from "../commons/DaySelector";
 
 const predefinedBags = [
     {
@@ -7,18 +8,24 @@ const predefinedBags = [
         color: "green-400",
         type: "personalizada",
         items: ["Toalla", "Proteína", "Zapatillas", "Botella"],
+        notifyDays: ["T", "J"],
+        notifyTime: "19:00",
     },
     {
         name: "Playa",
         color: "blue-400",
         type: "personalizada",
         items: ["Crema solar", "Gafas", "Toalla", "Chanclas"],
+        notifyDays: ["L", "M", "X", "J", "V"],
+        notifyTime: "20:00",
     },
     {
         name: "Piscina",
         color: "orange-400",
         type: "personalizada",
         items: ["Gorro", "Bañador", "Toalla", "Sandalias"],
+        notifyDays: ["L", "M", "X", "J", "V"],
+        notifyTime: "20:00",
     },
 ];
 
@@ -32,6 +39,8 @@ export const CreateBag = ({ onClose, onSubmit }) => {
         handleAddPredefined,
         handleAddCustomItem,
         handleCreateCustomBag,
+        notifyDays,
+        setNotifyDays,
     } = useCreateBag({
         onClose: () => {
             onClose();
@@ -93,6 +102,10 @@ export const CreateBag = ({ onClose, onSubmit }) => {
                 >
                     Crear mochila personalizada
                 </button>
+            </div>
+            <div className="mb-4">
+                <h4 className="text-sm font-semibold mb-2">Días de recordatorio</h4>
+                <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
             </div>
 
             <button onClick={onClose} className="absolute top-4 right-4 text-red-400 hover:text-red-700">

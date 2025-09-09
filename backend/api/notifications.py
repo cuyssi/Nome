@@ -24,12 +24,13 @@
 import os
 import json
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import APIRouter, Request, HTTPException
 from pywebpush import webpush, WebPushException
 from typing import Dict, Union, cast
 from dotenv import load_dotenv
 from pathlib import Path
+from dateutil.parser import isoparse
 
 load_dotenv()
 router = APIRouter()
@@ -43,12 +44,13 @@ if not JSON_FILE.exists():
     with open(JSON_FILE, "w") as f:
         json.dump({"subscriptions": {}, "scheduled_tasks": {}}, f, indent=2)
 
+
 def load_data():
     with open(JSON_FILE, "r") as f:
         return json.load(f)
 
+
 def save_data():
-    """Guarda en JSON eliminando timers y flags internos para que sea serializable."""
     clean_scheduled_tasks = {}
     for device_id, tasks in scheduled_tasks.items():
         clean_scheduled_tasks[device_id] = []
@@ -58,7 +60,12 @@ def save_data():
             t_copy.pop("rescheduled", None)
             clean_scheduled_tasks[device_id].append(t_copy)
     with open(JSON_FILE, "w") as f:
-        json.dump({"subscriptions": subscriptions, "scheduled_tasks": clean_scheduled_tasks}, f, indent=2)
+        json.dump(
+            {"subscriptions": subscriptions, "scheduled_tasks": clean_scheduled_tasks},
+            f,
+            indent=2,
+        )
+
 
 data = load_data()
 subscriptions: Dict[str, Dict] = data.get("subscriptions", {})
@@ -67,19 +74,28 @@ active_timers = []
 task_lock = threading.Lock()
 MAX_DELAY = 60 * 60 * 24 * 30
 
+
 @router.get("/vapid-public-key")
 def get_vapid_public_key():
     return VAPID_PUBLIC_KEY
+
 
 def cancelar_timer_existente(task):
     for timer in active_timers:
         if timer.args and isinstance(timer.args[0], dict):
             t = timer.args[0]
-            if t["title"] == task["title"] and t["time"] == task["time"] and t["deviceId"] == task["deviceId"]:
+            if (
+                t["title"] == task["title"]
+                and t["time"] == task["time"]
+                and t["deviceId"] == task["deviceId"]
+            ):
                 timer.cancel()
                 active_timers.remove(timer)
-                print(f"🧹 Timer cancelado para tarea '{t['title']}' del dispositivo {t['deviceId']}")
+                print(
+                    f"🧹 Timer cancelado para tarea '{t['title']}' del dispositivo {t['deviceId']}"
+                )
                 break
+
 
 def send_push_notification(subscription, payload):
     try:
@@ -95,6 +111,7 @@ def send_push_notification(subscription, payload):
         if ex.response:
             print("📄 Detalles:", ex.response.text)
 
+
 def notify_device(task):
     with task_lock:
         device_id = task.get("deviceId")
@@ -102,29 +119,44 @@ def notify_device(task):
         if not subscription:
             print(f"⚠️ No hay suscripción para deviceId: {device_id}")
             return
-        payload = {
-            "title": "⏰ Recordatorio de tarea",
-            "body": f'Tu tarea "{task["title"]}" es en 15 minutos',
-        }
+
+        tipo = task.get("type", "task")
+        if tipo == "bag":
+            body = f'¡Es hora de preparar tu mochila "{task["title"]}"!'
+            title = "⏱️ Recordatorio de mochila"
+        else:
+            body = f'Tu tarea "{task["title"]}" es en 15 minutos'
+            title = "⏱️ Recordatorio de tarea"
+
+        payload = {"title": title, "body": body}
         send_push_notification(subscription, payload)
+
         if device_id in scheduled_tasks:
             scheduled_tasks[device_id] = [
-                t for t in scheduled_tasks[device_id]
+                t
+                for t in scheduled_tasks[device_id]
                 if not (t["title"] == task["title"] and t["time"] == task["time"])
             ]
             save_data()
 
-def calcular_delay(task_time_str):
-    if "." in task_time_str:
-        task_time_str = task_time_str.split(".")[0]
-    task_time = datetime.strptime(task_time_str, "%Y-%m-%dT%H:%M:%S")
-    delay = (task_time - datetime.now()).total_seconds() - 15 * 60
+
+def calcular_delay(task_time_str, task_type="task", notify_minutes_before=15):
+    task_time = isoparse(task_time_str)
+    now = datetime.now(task_time.tzinfo)
+    if task_type == "bag":
+        delay = (task_time - now).total_seconds()
+    else:
+        delay = (task_time - now).total_seconds() - notify_minutes_before * 60
+    print(f"Delay calculado: {delay} segundos")
     if delay > MAX_DELAY:
         delay = MAX_DELAY
     return max(delay, 1)
 
 def schedule_notification(task):
     device_id = task.get("deviceId")
+    notify_minutes_before = task.get("notifyMinutesBefore", 15)
+    delay = calcular_delay(task["time"], task.get("type", "task"), notify_minutes_before)
+    print(f"schedule_notification: {task}")
     if not device_id:
         return
     if device_id not in scheduled_tasks:
@@ -132,16 +164,17 @@ def schedule_notification(task):
 
     for t in scheduled_tasks[device_id]:
         if t["title"] == task["title"] and t["time"] == task["time"]:
-            print("🔁 Tarea ya programada, no se duplica")
+            print("Tarea ya programada, no se duplica")
             return
 
     scheduled_tasks[device_id].append(task)
     save_data()
-
-    delay = calcular_delay(task["time"])
+    delay = calcular_delay(task["time"], task.get("type", "task"), notify_minutes_before)
+    print(f"Timer programado con delay: {delay} segundos")
     timer = threading.Timer(delay, notify_device, args=[task])
     active_timers.append(timer)
     timer.start()
+
 
 def reprogram_all_tasks():
     """Reprograma todas las tareas de dispositivos suscritos al iniciar backend"""
@@ -155,7 +188,10 @@ def reprogram_all_tasks():
                 timer.start()
                 active_timers.append(timer)
                 task["timer"] = timer
-                print(f"🔄 Reprogramada tarea '{task['title']}' para deviceId {device_id}")
+                print(
+                    f"🔄 Reprogramada tarea '{task['title']}' para deviceId {device_id}"
+                )
+
 
 @router.post("/subscribe")
 async def subscribe(request: Request):
@@ -182,6 +218,7 @@ async def subscribe(request: Request):
     print(f"📬 Suscripción registrada para deviceId: {device_id}")
     return {"status": "subscribed"}
 
+
 @router.post("/unsubscribe")
 async def unsubscribe(request: Request):
     body = await request.json()
@@ -195,6 +232,7 @@ async def unsubscribe(request: Request):
     print(f"🗑️ Suscripción eliminada: {endpoint}")
     return {"status": "unsubscribed"}
 
+
 @router.post("/schedule-task")
 async def schedule_task(request: Request):
     task = await request.json()
@@ -203,10 +241,13 @@ async def schedule_task(request: Request):
     device_id = task.get("deviceId")
     if not device_id:
         raise HTTPException(status_code=400, detail="Falta deviceId")
+    task_type = task.get("type", "task")
     task_data = {
         "title": task["text"],
         "time": task["dateTime"],
-        "deviceId": device_id
+        "deviceId": device_id,
+        "type": task_type,
+        "notifyMinutesBefore": task.get("notifyMinutesBefore", 15),
     }
     schedule_notification(task_data)
     return {"status": "scheduled"}

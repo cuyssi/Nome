@@ -13,6 +13,7 @@ import { getFormattedTasks, dateAndTime } from "../../utils/transcriptionUtils";
 import { getTaskColor } from "../task/useTaskColor";
 import { useStorageStore } from "../../store/storageStore";
 import { useTaskType } from "../task/useTaskType";
+import { formatDateForBackend } from "../../utils/formatDateForBackend";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -30,9 +31,11 @@ export const useTranscription = () => {
             const { assignColor } = getTaskColor();
             const color = assignColor();
 
+            const dateTimeFormatted = formatDateForBackend(dateTime);
+
             addTask({
                 id: crypto.randomUUID(),
-                dateTime,
+                dateTime: dateTimeFormatted,
                 text_raw,
                 text,
                 date,
@@ -43,7 +46,6 @@ export const useTranscription = () => {
                 repeat: options.repeat || "once",
                 customDays: options.customDays || [],
             });
-
         } catch (err) {
             console.error("❌ Error al enviar:", err);
         } finally {

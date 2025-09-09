@@ -1,7 +1,8 @@
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { useTaskForm } from "../../hooks/task/useTaskForm";
 import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
 import { Button } from "../commons/Button";
+import { Timer } from "../commons/Timer";
 import { useState } from "react";
 
 export const Form_Task = ({ task, onClose, onSubmit }) => {
@@ -10,7 +11,11 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
 
     return (
         <form className="relative bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] overflow-y-auto hide-scrollbar">
-            {showConfirmation && <p className="text-green-600 mb-3 font-semibold">✅ Cambios guardados</p>}
+            {showConfirmation && (
+                <p className="flex text-green-600 mb-3 font-semibold">
+                    <Check /> Cambios guardados{" "}
+                </p>
+            )}
 
             <Button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-400 hover:text-red-700">
                 <X className="w-8 h-8" />
@@ -39,92 +44,11 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                     />
                 </label>
 
-                <label>
-                    Hora:
-                    <div className="flex justify-between px-4 items-center mt-2">
-                        <div className="flex items-center border border-blue-400 rounded">
-                            <Button
-                                type="button"
-                                onClick={() =>
-                                    handleChange({
-                                        target: {
-                                            name: "hour",
-                                            value: String((+formData.hour + 23) % 24).padStart(2, "0"),
-                                        },
-                                    })
-                                }
-                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
-                            >
-                                –
-                            </Button>
-                            <input
-                                type="tel"
-                                name="hour"
-                                value={formData.hour}
-                                onChange={(e) => {
-                                    let val = Math.max(0, Math.min(23, Number(e.target.value)));
-                                    handleChange({ target: { name: "hour", value: String(val).padStart(2, "0") } });
-                                }}
-                                className="text-center w-12 border-x border-blue-400 rounded font-normal"
-                            />
-                            <Button
-                                type="button"
-                                onClick={() =>
-                                    handleChange({
-                                        target: {
-                                            name: "hour",
-                                            value: String((+formData.hour + 1) % 24).padStart(2, "0"),
-                                        },
-                                    })
-                                }
-                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
-                            >
-                                +
-                            </Button>
-                        </div>
-
-                        <div className="flex items-center justify-center border border-blue-400 rounded">
-                            <Button
-                                type="button"
-                                onClick={() =>
-                                    handleChange({
-                                        target: {
-                                            name: "minute",
-                                            value: String((+formData.minute + 59) % 60).padStart(2, "0"),
-                                        },
-                                    })
-                                }
-                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
-                            >
-                                –
-                            </Button>
-                            <input
-                                type="tel"
-                                name="minute"
-                                value={formData.minute}
-                                onChange={(e) => {
-                                    let val = Math.max(0, Math.min(59, Number(e.target.value)));
-                                    handleChange({ target: { name: "minute", value: String(val).padStart(2) } });
-                                }}
-                                className="text-center w-12 border-x border-blue-400 rounded font-normal"
-                            />
-                            <Button
-                                type="button"
-                                onClick={() =>
-                                    handleChange({
-                                        target: {
-                                            name: "minute",
-                                            value: String((+formData.minute + 1) % 60).padStart(2, "0"),
-                                        },
-                                    })
-                                }
-                                className="px-1 text-blue-900  bg-gray-200 hover:bg-gray-400"
-                            >
-                                +
-                            </Button>
-                        </div>
-                    </div>
-                </label>
+                <Timer
+                    hour={formData.hour}
+                    minute={formData.minute}
+                    onChange={(field, value) => handleChange({ target: { name: field, value } })}
+                />
 
                 <label className="font-semibold">
                     Color
@@ -139,8 +63,9 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                                 } bg-${color.value}`}
                             />
                         ))}
-                    </div>                   
+                    </div>
                 </label>
+
                 <label>
                     Tipo:
                     <select
@@ -229,7 +154,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                                 },
                             })
                         }
-                        className="accent-purple-600"
+                        className="accent-blue-500"
                     />
                     Avisarme también el día antes
                 </label>

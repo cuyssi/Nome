@@ -21,7 +21,7 @@ const getTomorrowSubjects = (subjects, dayKey) =>
     Object.entries(subjects || {})
         .filter(([key, value]) => {
             const [subjectDay] = key.split("-");
-            return subjectDay === dayKey && value.name; // solo revisa que tenga name
+            return subjectDay === dayKey && value.name;
         })
         .map(([key, value]) => {
             const [, hour] = key.split("-");

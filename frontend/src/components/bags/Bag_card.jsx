@@ -1,15 +1,15 @@
 import { Container_Card } from "../commons/Container_Card";
 import { Trash2, Pencil } from "lucide-react";
-import { useTaskCard } from "../../hooks/task/useTaskCard";
+import { useCard } from "../../hooks/commons/useCard";
 
 export const Bag_card = ({ bag, onDelete, onOpenModal }) => {
     const isSchoolBag = bag.name === "Escolar";
 
-    const { gestureHandlers, state: { dragOffset, isRemoving }, color } = useTaskCard(
-        bag,
-        isSchoolBag ? () => {} : onDelete,
-        () => onOpenModal(bag, "edit")
-    );
+    const {
+        gestureHandlers,
+        state: { dragOffset, isRemoving },
+        color,
+    } = useCard(bag, isSchoolBag ? () => {} : onDelete, () => onOpenModal(bag, "edit"));
 
     return (
         <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">

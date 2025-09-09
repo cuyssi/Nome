@@ -1,6 +1,8 @@
 import { X, Trash2 } from "lucide-react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
 import { useBagEditor } from "../../hooks/bag/useBagEditor";
+import { Timer } from "../commons/Timer";
+import { DaySelector } from "../commons/DaySelector";
 
 export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
     const {
@@ -13,6 +15,12 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
         items,
         selectedColor,
         setSelectedColor,
+        reminderTime,
+        setReminderTime,
+        notifyDayBefore,
+        setNotifyDayBefore,
+        notifyDays,
+        setNotifyDays,
     } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
 
     return (
@@ -83,6 +91,33 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
                                 + Añadir ítem
                             </button>
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="block font-semibold mb-1">Recordatorio</label>
+                        <div className="flex flex-col">
+                            <label>
+                                <Timer
+                                    hour={reminderTime.hour}
+                                    minute={reminderTime.minute}
+                                    onChange={(name, value) => setReminderTime({ ...reminderTime, [name]: value })}
+                                />
+                            </label>
+                            <label className="flex items-center gap-2 mt-4 ml-4">
+                                <input
+                                    type="checkbox"
+                                    checked={notifyDayBefore}
+                                    className="h-4 w-4 accent-blue-500 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                    onChange={(e) => setNotifyDayBefore(e.target.checked)}
+                                />
+                                Avisar día antes
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block font-semibold mb-1">Días de recordatorio</label>
+                        <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
                     </div>
 
                     <div className="flex justify-end gap-2 pt-4">

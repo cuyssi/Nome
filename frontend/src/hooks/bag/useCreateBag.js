@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useBagsStore } from "../../store/useBagsStore";
+import { useBag } from "../../hooks/bag/useBag";
 
 export const useCreateBag = ({ onClose }) => {
-    const { addBag } = useBagsStore();
+    const { addBag } = useBag();
     const [customName, setCustomName] = useState("");
     const [customItems, setCustomItems] = useState([]);
     const [newItem, setNewItem] = useState("");
+    const [notifyDays, setNotifyDays] = useState(["L", "M", "X", "J", "V"]);
 
     const handleAddPredefined = (bag) => {
         addBag({ id: crypto.randomUUID(), ...bag });
@@ -21,13 +22,18 @@ export const useCreateBag = ({ onClose }) => {
 
     const handleCreateCustomBag = () => {
         if (!customName.trim()) return;
-        addBag({
+
+        const newBag = {
             id: crypto.randomUUID(),
             name: customName.trim(),
             color: "gray-400",
             type: "personalizada",
             items: customItems,
-        });
+            reminderTime: "20:00",
+            notifyDays,
+            notifyDayBefore: true,
+        };
+        addBag(newBag);
         onClose();
     };
 
@@ -41,5 +47,7 @@ export const useCreateBag = ({ onClose }) => {
         handleAddPredefined,
         handleAddCustomItem,
         handleCreateCustomBag,
+        notifyDays,
+        setNotifyDays,
     };
 };

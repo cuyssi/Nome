@@ -3,6 +3,7 @@ import { CreateBag } from "./CreateBag";
 import { EditBag } from "./EditBag";
 import { BagItems } from "./BagItems";
 import { TomorrowSubjects } from "./TomorrowSubjects";
+import { Check } from "lucide-react";
 
 export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, onClose, mode }) => {
     if (!isOpen) return null;
@@ -10,8 +11,8 @@ export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, on
     return (
         <Modal isOpen={isOpen}>
             {mode !== "school" && showConfirmation ? (
-                <p className="text-green-500 text-center font-semibold animate-fadeIn">
-                    ✅ Cambios guardados con éxito
+                <p className="flex text-green-500 justify-center font-semibold animate-fadeIn">
+                    <Check className="mr-2" /> Cambios guardados con éxito
                 </p>
             ) : mode === "create" ? (
                 <CreateBag

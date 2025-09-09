@@ -1,6 +1,6 @@
 import { Container_Card } from "../commons/Container_Card";
 import { Trash2, Pencil } from "lucide-react";
-import { useTaskCard } from "../../hooks/task/useTaskCard";
+import { useCard } from "../../hooks/commons/useCard";
 import { useStorageStore } from "../../store/storageStore";
 import { toLocalYMD } from "../../utils/toLocalYMD";
 import { getRepeatLabel } from "../../utils/getRepeatLabel"
@@ -13,7 +13,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
         state: { dragOffset, isRemoving },
         color,
         
-    } = useTaskCard(task, onDelete, onEdit, markAsCompleted);
+    } = useCard(task, onDelete, onEdit, markAsCompleted);
 
 
 
