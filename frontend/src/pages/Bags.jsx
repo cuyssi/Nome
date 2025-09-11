@@ -6,25 +6,36 @@ import { Bag_card } from "../components/bags/Bag_card";
 import { useState } from "react";
 import { BagItems } from "../components/bags/BagItems";
 import { Plus } from "lucide-react";
-
+import { NotifyBag } from "../components/bags/NotifyBag";
 import { TomorrowSubjects } from "../components/bags/TomorrowSubjects";
 
 export const Bags = () => {
-    const { isOpen, openModalWithBag, handleEdit, handleClose, showConfirmation, deleteBag, mode } =
-        useBagModalManager();
+    const {
+        isOpen,
+        openModalWithBag,
+        handleEdit,
+        handleClose,
+        showConfirmation,
+        deleteBag,
+        mode,
+        selectedBag,
+        isTomorrowOpen,
+        isItemsOpen,
+        setTomorrowOpen,
+        setItemsOpen,
+        openBagFromURL,
+    } = useBagModalManager();
+
     const { bags, editBag } = useBagsStore();
 
     const handleUpdateBag = (updatedBag) => {
         editBag(updatedBag);
-        setSelectedBag(updatedBag);
+        handleEdit(updatedBag);
     };
-
-    const [selectedBag, setSelectedBag] = useState(null);
-    const [isTomorrowOpen, setTomorrowOpen] = useState(false);
-    const [isItemsOpen, setItemsOpen] = useState(false);
 
     return (
         <div className="flex flex-col items-center h-full bg-black p-4">
+            <NotifyBag onOpenBag={(name) => openBagFromURL(name, bags)} />
             <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-10 mb-10">Mochilas</h2>
             <Item_List
                 items={bags}
@@ -34,14 +45,15 @@ export const Bags = () => {
                         bag={bag}
                         onDelete={() => deleteBag(bag.id)}
                         onOpenModal={(bag, modalMode) => {
-                            setSelectedBag(bag);
                             if (bag.name === "Escolar") {
                                 if (modalMode === "school") {
+                                    handleEdit(bag); // ✅ actualiza selectedBag
                                     setTomorrowOpen(true);
                                 } else if (modalMode === "edit") {
                                     openModalWithBag(bag, "edit");
                                 }
                             } else if (modalMode === "items") {
+                                handleEdit(bag); // ✅ actualiza selectedBag
                                 setItemsOpen(true);
                             } else {
                                 openModalWithBag(bag, modalMode);

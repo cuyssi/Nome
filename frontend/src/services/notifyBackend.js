@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const notifyBackend = async (text, dateTime, deviceId, type = "task", notifyMinutesBefore = 15) => {
+export const notifyBackend = async (text, dateTime, deviceId, type = "task", notifyMinutesBefore = 15, url) => {
     const baseURL = import.meta.env.VITE_API_URL;
 
     try {
@@ -10,7 +10,9 @@ export const notifyBackend = async (text, dateTime, deviceId, type = "task", not
             deviceId,
             type,
             notifyMinutesBefore,
+            data: { url }
         });
+        console.log(`url: ${url}`)
         console.log("📅 Tarea programada correctamente");
     } catch (error) {
         console.error("❌ Error notificando al backend:", error);

@@ -1,5 +1,6 @@
 import { useBagsStore } from "../../store/useBagsStore";
 import { notifyBackend } from "../../services/notifyBackend";
+import { buildReminderUrl } from "../../utils/buildReminderUrl"
 
 const toLocalDateTimeString = (date) => {
     const pad = (n) => String(n).padStart(2, "0");
@@ -13,7 +14,6 @@ const toLocalDateTimeString = (date) => {
         date.getMinutes()
     )}:00${sign}${hoursOffset}:${minutesOffset}`;
 };
-
 
 const calculateReminderDateTime = (bag) => {
     const now = new Date();
@@ -61,13 +61,16 @@ export const useBag = () => {
         const dateTimeString = toLocalDateTimeString(localDate); // ISO con offset
         console.log("⏰ dateTimeString:", dateTimeString);
 
+        const url = buildReminderUrl("bag", bag.name);
+
         try {
-            await notifyBackend(`📚 Recordatorio de mochila: ${bag.name}`, dateTimeString, deviceId, "bag");
+            await notifyBackend(`📚 Recordatorio de mochila: ${bag.name}`, dateTimeString, deviceId, "bag", 15, url);
             console.log("✅ notifyBackend completado");
+            console.log(`USEBAG url: ${url}`)
         } catch (e) {
             console.error("❌ Error en notifyBackend:", e);
         }
-    };
+    };    
 
     const wrappedAddBag = async (bag) => {
         console.log("➕ wrappedAddBag llamado con:", bag);

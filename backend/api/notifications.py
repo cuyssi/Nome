@@ -128,7 +128,14 @@ def notify_device(task):
             body = f'Tu tarea "{task["title"]}" es en 15 minutos'
             title = "⏱️ Recordatorio de tarea"
 
-        payload = {"title": title, "body": body}
+        payload = {
+            "title": title,
+            "body": body,
+            "data": task.get("data", {})  # esto debería incluir el url
+        }
+
+        print("📤 Payload que se envía al navegador:", payload)  # ✅ este es el log que necesitas
+
         send_push_notification(subscription, payload)
 
         if device_id in scheduled_tasks:
@@ -152,10 +159,13 @@ def calcular_delay(task_time_str, task_type="task", notify_minutes_before=15):
         delay = MAX_DELAY
     return max(delay, 1)
 
+
 def schedule_notification(task):
     device_id = task.get("deviceId")
     notify_minutes_before = task.get("notifyMinutesBefore", 15)
-    delay = calcular_delay(task["time"], task.get("type", "task"), notify_minutes_before)
+    delay = calcular_delay(
+        task["time"], task.get("type", "task"), notify_minutes_before
+    )
     print(f"schedule_notification: {task}")
     if not device_id:
         return
@@ -169,7 +179,9 @@ def schedule_notification(task):
 
     scheduled_tasks[device_id].append(task)
     save_data()
-    delay = calcular_delay(task["time"], task.get("type", "task"), notify_minutes_before)
+    delay = calcular_delay(
+        task["time"], task.get("type", "task"), notify_minutes_before
+    )
     print(f"Timer programado con delay: {delay} segundos")
     timer = threading.Timer(delay, notify_device, args=[task])
     active_timers.append(timer)
@@ -248,6 +260,7 @@ async def schedule_task(request: Request):
         "deviceId": device_id,
         "type": task_type,
         "notifyMinutesBefore": task.get("notifyMinutesBefore", 15),
+        "data": task.get("data", {})
     }
     schedule_notification(task_data)
     return {"status": "scheduled"}

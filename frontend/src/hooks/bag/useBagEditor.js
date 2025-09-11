@@ -36,7 +36,7 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
 
         updateBag(updatedBag);
 
-        if (onUpdateBag) onUpdateBag(updatedBag);
+        if (onUpdateBag) onUpdateBag(updatedBag);        
     };
 
     return {

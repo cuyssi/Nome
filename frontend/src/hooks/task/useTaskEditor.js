@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTasks } from "./useTasks";
+import { formatDateForBackend } from "../../utils/formatDateForBackend"
 
 export function useTaskEditor() {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,12 +23,21 @@ export function useTaskEditor() {
     const handleEdit = (updatedTask) => {
         if (!updatedTask) return;
 
-        if (updatedTask.id && selectedTask?.id) {
-            const mergedTask = { ...selectedTask, ...updatedTask };
-            const { id, ...updatedFields } = mergedTask;
+        // Asegurarte de que dateTime esté en formato ISO si es una instancia de Date
+        const formattedDateTime =
+            updatedTask.dateTime instanceof Date ? formatDateForBackend(updatedTask.dateTime) : updatedTask.dateTime;
+
+        const mergedTask = {
+            ...selectedTask,
+            ...updatedTask,
+            dateTime: formattedDateTime ?? selectedTask.dateTime, // ✅ preserva si no se edita
+        };
+
+        const { id, ...updatedFields } = mergedTask;
+        if (id) {
             updateTask(id, updatedFields);
         } else {
-            addTask(updatedTask);
+            addTask(updatedFields);
         }
 
         reload();

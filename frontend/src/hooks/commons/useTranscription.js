@@ -14,6 +14,8 @@ import { getTaskColor } from "../task/useTaskColor";
 import { useStorageStore } from "../../store/storageStore";
 import { useTaskType } from "../task/useTaskType";
 import { formatDateForBackend } from "../../utils/formatDateForBackend";
+import { buildReminderUrl } from "../../utils/buildReminderUrl"
+import { notifyBackend } from "../../services/notifyBackend";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
@@ -46,6 +48,13 @@ export const useTranscription = () => {
                 repeat: options.repeat || "once",
                 customDays: options.customDays || [],
             });
+
+            const deviceId = localStorage.getItem("deviceId");
+            if (deviceId && dateTimeFormatted && text) {
+                const url = buildReminderUrl("task", text);
+                await notifyBackend(text, dateTimeFormatted, deviceId, "task", 15, url);
+            }
+
         } catch (err) {
             console.error("❌ Error al enviar:", err);
         } finally {

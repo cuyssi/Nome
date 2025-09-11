@@ -5,6 +5,7 @@ import { notifyBackend } from "../../services/notifyBackend";
 import { formatDateForBackend } from "../../utils/formatDateForBackend";
 import { isTaskActiveOnDate } from "../../store/storageStore";
 import { toLocalYMD } from "../../utils/toLocalYMD";
+import { buildReminderUrl } from "../../utils/buildReminderUrl"
 
 export const useTasks = (type, exclude = false) => {
     const { tasks: rawTasks, deleteTask, updateTask: baseUpdateTask, addTask: baseAddTask } = useStorageStore();
@@ -30,6 +31,7 @@ export const useTasks = (type, exclude = false) => {
         if (updatedFields.dateTime && updatedFields.text) {
             const isoDate = formatDateForBackend(updatedFields.dateTime);
             console.log(`Task updated: ${updatedFields.text} at ${isoDate}`);
+            const url = buildReminderUrl("task", updatedFields.text);
 
             const deviceId = localStorage.getItem("deviceId");
             if (!deviceId) return;
@@ -39,7 +41,8 @@ export const useTasks = (type, exclude = false) => {
                 isoDate,
                 deviceId,
                 "task",
-                Number(updatedFields.reminder) || 15
+                Number(updatedFields.reminder) || 15,
+                url
             );
         }
     };
@@ -53,7 +56,8 @@ export const useTasks = (type, exclude = false) => {
                 console.warn("⚠️ No hay deviceId en localStorage");
                 return;
             }
-            await notifyBackend(task.text, isoDate, deviceId, "taks", Number(task.reminder) || 15);
+            const url = buildReminderUrl("task", task.title);
+            await notifyBackend(task.text, isoDate, deviceId, "taks", Number(task.reminder) || 15, url);
         }
     };
 

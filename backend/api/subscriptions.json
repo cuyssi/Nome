@@ -29,40 +29,24 @@
     "e9d3a534-9ea5-4756-ab03-1932678440a4": [],
     "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40": [
       {
-        "title": "Recordatorio de mochila: asdrfasdf",
-        "time": "2025-09-09T20:00:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40"
-      },
-      {
-        "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
-        "time": "2025-09-10T10:38:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "bag"
-      },
-      {
-        "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
-        "time": "2025-09-10T11:11:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task"
-      },
-      {
-        "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
-        "time": "2025-09-10T11:13:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task"
-      },
-      {
-        "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
-        "time": "2025-09-10T11:19:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task"
-      },
-      {
-        "title": "\ud83d\udcda Recordatorio de mochila: Piscina",
-        "time": "2025-09-10T12:17:00+02:00",
+        "title": "\ud83d\udcda Recordatorio de mochila: Playa",
+        "time": "2025-09-11T20:00:00+02:00",
         "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
         "type": "bag",
-        "notifyMinutesBefore": 15
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/bags?open=playa"
+        }
+      },
+      {
+        "title": "Qued\u00e9 con marcos asno y en Rivero",
+        "time": "2025-09-11T15:30:00+02:00",
+        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today?open=quede-con-marcos-asno-y-en-rivero"
+        }
       }
     ]
   }
