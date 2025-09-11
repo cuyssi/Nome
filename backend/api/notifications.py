@@ -140,10 +140,10 @@ def notify_device(task):
 
         if device_id in scheduled_tasks:
             scheduled_tasks[device_id] = [
-                t
-                for t in scheduled_tasks[device_id]
-                if not (t["title"] == task["title"] and t["time"] == task["time"])
+                t for t in scheduled_tasks[device_id]
+                if isinstance(t, dict) and t.get("id") != task["id"]
             ]
+
             save_data()
 
 
@@ -173,9 +173,12 @@ def schedule_notification(task):
         scheduled_tasks[device_id] = []
 
     for t in scheduled_tasks[device_id]:
-        if t["title"] == task["title"] and t["time"] == task["time"]:
-            print("Tarea ya programada, no se duplica")
-            return
+        if t.get("id") == task["id"]:
+            print("🔍 Revisando tarea:", t)
+            print("🔁 Tarea ya existe, se cancela y se reprograma")
+            cancelar_timer_existente(t)
+            scheduled_tasks[device_id].remove(t)
+            break
 
     scheduled_tasks[device_id].append(task)
     save_data()
@@ -203,6 +206,27 @@ def reprogram_all_tasks():
                 print(
                     f"🔄 Reprogramada tarea '{task['title']}' para deviceId {device_id}"
                 )
+
+
+@router.post("/cancel-task")
+async def cancel_task(request: Request):
+    body = await request.json()
+    task_id = body.get("id")
+    device_id = body.get("deviceId")
+
+    if not task_id or not device_id:
+        raise HTTPException(status_code=400, detail="Faltan id o deviceId")
+
+    tareas = scheduled_tasks.get(device_id, [])
+    for t in tareas:
+        if t.get("id") == task_id:
+            cancelar_timer_existente(t)
+            tareas.remove(t)
+            print(f"🧹 Tarea cancelada: {task_id} para deviceId {device_id}")
+            break
+
+    save_data()
+    return {"status": "cancelled"}
 
 
 @router.post("/subscribe")
@@ -255,6 +279,7 @@ async def schedule_task(request: Request):
         raise HTTPException(status_code=400, detail="Falta deviceId")
     task_type = task.get("type", "task")
     task_data = {
+        "id": task.get("id"),
         "title": task["text"],
         "time": task["dateTime"],
         "deviceId": device_id,
@@ -262,5 +287,6 @@ async def schedule_task(request: Request):
         "notifyMinutesBefore": task.get("notifyMinutesBefore", 15),
         "data": task.get("data", {})
     }
+    print("📦 Task final para programar:", task_data)
     schedule_notification(task_data)
     return {"status": "scheduled"}

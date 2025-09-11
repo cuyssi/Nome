@@ -39,7 +39,7 @@ const Task_count = () => {
 
                 <div className="flex w-[100%] justify-center items-center px-4 mt-4">
                     <Container innerClass="flex flex-col" outerClass="w-[100%]">
-                        <h3 className="text-white font-poppins text-lg mb-2">Tareas para hoy</h3>
+                        <h3 className="text-yellow-600 font-poppins text-lg mb-4">Tareas para hoy</h3>
                         <div className="w-full flex justify-between items-center">
                             <Link to="./today" className="flex-1 flex-col no-underline justify-center items-center">
                                 <p className="text-yellow-200 text-center font-extrabold drop-shadow-[0_0_1px_black] text-3xl">

@@ -23,6 +23,30 @@
         "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
         "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
       }
+    },
+    "d5af3bf3-4514-4954-9194-32593c25ab5c": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d9eJMmMDHIg:APA91bE7lNNJrdUHIBbT4xdpbbbWi5xUrPQFR9v5I9XBNbKHk_NXt9uiPvUD5mT6t-J7_e-y1qBxsMPcqNtBcwDmTHS5Tk52PkOAnHWbESiTo6iWILnU8DVCLf6NNe5CwzkS9okwonqL",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
+        "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
+      }
+    },
+    "fbb9d131-0299-4980-8c48-3cb53c90487e": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d9eJMmMDHIg:APA91bE7lNNJrdUHIBbT4xdpbbbWi5xUrPQFR9v5I9XBNbKHk_NXt9uiPvUD5mT6t-J7_e-y1qBxsMPcqNtBcwDmTHS5Tk52PkOAnHWbESiTo6iWILnU8DVCLf6NNe5CwzkS9okwonqL",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
+        "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
+      }
+    },
+    "58acfefe-2843-4513-bc7b-fa659f18d2fe": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/d9eJMmMDHIg:APA91bE7lNNJrdUHIBbT4xdpbbbWi5xUrPQFR9v5I9XBNbKHk_NXt9uiPvUD5mT6t-J7_e-y1qBxsMPcqNtBcwDmTHS5Tk52PkOAnHWbESiTo6iWILnU8DVCLf6NNe5CwzkS9okwonqL",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BNUxNGt2P7t_xs0_flK1Cgt0V7TJea0sQq_WyVTG3LE6b2a69lQ-xNK-0vDUgiuxcmsStxW-epYYE47KOMoVyOA",
+        "auth": "E7-gcdpkyB6Ndl_Ksomo0Q"
+      }
     }
   },
   "scheduled_tasks": {
@@ -36,16 +60,6 @@
         "notifyMinutesBefore": 15,
         "data": {
           "url": "/bags?open=playa"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con marcos asno y en Rivero",
-        "time": "2025-09-11T15:30:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-marcos-asno-y-en-rivero"
         }
       },
       {
@@ -76,156 +90,6 @@
         "notifyMinutesBefore": 15,
         "data": {
           "url": "/today?open=quede-con-joaquin-en-las-meanas-minutos"
-        }
-      },
-      {
-        "title": "Qued\u00e9 qued\u00e9 con m\u00f3nica en las Meanas",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-quede-con-monica-en-las-meanas"
-        }
-      },
-      {
-        "title": "Eve comunican las Meanas",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=eve-comunican-las-meanas"
-        }
-      },
-      {
-        "title": "Qued\u00e9 comunican las Meanas",
-        "time": "2025-09-11T14:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-comunican-las-meanas"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con m\u00f3nica las Meanas",
-        "time": "2025-09-11T14:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-monica-las-meanas"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con m\u00f3nica en las menas",
-        "time": "2025-09-11T14:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-monica-en-las-menas"
-        }
-      },
-      {
-        "title": "De comunican las Meanas",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=de-comunican-las-meanas"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con m\u00f3nica las medidas",
-        "time": "2025-09-11T14:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-monica-las-medidas"
-        }
-      },
-      {
-        "title": "Quienes comunican las manos",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quienes-comunican-las-manos"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con Joaqu\u00edn en Rivero",
-        "time": "2025-09-11T15:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-joaquin-en-rivero"
-        }
-      },
-      {
-        "title": "Qued\u00e9 te con monica las manos",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-te-con-monica-las-manos"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con m\u00f3nica en las Meanas",
-        "time": "2025-09-11T12:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-monica-en-las-meanas"
-        }
-      },
-      {
-        "title": "Con Joaqu\u00edn en Rivero",
-        "time": "2025-09-11T14:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=con-joaquin-en-rivero"
-        }
-      },
-      {
-        "title": "Qued\u00e9 con Joaqu\u00edn en el Mario",
-        "time": "2025-09-11T15:05:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-con-joaquin-en-el-mario"
-        }
-      },
-      {
-        "title": "Qued\u00e9 venga el Mario con rossi",
-        "time": "2025-09-11T15:52:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=quede-venga-el-mario-con-rossi"
-        }
-      },
-      {
-        "title": "El Mario",
-        "time": "2025-09-11T15:30:00+02:00",
-        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today?open=el-mario"
         }
       },
       {
@@ -297,7 +161,20 @@
         "data": {
           "url": "/today?open=quede-con-sheila-en-las-meanas"
         }
+      },
+      {
+        "title": "Qued\u00e9 con Joaqu\u00edn en las Meanas a",
+        "time": "2025-09-11T18:30:00+02:00",
+        "deviceId": "5c1f3f8a-6fa5-401f-aeb1-123757e6ff40",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today?open=quede-con-joaquin-en-las-meanas-a"
+        }
       }
-    ]
+    ],
+    "d5af3bf3-4514-4954-9194-32593c25ab5c": [],
+    "fbb9d131-0299-4980-8c48-3cb53c90487e": [],
+    "58acfefe-2843-4513-bc7b-fa659f18d2fe": []
   }
 }

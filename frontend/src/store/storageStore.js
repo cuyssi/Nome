@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toLocalYMD } from "../utils/toLocalYMD";
+import { notifyBackend, cancelTaskBackend } from "../services/notifyBackend";
+import { buildReminderUrl } from "../utils/buildReminderUrl";
+import { formatDateForBackend } from "../utils/formatDateForBackend";
 
 export const isTaskActiveOnDate = (task, dateStr) => {
     const date = new Date(dateStr);
@@ -42,16 +45,58 @@ export const useStorageStore = create(
             addTask: (newTask) => {
                 const tasks = [...get().tasks, newTask];
                 set({ tasks: sortTasks(tasks) });
+
+                const deviceId = localStorage.getItem("deviceId");
+                if (!deviceId || !newTask.dateTime || !newTask.text) return;
+
+                const isoDate = formatDateForBackend(newTask.dateTime);
+                const url = buildReminderUrl("task", newTask.text);
+
+                notifyBackend(
+                    newTask.id,
+                    newTask.text,
+                    isoDate,
+                    deviceId,
+                    "task",
+                    Number(newTask.reminder) || 15,
+                    url
+                );
             },
 
-            updateTask: (id, updatedFields) => {
-                const updatedTasks = get().tasks.map((task) => (task.id === id ? { ...task, ...updatedFields } : task));
+            updateTask: async (id, updatedFields) => {
+                const updatedTasks = get().tasks.map((task) =>
+                    task.id === id ? { ...task, ...updatedFields } : task
+                );
                 set({ tasks: sortTasks(updatedTasks) });
+
+                const updatedTask = updatedTasks.find((t) => t.id === id);
+                const deviceId = localStorage.getItem("deviceId");
+                if (!deviceId || !updatedTask?.dateTime || !updatedTask?.text) return;
+
+                await cancelTaskBackend(id, deviceId);
+
+                const isoDate = formatDateForBackend(updatedTask.dateTime);
+                const url = buildReminderUrl("task", updatedTask.text);
+
+                notifyBackend(
+                    updatedTask.id,
+                    updatedTask.text,
+                    isoDate,
+                    deviceId,
+                    "task",
+                    Number(updatedTask.reminder) || 15,
+                    url
+                );
             },
 
-            deleteTask: (id) => {
+            deleteTask: async (id) => {
                 const tasks = get().tasks.filter((task) => task.id !== id);
                 set({ tasks: sortTasks(tasks) });
+
+                const deviceId = localStorage.getItem("deviceId");
+                if (deviceId) {
+                    await cancelTaskBackend(id, deviceId);
+                }
             },
 
             clearAllTasks: () => set({ tasks: [], completedToday: [] }),

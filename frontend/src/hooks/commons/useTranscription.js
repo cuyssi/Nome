@@ -48,13 +48,7 @@ export const useTranscription = () => {
                 repeat: options.repeat || "once",
                 customDays: options.customDays || [],
             });
-
-            const deviceId = localStorage.getItem("deviceId");
-            if (deviceId && dateTimeFormatted && text) {
-                const url = buildReminderUrl("task", text);
-                await notifyBackend(text, dateTimeFormatted, deviceId, "task", 15, url);
-            }
-
+            
         } catch (err) {
             console.error("❌ Error al enviar:", err);
         } finally {
