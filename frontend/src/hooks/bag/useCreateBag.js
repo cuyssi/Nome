@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useBag } from "../../hooks/bag/useBag";
+import { calculateReminderDateTime } from "../../utils/calculateReminder";
 
 export const useCreateBag = ({ onClose }) => {
     const { addBag } = useBag();
@@ -32,7 +33,13 @@ export const useCreateBag = ({ onClose }) => {
             reminderTime: "20:00",
             notifyDays,
             notifyDayBefore: true,
+            dateTime: calculateReminderDateTime({
+                reminderTime: "20:00",
+                type: "personalizada",
+                notifyDays,
+            }).toISOString(),
         };
+
         addBag(newBag);
         onClose();
     };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AVAILABLE_COLORS } from "../../utils/constants";
 import { useBag } from "../../hooks/bag/useBag";
+import { calculateReminderDateTime } from "../../utils/calculateReminder";
 
 export const useBagEditor = ({ bag, onUpdateBag }) => {
     const { updateBag } = useBag();
@@ -25,6 +26,12 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        const dateTime = calculateReminderDateTime({
+            reminderTime: `${reminderTime.hour}:${reminderTime.minute}`,
+            type: bag.type,
+            notifyDays,
+        }).toISOString();
+
         const updatedBag = {
             ...bag,
             name,
@@ -32,11 +39,12 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
             color: selectedColor,
             reminderTime: `${reminderTime.hour}:${reminderTime.minute}`,
             notifyDays,
+            dateTime,
         };
 
         updateBag(updatedBag);
 
-        if (onUpdateBag) onUpdateBag(updatedBag);        
+        if (onUpdateBag) onUpdateBag(updatedBag);
     };
 
     return {

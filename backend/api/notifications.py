@@ -86,7 +86,7 @@ def cancelar_timer_existente(task):
             t = timer.args[0]
             if (
                 t["title"] == task["title"]
-                and t["time"] == task["time"]
+                and t["dateTime"] == task["dateTime"]
                 and t["deviceId"] == task["deviceId"]
             ):
                 timer.cancel()
@@ -131,20 +131,24 @@ def notify_device(task):
         payload = {
             "title": title,
             "body": body,
-            "data": task.get("data", {})  # esto debería incluir el url
+            "data": task.get("data", {})
         }
 
-        print("📤 Payload que se envía al navegador:", payload)  # ✅ este es el log que necesitas
-
+        print("📤 Payload que se envía al navegador:", payload)
         send_push_notification(subscription, payload)
+
+        task_id = task.get("id")
+        if not task_id:
+            print(f"❌ Tarea sin ID, no se puede limpiar: {task}")
+            return
 
         if device_id in scheduled_tasks:
             scheduled_tasks[device_id] = [
                 t for t in scheduled_tasks[device_id]
-                if isinstance(t, dict) and t.get("id") != task["id"]
+                if isinstance(t, dict) and t.get("id") != task_id
             ]
 
-            save_data()
+        save_data()
 
 
 def calcular_delay(task_time_str, task_type="task", notify_minutes_before=15):
@@ -164,7 +168,7 @@ def schedule_notification(task):
     device_id = task.get("deviceId")
     notify_minutes_before = task.get("notifyMinutesBefore", 15)
     delay = calcular_delay(
-        task["time"], task.get("type", "task"), notify_minutes_before
+        task["dateTime"], task.get("type", "task"), notify_minutes_before
     )
     print(f"schedule_notification: {task}")
     if not device_id:
@@ -183,7 +187,7 @@ def schedule_notification(task):
     scheduled_tasks[device_id].append(task)
     save_data()
     delay = calcular_delay(
-        task["time"], task.get("type", "task"), notify_minutes_before
+        task["dateTime"], task.get("type", "task"), notify_minutes_before
     )
     print(f"Timer programado con delay: {delay} segundos")
     timer = threading.Timer(delay, notify_device, args=[task])
@@ -197,7 +201,7 @@ def reprogram_all_tasks():
         if device_id not in subscriptions:
             continue
         for task in tasks:
-            delay = calcular_delay(task["time"])
+            delay = calcular_delay(task["dateTime"])
             if delay > 0:
                 timer = threading.Timer(delay, notify_device, args=[task])
                 timer.start()
@@ -241,7 +245,7 @@ async def subscribe(request: Request):
 
     if device_id in scheduled_tasks:
         for task in scheduled_tasks[device_id]:
-            delay = calcular_delay(task["time"])
+            delay = calcular_delay(task["dateTime"])
             if delay > 0 and not task.get("rescheduled"):
                 cancelar_timer_existente(task)
                 timer = threading.Timer(delay, notify_device, args=[task])
@@ -281,12 +285,13 @@ async def schedule_task(request: Request):
     task_data = {
         "id": task.get("id"),
         "title": task["text"],
-        "time": task["dateTime"],
+        "dateTime": task["dateTime"],
         "deviceId": device_id,
         "type": task_type,
         "notifyMinutesBefore": task.get("notifyMinutesBefore", 15),
         "data": task.get("data", {})
     }
+    print(f"🧪 Recibido dateTime: {task['dateTime']}")
     print("📦 Task final para programar:", task_data)
     schedule_notification(task_data)
     return {"status": "scheduled"}

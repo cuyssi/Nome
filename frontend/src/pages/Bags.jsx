@@ -5,6 +5,8 @@ import { useBagsStore } from "../store/useBagsStore";
 import { Bag_card } from "../components/bags/Bag_card";
 import { Plus } from "lucide-react";
 import { NotifyBag } from "../components/bags/NotifyBag";
+import { useBag } from "../hooks/bag/useBag";
+
 
 export const Bags = () => {
     const {
@@ -13,14 +15,15 @@ export const Bags = () => {
         handleEdit,
         handleClose,
         showConfirmation,
-        setSelectedBag,
-        deleteBag,
+        setSelectedBag,        
         mode,
         selectedBag,
         openBagFromURL,
     } = useBagModalManager();
 
     const { bags, editBag } = useBagsStore();
+    const { deleteBag } = useBag();
+
 
     const handleUpdateBag = (updatedBag, options = {}) => {
         const { closeAfterSave = false, skipConfirmation = false } = options;

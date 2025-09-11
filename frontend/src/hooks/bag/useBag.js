@@ -1,6 +1,6 @@
 import { useBagsStore } from "../../store/useBagsStore";
-import { notifyBackend } from "../../services/notifyBackend";
-import { buildReminderUrl } from "../../utils/buildReminderUrl"
+import { notifyBackend, cancelTaskBackend } from "../../services/notifyBackend";
+import { buildReminderUrl } from "../../utils/buildReminderUrl";
 
 const toLocalDateTimeString = (date) => {
     const pad = (n) => String(n).padStart(2, "0");
@@ -15,62 +15,74 @@ const toLocalDateTimeString = (date) => {
     )}:00${sign}${hoursOffset}:${minutesOffset}`;
 };
 
-const calculateReminderDateTime = (bag) => {
+export const calculateReminderDateTime = (bag) => {
     const now = new Date();
     const [hours, minutes] = (bag.reminderTime || "20:00").split(":").map(Number);
     const reminder = new Date(now);
     reminder.setHours(hours, minutes, 0, 0);
 
-    if (bag.type === "escolar") {
-        // 🟢 Notificación **hoy**, porque la mochila es para mañana
-        // NO sumamos días
-    } else if (bag.type === "personalizada" && Array.isArray(bag.notifyDays) && bag.notifyDays.length) {
+    if (bag.type === "personalizada" && Array.isArray(bag.notifyDays) && bag.notifyDays.length) {
         const dayMap = { L: 1, M: 2, X: 3, J: 4, V: 5, S: 6, D: 0 };
         const todayDay = now.getDay();
 
-        const daysAhead = bag.notifyDays.map((d) => (dayMap[d] - todayDay + 7) % 7).sort((a, b) => a - b);
+        const daysAhead = bag.notifyDays
+            .map((d) => (dayMap[d] - todayDay + 7) % 7)
+            .sort((a, b) => a - b);
 
-        let nextOffset =
+        const nextOffset =
             daysAhead.find((d) => {
                 const candidate = new Date(reminder);
                 candidate.setDate(candidate.getDate() + d);
                 return candidate > now;
-            }) ??
-            daysAhead[0] ??
-            0;
+            }) ?? daysAhead[0] ?? 0;
 
         reminder.setDate(reminder.getDate() + nextOffset);
     }
-    console.log("calculateReminderDateTime (local):", reminder);
+
     return reminder;
 };
+
 
 export const useBag = () => {
     console.log("🟢 useBag hook inicializado");
 
-    const { addBag: baseAddBag, updateBag: baseUpdateBag } = useBagsStore();
+    const { addBag: baseAddBag, updateBag: baseUpdateBag, deleteBag: baseDeleteBag } = useBagsStore();
 
     const scheduleNotification = async (bag) => {
         console.log("🟡 scheduleNotification llamado con:", bag);
 
         const deviceId = localStorage.getItem("deviceId");
-        console.log("📌 deviceId:", deviceId);
         if (!deviceId) return console.log("❌ No hay deviceId, saliendo");
 
-        const localDate = calculateReminderDateTime(bag); // Date
-        const dateTimeString = toLocalDateTimeString(localDate); // ISO con offset
-        console.log("⏰ dateTimeString:", dateTimeString);
-
+        const localDate = calculateReminderDateTime(bag);
+        const dateTimeString = toLocalDateTimeString(localDate);
         const url = buildReminderUrl("bag", bag.name);
 
+        console.log("📦 Enviando al backend →", {
+            id: bag.id,
+            text: `📚 Recordatorio de mochila: ${bag.name}`,
+            dateTime: dateTimeString,
+            deviceId,
+            type: "bag",
+            notifyMinutesBefore: Number(bag.reminder) || 15,
+            url
+        });
+
         try {
-            await notifyBackend(`📚 Recordatorio de mochila: ${bag.name}`, dateTimeString, deviceId, "bag", 15, url);
+            await notifyBackend(
+                bag.id,
+                `📚 Recordatorio de mochila: ${bag.name}`,
+                dateTimeString,
+                deviceId,
+                "bag",
+                Number(bag.reminder) || 15,
+                url
+            );
             console.log("✅ notifyBackend completado");
-            console.log(`USEBAG url: ${url}`)
         } catch (e) {
             console.error("❌ Error en notifyBackend:", e);
         }
-    };    
+    };
 
     const wrappedAddBag = async (bag) => {
         console.log("➕ wrappedAddBag llamado con:", bag);
@@ -81,11 +93,28 @@ export const useBag = () => {
     const wrappedUpdateBag = async (bag) => {
         console.log("🔄 wrappedUpdateBag llamado con:", bag);
         baseUpdateBag(bag);
+
+        const deviceId = localStorage.getItem("deviceId");
+        if (deviceId) {
+            await cancelTaskBackend(bag.id, deviceId);
+        }
+
         await scheduleNotification(bag);
+    };
+
+    const wrappedDeleteBag = async (id) => {
+        console.log("🗑️ wrappedDeleteBag llamado con:", id);
+        baseDeleteBag(id);
+
+        const deviceId = localStorage.getItem("deviceId");
+        if (deviceId) {
+            await cancelTaskBackend(id, deviceId);
+        }
     };
 
     return {
         addBag: wrappedAddBag,
         updateBag: wrappedUpdateBag,
+        deleteBag: wrappedDeleteBag
     };
 };
