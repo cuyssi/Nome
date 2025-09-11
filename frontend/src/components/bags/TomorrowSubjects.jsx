@@ -1,6 +1,6 @@
 import { Modal } from "../commons/Modal";
 import { useTomorrowSubjects } from "../../hooks/bag/useTomorrowSubjects";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 
 const fullDays = {
     L: "Lunes",
@@ -28,7 +28,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
 
                 {isTomorrowBagComplete && (
                     <p className="flex items-center gap-2 text-green-700 justify-center mt-4 font-bold">
-                        ¡Mochila lista! <Check />
+                        <Check className="mr-2" /> Cambios guardados con éxito
                     </p>
                 )}
 
