@@ -3,11 +3,8 @@ import { useBagModalManager } from "../hooks/bag/useBagModalManager";
 import { BagModalManager } from "../components/bags/BagModalManager";
 import { useBagsStore } from "../store/useBagsStore";
 import { Bag_card } from "../components/bags/Bag_card";
-import { useState } from "react";
-import { BagItems } from "../components/bags/BagItems";
 import { Plus } from "lucide-react";
 import { NotifyBag } from "../components/bags/NotifyBag";
-import { TomorrowSubjects } from "../components/bags/TomorrowSubjects";
 
 export const Bags = () => {
     const {
@@ -16,21 +13,24 @@ export const Bags = () => {
         handleEdit,
         handleClose,
         showConfirmation,
+        setSelectedBag,
         deleteBag,
         mode,
         selectedBag,
-        isTomorrowOpen,
-        isItemsOpen,
-        setTomorrowOpen,
-        setItemsOpen,
         openBagFromURL,
     } = useBagModalManager();
 
     const { bags, editBag } = useBagsStore();
 
-    const handleUpdateBag = (updatedBag) => {
+    const handleUpdateBag = (updatedBag, options = {}) => {
+        const { closeAfterSave = false, skipConfirmation = false } = options;
         editBag(updatedBag);
-        handleEdit(updatedBag);
+
+        if (closeAfterSave) {
+            handleEdit(updatedBag);
+        } else {
+            setSelectedBag(updatedBag);
+        }
     };
 
     return (
@@ -45,51 +45,22 @@ export const Bags = () => {
                         bag={bag}
                         onDelete={() => deleteBag(bag.id)}
                         onOpenModal={(bag, modalMode) => {
-                            if (bag.name === "Escolar") {
-                                if (modalMode === "school") {
-                                    handleEdit(bag); // ✅ actualiza selectedBag
-                                    setTomorrowOpen(true);
-                                } else if (modalMode === "edit") {
-                                    openModalWithBag(bag, "edit");
-                                }
-                            } else if (modalMode === "items") {
-                                handleEdit(bag); // ✅ actualiza selectedBag
-                                setItemsOpen(true);
-                            } else {
-                                openModalWithBag(bag, modalMode);
-                            }
+                            openModalWithBag(bag, modalMode);
                         }}
                     />
                 )}
             />
-            {selectedBag && selectedBag.name === "Escolar" && (
-                <TomorrowSubjects
-                    isOpen={isTomorrowOpen}
-                    bag={selectedBag}
-                    onClose={() => setTomorrowOpen(false)}
-                    onUpdateBag={handleUpdateBag}
-                />
-            )}
-            {selectedBag && selectedBag.name !== "Escolar" && (
-                <BagItems
-                    isOpen={isItemsOpen}
-                    bag={selectedBag}
-                    onClose={() => setItemsOpen(false)}
-                    onUpdateBag={handleUpdateBag}
-                />
-            )}
             <button
                 onClick={() => openModalWithBag(null, "create")}
                 className="bg-purple-400 text-white font-poppins px-4 py-2 rounded-lg mb-6 hover:bg-purple-700 transition"
             >
                 <Plus className="inline-block mr-2" /> Crear mochila
             </button>
-            console.log("modalBag", modalBag);
             <BagModalManager
                 isOpen={isOpen}
                 selected={selectedBag}
                 showConfirmation={showConfirmation}
-                onEdit={handleEdit}
+                onEdit={handleUpdateBag}
                 onClose={handleClose}
                 mode={mode}
             />

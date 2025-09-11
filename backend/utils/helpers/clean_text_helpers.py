@@ -10,10 +10,6 @@
 import re
 
 def clean_date_and_fragment(text, fragments=None):
-    """
-    Elimina del texto todos los fragmentos de fecha/hora pasados en `fragments`.
-    fragments: str o lista de str
-    """
     if not fragments:
         fragments = []
     elif isinstance(fragments, str):

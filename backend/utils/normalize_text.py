@@ -28,6 +28,7 @@ with open(CUSTOM_WORDS_PATH, "r", encoding="utf-8") as f:
 nlp = spacy.load("es_core_news_md")
 
 def fix_transcription(text):
+    print(f"TEXTO: {text}")
     text_lower = text.lower()
     for wrong, correct in CORRECTIONS.items():
         text_lower = re.sub(rf"\b{re.escape(wrong)}\b", correct, text_lower)

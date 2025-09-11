@@ -14,7 +14,7 @@ CORRECTIONS = {
     "ede": "quedé",
     "ver": "quedé",
     "las medianas": "las Meanas",
-    "las mañanas": "las Meanas",    
+    "las mañanas": "las Meanas",
     "y media": "30",
     "y cuarto": "15",
     "menos cuarto": "menos 15",
@@ -38,5 +38,8 @@ CORRECTIONS = {
     "compartí": "quede con Paqui",
     "johann": "Joan",
     "joanne": "Joan",
-    "johan": "Joan"
+    "johan": "Joan",
+    "minutos": "",
+    "comunican": "con Monica",
+    "el mario": "el Atrio",
 }
