@@ -18,7 +18,7 @@ def clean_date_and_fragment(text, fragments=None):
     for fragment in fragments:
         if fragment:
             fragment_esc = re.escape(fragment.strip())
-            text = re.sub(rf'\b{fragment_esc}\b', '', text, flags=re.IGNORECASE)
+            text = re.sub(rf'\b(?:para\s+)?(?:el|la|los|las)?\s*{fragment_esc}\b', '', text, flags=re.IGNORECASE)
 
     text = re.sub(r"\b(a\s+)?(la|las)\s+\d{1,2}(:\d{2})?\b", "", text, flags=re.IGNORECASE)
     text = re.sub(r"\b\d{1,2}(:\d{2})?\b", "", text)

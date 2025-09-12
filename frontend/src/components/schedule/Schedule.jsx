@@ -57,7 +57,7 @@ export const Schedule = () => {
                 return (
                   <td
                     key={key}
-                    className={`border border-black h-16 sm:h-14 text-center cursor-pointer hover:brightness-95 bg-${bgColor} ${textClass}`}
+                    className={`border border-black h-14 sm:h-12 text-center cursor-pointer hover:brightness-95 bg-${bgColor} ${textClass}`}
                     onClick={() => {
                       setSelectedSubject({
                         day,

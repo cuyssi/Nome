@@ -12,7 +12,7 @@ export const Modal = ({ isOpen, children }) => {
 
     return (
         <div className="absolute inset-0 flex justify-center items-center z-50 backdrop-blur-sm bg-black/30 p-4">
-            <div className=" rounded-lg shadow-lg w-full max-w-md">{children}</div>
+            <div>{children}</div>
         </div>
     );
 };

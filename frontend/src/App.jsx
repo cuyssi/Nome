@@ -1,13 +1,13 @@
 import "./App.css";
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Task from "./pages/Task";
-import Dates from "./pages/Dates";
+import { Home } from "./pages/Home";
+import { Tasks } from "./pages/Tasks";
+import { Dates } from "./pages/Dates";
 import { Footer } from "./components/commons/Footer";
-import Completed_tasks from "./pages/Completed_tasks";
-import Pending_tasks from "./pages/Pending_tasks";
-import Today_tasks from "./pages/Today_tasks";
+import { Completed_tasks } from "./pages/Completed_tasks";
+import { Pending_tasks } from "./pages/Pending_tasks";
+import { Today_tasks } from "./pages/Today_tasks";
 import { ensureDeviceId } from "./utils/ensureDeviceId";
 import { usePushNotifications } from "./hooks/notification/usePushNotifications";
 import { Schedule_page } from "./pages/Schedule_page";
@@ -41,7 +41,7 @@ function App() {
                 <main className="bg-black flex-1 overflow-y-auto border border-black">
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/tasks" element={<Task />} />
+                        <Route path="/tasks" element={<Tasks />} />
                         <Route path="/dates" element={<Dates />} />
                         <Route path="/today" element={<Today_tasks />} />
                         <Route path="/completed" element={<Completed_tasks />} />

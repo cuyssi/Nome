@@ -31,19 +31,24 @@ Doc.set_extension("task_type", default=None)
 
 matcher = Matcher(nlp.vocab)
 
-matcher.add("APPOINTMENT", [[{"LEMMA": {"IN": ["quedar", "ver", "citar"]}}]])
-matcher.add("MEDICAL", [
+matcher.add("cita", [[{"LEMMA": {"IN": ["quedar", "ver", "citar"]}}]])
+matcher.add("medico", [
     [{"LOWER": {"IN": ["medico", "doctor", "hospital", "consulta"]}}],
     [{"LOWER": "cita"}, {"LOWER": "medica"}]
 ])
-matcher.add("HOMEWORK", [
+matcher.add("deberes", [
     [{"LOWER": {"IN": ["deberes", "ejercicio", "estudiar", "resolver", "tarea"]}}],
     [{"LOWER": "tengo"}, {"LOWER": "que"}, {"LEMMA": {"IN": ["hacer", "estudiar"]}}]
 ])
-matcher.add("WORK", [
+matcher.add("trabajo", [
     [{"LEMMA": {"IN": ["trabajo", "redactar", "investigar", "exponer"]}}],
     [{"LOWER": {"IN": ["informe", "redacción", "exposición", "mapa"]}}]
 ])
+matcher.add("examen", [
+    [{"LOWER": {"IN": ["examen", "prueba", "evaluación", "control"]}}],
+    [{"LOWER": "tengo"}, {"LOWER": "un"}, {"LOWER": {"IN": ["examen", "test"]}}]
+])
+
 
 @spacy.language.Language.component("task_type_matcher")
 def task_type_matcher(doc):
@@ -70,23 +75,26 @@ def infer_task_type(text):
     lemmas = [token.lemma_.lower() for token in doc]
 
     if "quedar" in lemmas and any(p in lemmas for p in ["pedro", "marta", "maría"]):
-        return "appointment"
-    if any(p in text.lower() for p in ["quedé", "quede", "quedar", "vernos", "verme", "vernos con"]):
+        return "cita"
+    if any(p in text.lower() for p in ["quedé", "quede", "quedar", "vernos", "verme", "vernos con", "citar", "cite", "citarnos"]):
         if "con" in text.lower():
-            return "appointment"
+            return "cita"
 
-    appointment_keywords = {"quedar", "ver", "citar"}
-    medical_keywords = {"medico", "cita", "hospital", "consulta"}
-    homework_keywords = {"deberes", "ejercicio", "resolver", "estudiar"}
-    work_keywords = {"trabajo", "investigación", "redacción", "informe"}
+    cita_keywords = {"quedar", "ver", "citar"}
+    medico_keywords = {"medico", "cita", "hospital", "consulta"}
+    deberes_keywords = {"deberes", "ejercicio", "resolver", "estudiar"}
+    trabajo_keywords = {"trabajo", "investigación", "redacción", "informe"}
+    examen_keywords = {"examen", "prueba", "evaluación", "control"}
 
-    if appointment_keywords & set(lemmas):
-        return "appointment"
-    elif medical_keywords & set(lemmas):
-        return "medical"
-    elif homework_keywords & set(lemmas):
-        return "homework"
-    elif work_keywords & set(lemmas):
-        return "work"
+    if cita_keywords & set(lemmas):
+        return "cita"
+    elif medico_keywords & set(lemmas):
+        return "medico"
+    elif deberes_keywords & set(lemmas):
+        return "deberes"
+    elif trabajo_keywords & set(lemmas):
+        return "trabajo"
+    elif examen_keywords & set(lemmas):
+        return "examen"
     else:
         return "unknown"

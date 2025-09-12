@@ -13,7 +13,7 @@ import Task_count from "../components/task/Task_count";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { TaskModalManager } from "../components/task/TaskModalManager"
 
-const Home = () => {
+export const Home = () => {
     const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();
 
     return (
@@ -34,4 +34,3 @@ const Home = () => {
     );
 };
 
-export default Home;

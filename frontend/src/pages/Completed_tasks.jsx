@@ -6,7 +6,7 @@ import { Tasks_list } from "../components/task/Tasks_list";
 import { useStorageStore } from "../store/storageStore";
 import { toLocalYMD } from "../utils/toLocalYMD";
 
-const Completed_tasks = () => {
+export const Completed_tasks = () => {
     const { todayTasks } = useTasks();
     const { isTaskCompletedForDate } = useStorageStore();
     const todayYMD = toLocalYMD(new Date());
@@ -28,4 +28,3 @@ const Completed_tasks = () => {
     );
 };
 
-export default Completed_tasks;

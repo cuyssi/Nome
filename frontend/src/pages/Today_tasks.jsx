@@ -5,7 +5,7 @@ import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskPageLayout } from "../components/task/TaskPageLayout";
 
-const Today_tasks = () => {
+export const Today_tasks = () => {
     const { todayTasks, reload } = useTasks();
     const { updateTask } = useStorageStore();
     const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } = useTaskEditor(reload, updateTask);
@@ -24,4 +24,3 @@ const Today_tasks = () => {
     );
 };
 
-export default Today_tasks;

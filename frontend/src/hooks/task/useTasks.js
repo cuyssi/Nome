@@ -30,7 +30,7 @@ export const useTasks = (type, exclude = false) => {
 
         if (updatedFields.dateTime && updatedFields.text) {
             const isoDate = formatDateForBackend(updatedFields.dateTime);
-            console.log(`Task updated: ${updatedFields.text} at ${isoDate}`);
+            console.log(`Tasks updated: ${updatedFields.text} at ${isoDate}`);
             const url = buildReminderUrl("task", updatedFields.text);
 
             const deviceId = localStorage.getItem("deviceId");

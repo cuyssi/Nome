@@ -1,4 +1,4 @@
-export const AVAILABLE_TYPES = ["Deberes", "Trabajo", "Médico", "Cita", "Otros"];
+export const AVAILABLE_TYPES = ["deberes", "trabajo", "examen", "medico", "cita", "otros"];
 
 export const AVAILABLE_COLORS = [
     { value: "red-400", label: "Rojo" },

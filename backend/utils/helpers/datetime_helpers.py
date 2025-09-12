@@ -56,9 +56,11 @@ def detect_dates_in_text(text: str):
 
     if dt_day_ref:
         dt = dt_day_ref
+
     else:
-        dates_with_hour = [dt for txt, dt in data if re.search(r"\d{1,2}[:h]\d{2}", txt)]
-        dt = dates_with_hour[-1] if dates_with_hour else data[-1][1]
+        dates_with_hour = [(txt, dt) for txt, dt in data if re.search(r"\d{1,2}[:h]\d{2}", txt)]
+        txt, dt = dates_with_hour[-1] if dates_with_hour else data[-1]
+        day_fragment = txt
 
     if "mañana" in text and dt.date() == now.date():
         dt += timedelta(days=1)
@@ -66,5 +68,7 @@ def detect_dates_in_text(text: str):
     dt = adjust_ambiguous_hour(dt, now)
     dt = adjust_weekday_forward(dt, text, now)
     dt, time_fragment = adjust_time_context(dt, text)
+
+    print(f"[DETECT DATES IN TEXT] time_fragment: {time_fragment}, day_fragment: {day_fragment}")
 
     return dt, data, time_fragment, day_fragment

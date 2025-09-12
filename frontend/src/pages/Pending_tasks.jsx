@@ -6,7 +6,7 @@ import { TaskModalManager } from "../components/task/TaskModalManager"
 import { TaskPageLayout } from "../components/task/TaskPageLayout";
 import { toLocalYMD } from "../utils/toLocalYMD";
 
-const Pending_tasks = () => {
+export const Pending_tasks = () => {
     const { todayTasks, reload } = useTasks();
     const { updateTask, isTaskCompletedForDate } = useStorageStore();
     const todayYMD = toLocalYMD(new Date());
@@ -31,4 +31,3 @@ const Pending_tasks = () => {
     );
 };
 
-export default Pending_tasks;

@@ -42,4 +42,5 @@ CORRECTIONS = {
     "minutos": "",
     "comunican": "con Monica",
     "el mario": "el Atrio",
+    "Débiles": "Deberes",
 }

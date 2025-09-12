@@ -10,6 +10,62 @@
     }
   },
   "scheduled_tasks": {
-    "74050706-30a4-4ac5-8838-0cff4350ea7a": []
+    "74050706-30a4-4ac5-8838-0cff4350ea7a": [
+      {
+        "id": "1da4834e-e649-4367-a9c2-f2b7cf293b91",
+        "title": "Qued\u00e9 con Mario en las Meanas",
+        "dateTime": "2025-09-12T18:30:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "57cd0bc8-8f65-48ed-b7d4-e5580c9463c8",
+        "title": "Tengo m\u00e9dico",
+        "dateTime": "2025-09-13T08:30:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "be8c25db-9078-430b-826f-a6d2ee73e9f5",
+        "title": "Deberes de matem\u00e1ticas p\u00e1g. 146, ej: 2, 5, 6 y 7",
+        "dateTime": "2025-09-12T15:30:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "2db8efe8-b039-474e-a3a6-f9e4b8d9b757",
+        "title": "Trabajo de historia sobre la revoluci\u00f3n francesa",
+        "dateTime": "2025-09-19T00:00:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "fde02f16-cfaa-4256-aea4-5526a7437163",
+        "title": "Examen de f\u00edsica y qu\u00edmica",
+        "dateTime": "2025-09-28T00:00:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      }
+    ]
   }
 }

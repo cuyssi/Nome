@@ -7,8 +7,10 @@ import { Plus } from "lucide-react";
 import { NotifyBag } from "../components/bags/NotifyBag";
 import { useBag } from "../hooks/bag/useBag";
 
-
 export const Bags = () => {
+    const { bags, editBag } = useBagsStore();
+    const { deleteBag } = useBag();
+
     const {
         isOpen,
         openModalWithBag,
@@ -20,9 +22,6 @@ export const Bags = () => {
         selectedBag,
         openBagFromURL,
     } = useBagModalManager();
-
-    const { bags, editBag } = useBagsStore();
-    const { deleteBag } = useBag();
 
 
     const handleUpdateBag = (updatedBag, options = {}) => {

@@ -12,10 +12,11 @@ export const useTaskType = () => {
     const getTaskType = (text = "") => {
         const cleaned = normalizeText(text);
 
-        if (cleaned.includes("quede")) return "quede";
+        if (cleaned.includes("quede")) return "cita";
         if (cleaned.includes("medico")) return "medico";
         if (cleaned.includes("deberes") || cleaned.includes("estudiar")) return "deberes";
         if (cleaned.includes("trabajo") || cleaned.includes("reunion")) return "trabajo";
+        if (cleaned.includes("examen") || cleaned.includes("preparar")) return "examen";
 
         return "otros";
     };

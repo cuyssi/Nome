@@ -20,7 +20,7 @@ export const DaySelector = ({ selectedDays, setSelectedDays }) => {
     };
 
     return (
-        <div className="flex gap-2 flex-wrap mt-2">
+        <div className="flex gap-2 justify-center flex-wrap mt-2">
             {DAYS.map((day) => (
                 <button
                     key={day.key}
