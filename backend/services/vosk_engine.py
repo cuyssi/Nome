@@ -23,6 +23,10 @@ from constants.corrections import CORRECTIONS
 import json
 import re
 import difflib
+import noisereduce as nr
+import soundfile as sf
+import numpy as np
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
@@ -43,14 +47,34 @@ def get_model():
     return Model(MODEL_PATH)
 
 def clean_audio(input_path: str, output_path: str) -> None:
+    """
+    Limpieza ligera de audio para Vosk:
+    - Convierte a mono 16kHz
+    - Aplica reducción de ruido ligera
+    """
+
+    # 1️⃣ Convertir a WAV mono 16kHz usando ffmpeg temporalmente
+    with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmpfile:
+        tmp_path = tmpfile.name
     cmd = [
         "ffmpeg", "-y", "-i", input_path,
-        "-ac", "1",
-        "-ar", "16000",
-        "-af", "afftdn",
-        output_path
+        "-ac", "1",      # Mono
+        "-ar", "16000",  # 16 kHz
+        tmp_path
     ]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    # 2️⃣ Leer audio temporal
+    data, rate = sf.read(tmp_path)
+
+    # 3️⃣ Reducción de ruido ligera (solo ruido constante)
+    reduced_noise = nr.reduce_noise(y=data, sr=rate, stationary=True)
+
+    # 4️⃣ Guardar audio limpio en output_path
+    sf.write(output_path, reduced_noise, rate)
+
+    # 5️⃣ Eliminar archivo temporal
+    os.remove(tmp_path)
 
 def convert_to_wav_mono16k(input_path: str, output_path: str):
     try:

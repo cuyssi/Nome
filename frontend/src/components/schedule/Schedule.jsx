@@ -78,7 +78,7 @@ export const Schedule = () => {
       </table>
 
       <div className="w-full flex justify-center">
-        <div className="mt-14 flex gap-4 ml-4">
+        <div className="mt-28 flex gap-4 ml-4">
           <button
             onClick={() => {
               const newHour = prompt("Add new hour (e.g., 12:30)");

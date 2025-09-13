@@ -12,17 +12,6 @@
   "scheduled_tasks": {
     "74050706-30a4-4ac5-8838-0cff4350ea7a": [
       {
-        "id": "57cd0bc8-8f65-48ed-b7d4-e5580c9463c8",
-        "title": "Tengo m\u00e9dico",
-        "dateTime": "2025-09-13T08:30:00+02:00",
-        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today"
-        }
-      },
-      {
         "id": "2db8efe8-b039-474e-a3a6-f9e4b8d9b757",
         "title": "Trabajo de historia sobre la revoluci\u00f3n francesa",
         "dateTime": "2025-09-19T00:00:00+02:00",
@@ -37,6 +26,83 @@
         "id": "fde02f16-cfaa-4256-aea4-5526a7437163",
         "title": "Examen de f\u00edsica y qu\u00edmica",
         "dateTime": "2025-09-28T00:00:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "9478d59b-f422-4368-822a-ec11a3283126",
+        "title": "Qued\u00e9 con Mario las a",
+        "dateTime": "2025-09-13T19:33:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "77740ac6-7efd-4b7c-a11c-a39bf57cdccf",
+        "title": "Qued\u00e9 con Mar\u00eda en las canchas",
+        "dateTime": "2025-09-13T19:33:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "5816d861-c940-49dd-a882-7e81db90e95f",
+        "title": "Qued\u00e9 con Rub\u00e9n en Rivero a las ni\u00f1as les dice",
+        "dateTime": "2025-09-13T15:30:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "b917474c-75c2-45fc-8d8f-eb0973a1354e",
+        "title": "Qued\u00e9 contuve en Rivero",
+        "dateTime": "2025-09-13T17:25:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "aa8749b0-3aa7-47a0-a53e-e196eef485e4",
+        "title": "Qued\u00e9 con Mario las cansas a",
+        "dateTime": "2025-09-13T19:24:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "3d5afb4e-4a5d-4b5a-a492-3deae97d0256",
+        "title": "El eco Mario en las anchas",
+        "dateTime": "2025-09-13T19:24:00+02:00",
+        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        }
+      },
+      {
+        "id": "84ddde55-a7c7-4759-b39a-da6ba9fcc9bb",
+        "title": "Qued\u00e9 con Mario en las canchas",
+        "dateTime": "2025-09-13T19:24:00+02:00",
         "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
         "type": "task",
         "notifyMinutesBefore": 15,

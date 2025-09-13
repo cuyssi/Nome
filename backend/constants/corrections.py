@@ -43,4 +43,5 @@ CORRECTIONS = {
     "comunican": "con Monica",
     "el mario": "el Atrio",
     "Débiles": "Deberes",
+    "eddy": "quedé",
 }
