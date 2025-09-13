@@ -1,42 +1,20 @@
 {
   "subscriptions": {
     "74050706-30a4-4ac5-8838-0cff4350ea7a": {
-      "endpoint": "https://fcm.googleapis.com/fcm/send/dvEeRe099Nc:APA91bEbg7ZbOsxT8ZH-P75lSHaarNiiJ9q92NQvn7CsPo_BF4qTaz8t9Cr314hdzTPVC77g4Wx9G2rB2lTP5qXPBNsJc-XArwJCHoB7eChT6Pt7ndYrGxVktDVSZ_wEOg6Z5rfhou4p",
+      "endpoint": "https://fcm.googleapis.com/fcm/send/egJdFLGLEyA:APA91bGF3dryWxYhAwsLw2O0n7lJiM9PjiMvwqFF5OQ-7ZeWfwy6PPlJX0eVotoeoZQB_9Bnj9tVuroAihCNF8cQwtCE4LZVebkg816b6pIYADrT1_jqDh3EW01mowHK66C-wzu0HMsT",
       "expirationTime": null,
       "keys": {
-        "p256dh": "BOdaPBJFcnW6ZxSAdjM4w2ia2lfO3-Yzc6wLsFEB-Pdej_RBDvdqSv17Ww7h8NHlGneWtvnrOVD0D8xcGCa5tRc",
-        "auth": "3bgiduVgLKyZ6Usx-LeK_w"
+        "p256dh": "BP0Xqc__av-xiAcMcoSTnttC7TcYJF687UIlF0n0njwgiFun1xM8f_e6axlT6-_kbPG02drP6jmxWjVrahoursM",
+        "auth": "uDUhu8P24_WS2F19HVx7mg"
       }
     }
   },
   "scheduled_tasks": {
     "74050706-30a4-4ac5-8838-0cff4350ea7a": [
       {
-        "id": "1da4834e-e649-4367-a9c2-f2b7cf293b91",
-        "title": "Qued\u00e9 con Mario en las Meanas",
-        "dateTime": "2025-09-12T18:30:00+02:00",
-        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today"
-        }
-      },
-      {
         "id": "57cd0bc8-8f65-48ed-b7d4-e5580c9463c8",
         "title": "Tengo m\u00e9dico",
         "dateTime": "2025-09-13T08:30:00+02:00",
-        "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today"
-        }
-      },
-      {
-        "id": "be8c25db-9078-430b-826f-a6d2ee73e9f5",
-        "title": "Deberes de matem\u00e1ticas p\u00e1g. 146, ej: 2, 5, 6 y 7",
-        "dateTime": "2025-09-12T15:30:00+02:00",
         "deviceId": "74050706-30a4-4ac5-8838-0cff4350ea7a",
         "type": "task",
         "notifyMinutesBefore": 15,

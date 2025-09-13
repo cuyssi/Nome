@@ -11,17 +11,20 @@ import Welcome from "../components/commons/Wellcome";
 import Voice_rec from "../components/audio/Voice_rec";
 import Task_count from "../components/task/Task_count";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
-import { TaskModalManager } from "../components/task/TaskModalManager"
+import { TaskModalManager } from "../components/task/TaskModalManager";
+import { TutoHome } from "../components/tutorials/TutoHome";
+import { useTutoHome } from "../hooks/home/useTutoHome";
 
 export const Home = () => {
     const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();
+    const { shouldShowTutorial, setShowModal, hideTutorial } = useTutoHome();
 
     return (
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
             <div className="flex flex-col  w-full h-full items-center bg-black">
                 <Welcome />
                 <Task_count />
-                <Voice_rec openModalWithTask={openModalWithTask}/>
+                <Voice_rec openModalWithTask={openModalWithTask} />
                 <TaskModalManager
                     isOpen={isOpen}
                     selectedTask={selectedTask}
@@ -29,8 +32,8 @@ export const Home = () => {
                     onEdit={handleEdit}
                     onClose={handleClose}
                 />
+                {shouldShowTutorial && <TutoHome setShowModal={setShowModal} hideTutorial={hideTutorial} />}
             </div>
         </div>
     );
 };
-

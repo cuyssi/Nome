@@ -6,10 +6,13 @@ import { Bag_card } from "../components/bags/Bag_card";
 import { Plus } from "lucide-react";
 import { NotifyBag } from "../components/bags/NotifyBag";
 import { useBag } from "../hooks/bag/useBag";
+import { useTutoBags } from "../hooks/bag/useTutoBags"
+import { TutoBags } from "../components/tutorials/TutoBags"
 
 export const Bags = () => {
     const { bags, editBag } = useBagsStore();
-    const { deleteBag } = useBag();
+    const { deleteBag } = useBag();    
+    const { shouldShowTutorial, setShowModal, hideTutorial } = useTutoBags();
 
     const {
         isOpen,
@@ -25,7 +28,7 @@ export const Bags = () => {
 
 
     const handleUpdateBag = (updatedBag, options = {}) => {
-        const { closeAfterSave = false, skipConfirmation = false } = options;
+        const { closeAfterSave = false, skipConfirmation = false } = options;        
         editBag(updatedBag);
 
         if (closeAfterSave) {
@@ -66,6 +69,11 @@ export const Bags = () => {
                 onClose={handleClose}
                 mode={mode}
             />
+
+            {shouldShowTutorial && (
+                <TutoBags activeTab={bags} setShowModal={setShowModal} hideTutorial={hideTutorial} />
+            )}    
+
         </div>
     );
 };

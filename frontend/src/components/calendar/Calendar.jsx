@@ -1,8 +1,8 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Button } from "./Button";
-import { Modal } from "./Modal";
+import { Button } from "../commons/Button";
+import { Modal } from "../commons/Modal";
 import { X, Trash2, Pencil } from "lucide-react";
 import { useCalendarTasks } from "../../hooks/calendar/useCalendarTasks";
 import { toLocalYMD } from "../../utils/toLocalYMD";
