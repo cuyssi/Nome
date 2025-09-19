@@ -1,3 +1,25 @@
+/**────────────────────────────────────────────────────────────────────────────────────────────┐
+ * Componente BagModalManager: gestiona y muestra los diferentes modales de mochilas.          │
+ *                                                                                             │
+ * Funcionalidad:                                                                              │
+ *   • Renderiza un modal según el `mode` y props:                                             │
+ *       – "create" → CreateBag: crear nueva mochila.                                          │
+ *       – "edit" → EditBag: editar mochila existente.                                         │ 
+ *       – "items" → BagItems: ver y marcar items de la mochila.                               │
+ *       – "school" → TomorrowSubjects: gestionar asignaturas de la mochila escolar.           │
+ *   • Muestra un mensaje de confirmación si `showConfirmation` es true y no es modo "school". │
+ *                                                                                             │
+ * Props:                                                                                      │ 
+ *   • isOpen: boolean que controla si el modal está visible.                                  │
+ *   • selected: mochila seleccionada para editar o mostrar items.                             │ 
+ *   • showConfirmation: boolean para mostrar mensaje de éxito.                                │ 
+ *   • onEdit: función llamada al guardar cambios.                                             │ 
+ *   • onClose: función para cerrar el modal.                                                  │ 
+ *   • mode: string que define qué modal mostrar ("create", "edit", "items", "school").        │  
+ *                                                                                             │ 
+ * Autor: Ana Castro                                                                           │         
+└─────────────────────────────────────────────────────────────────────────────────────────────*/
+
 import { Modal } from "../commons/Modal";
 import { CreateBag } from "./CreateBag";
 import { EditBag } from "./EditBag";
@@ -15,10 +37,7 @@ export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, on
                     <Check className="mr-2" /> Cambios guardados con éxito
                 </p>
             ) : mode === "create" ? (
-                <CreateBag
-                    onClose={onClose}
-                    onSubmit={(newBag) => onEdit(newBag)}
-                />
+                <CreateBag onClose={onClose} onSubmit={(newBag) => onEdit(newBag)} />
             ) : mode === "edit" ? (
                 <EditBag
                     bag={selected}

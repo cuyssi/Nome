@@ -1,9 +1,44 @@
+/**─────────────────────────────────────────────────────────────────────────────────────────────────┐
+ * useStorageStore: store de Zustand para manejar tareas y su persistencia.                         │
+ *                                                                                                  │
+ * Funcionalidad:                                                                                   │
+ *   • tasks: array de todas las tareas.                                                            │
+ *   • completedToday: lista de IDs de tareas completadas hoy.                                      │
+ *                                                                                                  │
+ *   • addTask(newTask)                                                                             │
+ *       - Añade una nueva tarea y la ordena por fecha/hora.                                        │
+ *       - Envía notificación al backend si la tarea tiene dateTime y text.                         │
+ *       - Si notifyDayBefore está activo, programa también recordatorio el día anterior.            │
+ *                                                                                                  │
+ *   • updateTask(id, updatedFields)                                                                │
+ *       - Actualiza campos de una tarea existente.                                                 │
+ *       - Cancela la tarea anterior en el backend y programa la nueva.                             │
+ *       - Maneja también notifyDayBefore.                                                          │
+ *                                                                                                  │
+ *   • deleteTask(id)                                                                               │
+ *       - Elimina una tarea y cancela su recordatorio en backend si existe deviceId.               │
+ *                                                                                                  │
+ *   • clearAllTasks()                                                                              │
+ *       - Borra todas las tareas y completadas de hoy.                                             │
+ *                                                                                                  │
+ *   • getSortedTasks()                                                                             │
+ *       - Devuelve todas las tareas ordenadas por fecha y hora.                                    │
+ *                                                                                                  │
+ *   • toggleCompletedToday(id, dateStr)                                                            │
+ *       - Marca o desmarca una tarea como completada para una fecha específica.                    │
+ *       - Solo afecta si la tarea está activa en esa fecha.                                        │
+ *                                                                                                  │
+ *   • isTaskCompletedForDate(id, dateStr)                                                          │
+ *       - Retorna true si la tarea ya está completada en la fecha indicada.                        │
+ *                                                                                                  │
+ * Autor: Ana Castro                                                                                │
+└──────────────────────────────────────────────────────────────────────────────────────────────────*/
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { toLocalYMD } from "../utils/toLocalYMD";
+import { toLocalYMD, formatDateForBackend } from "../utils/dateUtils";
 import { notifyBackend, cancelTaskBackend } from "../services/notifyBackend";
 import { buildReminderUrl } from "../utils/buildReminderUrl";
-import { formatDateForBackend } from "../utils/formatDateForBackend";
 
 export const isTaskActiveOnDate = (task, dateStr) => {
     const date = new Date(dateStr);
@@ -24,14 +59,8 @@ export const isTaskActiveOnDate = (task, dateStr) => {
 
 const sortTasks = (tasks) => {
     return [...tasks].sort((a, b) => {
-        const [dayA, monthA] = a.date.split("/").map(Number);
-        const [hourA, minuteA] = a.hour.split(":").map(Number);
-        const [dayB, monthB] = b.date.split("/").map(Number);
-        const [hourB, minuteB] = b.hour.split(":").map(Number);
-
-        const dateA = new Date(2025, monthA - 1, dayA, hourA, minuteA);
-        const dateB = new Date(2025, monthB - 1, dayB, hourB, minuteB);
-
+        const dateA = new Date(a.dateTime);
+        const dateB = new Date(b.dateTime);
         return dateA - dateB;
     });
 };
@@ -55,18 +84,19 @@ export const useStorageStore = create(
                 notifyBackend(
                     newTask.id,
                     newTask.text,
-                    isoDate,
+                    isoDate,        
                     deviceId,
                     "task",
                     Number(newTask.reminder) || 15,
-                    url
-                );
+                    url,
+                    newTask.notifyDayBefore,
+                    newTask.repeat || "once",
+                    newTask.customDays || []
+                );                
             },
 
             updateTask: async (id, updatedFields) => {
-                const updatedTasks = get().tasks.map((task) =>
-                    task.id === id ? { ...task, ...updatedFields } : task
-                );
+                const updatedTasks = get().tasks.map((task) => (task.id === id ? { ...task, ...updatedFields } : task));
                 set({ tasks: sortTasks(updatedTasks) });
 
                 const updatedTask = updatedTasks.find((t) => t.id === id);
@@ -74,6 +104,7 @@ export const useStorageStore = create(
                 if (!deviceId || !updatedTask?.dateTime || !updatedTask?.text) return;
 
                 await cancelTaskBackend(id, deviceId);
+                await cancelTaskBackend(`${id}-daybefore`, deviceId);
 
                 const isoDate = formatDateForBackend(updatedTask.dateTime);
                 const url = buildReminderUrl("task", updatedTask.text);
@@ -85,7 +116,10 @@ export const useStorageStore = create(
                     deviceId,
                     "task",
                     Number(updatedTask.reminder) || 15,
-                    url
+                    url,
+                    updatedTask.notifyDayBefore,
+                    updatedTask.repeat || "once",
+                    updatedTask.customDays || []
                 );
             },
 
@@ -96,6 +130,7 @@ export const useStorageStore = create(
                 const deviceId = localStorage.getItem("deviceId");
                 if (deviceId) {
                     await cancelTaskBackend(id, deviceId);
+                    await cancelTaskBackend(`${id}-daybefore`, deviceId);
                 }
             },
 
@@ -105,7 +140,6 @@ export const useStorageStore = create(
 
             toggleCompletedToday: (id, dateStr) => {
                 if (!dateStr) {
-                    console.warn("⚠️ toggleCompletedToday llamado sin fecha, usando hoy por defecto");
                     dateStr = toLocalYMD(new Date());
                 }
 
@@ -114,12 +148,10 @@ export const useStorageStore = create(
                     if (!task) return {};
 
                     if (!isTaskActiveOnDate(task, dateStr)) {
-                        console.warn("⛔ La tarea no está activa en esta fecha:", dateStr);
                         return {};
                     }
 
                     const completedDates = task.completedDates ? [...task.completedDates] : [];
-
                     const alreadyCompleted = completedDates.includes(dateStr);
                     const newCompletedDates = alreadyCompleted
                         ? completedDates.filter((d) => d !== dateStr)
@@ -129,7 +161,6 @@ export const useStorageStore = create(
                         t.id === id ? { ...t, completedDates: newCompletedDates } : t
                     );
 
-                    console.log("✅ updated completedDates:", newCompletedDates);
                     return { tasks: updatedTasks };
                 });
             },

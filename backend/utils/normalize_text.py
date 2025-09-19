@@ -1,12 +1,12 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # Normalización y extracción de patrones para texto transcrito.
-# - fix_transcription(text): Corrige errores comunes de transcripción.
-# - is_valid_sequence(seq): Comprueba si una secuencia contiene números o palabras numéricas.
-# - extract_patterns(text): Extrae marcadores como páginas o ejercicios.
-# - normalize_time(text): Convierte expresiones horarias naturales en español al formato HH:MM.
-# - insert_patterns(text, results): Sustituye los marcadores por los valores formateados.
-# - capitalize_text(text): Capitaliza inteligentemente los nombres propios.
-# - normalize(text): Pipeline completo que combina todas las funciones anteriores.
+# - fix_transcription(text)-> Corrige errores comunes de transcripción.
+# - is_valid_sequence(seq)-> Comprueba si una secuencia contiene números o palabras numéricas.
+# - extract_patterns(text)-> Extrae marcadores como páginas o ejercicios.
+# - normalize_time(text)-> Convierte expresiones horarias naturales en español al formato HH:MM.
+# - insert_patterns(text, results)-> Sustituye los marcadores por los valores formateados.
+# - capitalize_text(text)-> Capitaliza inteligentemente los nombres propios.
+# - normalize(text)-> Pipeline completo que combina todas las funciones anteriores.
 # ──────────────────────────────────────────────────────────────────────────────
 
 import re
@@ -60,20 +60,23 @@ def extract_patterns(text):
 
 
 def normalize_time(text):
-    text = re.sub(r'\ba la una\b', 'a la 1', text)
-    text = re.sub(r'\ba las una\b', 'a las 1', text)
-    text = re.sub(r'(\d{1,2})\s+y\s+media\b', r'\1:30', text)
-    text = re.sub(r'(\d{1,2})\s+y\s+cuarto\b', r'\1:15', text)
-
-    # Minutos con padding
     def y_replacer(match):
         h, m = match.groups()
-        return f"{h}:{int(m):02d}"  # <--- Aquí forzamos dos dígitos
-    text = re.sub(r'\b(\d{1,2})\s+y\s+(\d{1,2})\b', y_replacer, text)
+        return f"{h}:{int(m):02d}"
 
-    text = re.sub(r'\b(\d{1,2})\s+(\d{2})\b', r'\1:\2', text)
-    text = re.sub(r'\ba las (\d{1,2})(?!:\d{2})\b', r'a las \1:00', text)
-    text = re.sub(r'\ba la (\d{1,2})(?!:\d{2})\b', r'a la \1:00', text)
+    patterns = [
+        (r'\ba la una\b', 'a la 1'),
+        (r'\ba las una\b', 'a las 1'),
+        (r'(\d{1,2})\s+y\s+media\b', r'\1:30'),
+        (r'(\d{1,2})\s+y\s+cuarto\b', r'\1:15'),
+        (r'\b(\d{1,2})\s+y\s+(\d{1,2})\b', y_replacer),
+        (r'\b(\d{1,2})\s+(\d{2})\b', r'\1:\2'),
+        (r'\ba las (\d{1,2})(?!:\d{2})\b', r'a las \1:00'),
+        (r'\ba la (\d{1,2})(?!:\d{2})\b', r'a la \1:00'),
+    ]
+
+    for pattern, repl in patterns:
+        text = re.sub(pattern, repl, text)
 
     return text
 
@@ -88,11 +91,14 @@ def insert_patterns(text, results):
 
     return text
 
+
 def capitalize_custom_words(text, custom_words):
     for w in custom_words["words"]:
         pattern = re.compile(rf"\b{re.escape(w.lower())}\b", flags=re.IGNORECASE)
         text = pattern.sub(w, text)
+
     return text
+
 
 def capitalize_text(text):
     doc = nlp(text)
@@ -106,18 +112,11 @@ def capitalize_text(text):
 
 def normalize_text(text):
     text = fix_transcription(text)
-    print(f"[NORMALIZE] fix: {text}")
     text, extracted = extract_patterns(text)
-    print(f"[NORMALIZE] extract: {text}")
     text = alpha2digit(text, "es")
-    print(f"[NORMALIZE] 2num: {text}")
     text = correct_minus_expressions(text)
-    print(f"[NORMALIZE] menos: {text}")
     text = normalize_time(text)
-    print(f"[NORMALIZE] normaTime: {text}")
     text = capitalize_custom_words(text, CUSTOM_WORDS)
-    print(f"[NORMALIZE] capitalize custom_words: {text}")
     text = capitalize_text(text)
-    print(f"[NORMALIZE] capitalize: {text}")
 
     return text, extracted

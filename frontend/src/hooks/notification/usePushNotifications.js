@@ -1,3 +1,31 @@
+/**────────────────────────────────────────────────────────────────────────────────────────────────┐
+ * usePushNotifications: hook para gestionar notificaciones push en el navegador.                  │
+ *                                                                                                 │
+ * Funcionalidad:                                                                                  │
+ *   • Comprueba si el usuario ya está suscrito a notificaciones push.                             │
+ *   • Permite suscribirse usando VAPID y Service Workers.                                         │
+ *   • Permite cancelar la suscripción de notificaciones.                                          │
+ *   • Genera mensajes temporales para indicar el estado de la suscripción (activado/desactivado). │
+ *   • Gestiona un `deviceId` único en localStorage para identificar el dispositivo.               │
+ *                                                                                                 │
+ * Devuelve:                                                                                       │
+ *   - isSubscribed: booleano que indica si el usuario está suscrito.                              │
+ *   - message: string con mensaje temporal de estado.                                             │
+ *   - subscribeUser(): función que suscribe al usuario a las push notifications.                  │
+ *   - unsubscribeUser(): función que cancela la suscripción a push notifications.                 │
+ *                                                                                                 │
+ * Internamente:                                                                                   │
+ *   • urlBase64ToUint8Array(base64String): convierte la clave pública VAPID a Uint8Array.         │
+ *   • requestPermission(): solicita permiso de notificaciones al usuario.                         │
+ *   • navigator.serviceWorker y pushManager se usan para suscribir y desuscribir.                 │
+ *   • axios realiza las llamadas al backend para registrar o eliminar la suscripción.             │
+ *                                                                                                 │
+ * Uso típico:                                                                                     │
+ *   const { isSubscribed, message, subscribeUser, unsubscribeUser } = usePushNotifications();     │
+ *                                                                                                 │
+ * Autor: Ana Castro                                                                               │
+└─────────────────────────────────────────────────────────────────────────────────────────────────*/
+
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -23,37 +51,44 @@ export const usePushNotifications = () => {
     };
 
     const subscribeUser = async () => {
-        const baseURL = import.meta.env.VITE_API_URL;
-        const permission = await Notification.requestPermission();
-        if (permission !== "granted") return;
+        try {
+            const baseURL = import.meta.env.VITE_API_URL;
+            console.log("VITE_API_URL:", baseURL);
 
-        const registration = await navigator.serviceWorker.ready;
-        const existingSubscription = await registration.pushManager.getSubscription();
+            const permission = await Notification.requestPermission();
+            console.log("Permiso de notificación:", permission);
+            if (permission !== "granted") return;
 
-        let subscription = existingSubscription;
-        if (!subscription) {
-            const vapidKeyRes = await axios.get(`${baseURL}/vapid-public-key`);
-            const applicationServerKey = urlBase64ToUint8Array(vapidKeyRes.data);
+            const registration = await navigator.serviceWorker.ready;
+            const existingSubscription = await registration.pushManager.getSubscription();
 
-            subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey,
+            let subscription = existingSubscription;
+            if (!subscription) {
+                const vapidKeyRes = await axios.get(`${baseURL}/vapid-public-key`);
+                const applicationServerKey = urlBase64ToUint8Array(vapidKeyRes.data);
+
+                subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey,
+                });
+            }
+
+            let deviceId = localStorage.getItem("deviceId");
+            if (!deviceId) {
+                deviceId = crypto.randomUUID();
+                localStorage.setItem("deviceId", deviceId);
+            }
+
+            await axios.post(`${baseURL}/subscribe`, {
+                deviceId,
+                subscription,
             });
+
+            setIsSubscribed(true);
+            showMessage("🔔 Notificaciones activadas");
+        } catch (err) {
+            console.error("❌ Error en subscribeUser:", err);
         }
-
-        let deviceId = localStorage.getItem("deviceId");
-        if (!deviceId) {
-            deviceId = crypto.randomUUID();
-            localStorage.setItem("deviceId", deviceId);
-        }
-
-        await axios.post(`${baseURL}/subscribe`, {
-            deviceId,
-            subscription,
-        });
-
-        setIsSubscribed(true);
-        showMessage("🔔 Notificaciones activadas");
     };
 
     const unsubscribeUser = async () => {

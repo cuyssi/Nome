@@ -15,10 +15,24 @@
 export const getFormattedTasks = (transcription) => {
     const text_raw = transcription.text_raw;
     const text = transcription.text;
-    const dateTime = transcription.datetime;
+
+    let dateTime = transcription.datetime;
+    try {
+        if (!dateTime || isNaN(new Date(dateTime).getTime())) {
+            console.warn("⚠️ datetime inválido en transcripción, usando fecha actual");
+            dateTime = new Date().toISOString();
+        } else {
+            dateTime = new Date(dateTime).toISOString();
+        }
+    } catch (err) {
+        console.warn("⚠️ error parseando datetime, usando ahora:", err);
+        dateTime = new Date().toISOString();
+    }
+
     const isToday = transcription.isToday;
     return { text_raw, text, dateTime, isToday };
 };
+
 
 export const dateAndTime = (data) => {
     try {
@@ -39,4 +53,3 @@ export const dateAndTime = (data) => {
         return { date: undefined, hour: undefined, dateWithYear: undefined };
     }
 };
-

@@ -8,7 +8,7 @@
 # @author: Ana Castro
 # ──────────────────────────────────────────────────────────────────────────────
 
-from fastapi import APIRouter, File, UploadFile, BackgroundTasks
+from fastapi import APIRouter, File, UploadFile
 from utils.spacy_utils import nlp, infer_task_type
 from services.vosk_engine import transcribe_audio_file
 from services.date_parser import combine_date_and_time
@@ -17,12 +17,11 @@ from utils.helpers.date_helpers import is_today
 router = APIRouter()
 
 @router.post("/transcribe/")
-async def transcribe_audio(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
+async def transcribe_audio(file: UploadFile = File(...)):
     text_raw = await transcribe_audio_file(file)
     doc = nlp(text_raw)
     tipo = infer_task_type(doc.text)
     text, dt, hour, minutes, time = combine_date_and_time(doc.text)
-
     response = {
         "text_raw": text_raw,
         "text": text,

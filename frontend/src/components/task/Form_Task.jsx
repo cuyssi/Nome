@@ -1,108 +1,111 @@
-import { X, Check } from "lucide-react";
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente Form_Task: formulario para crear o editar tareas.                 │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Permite crear o editar tareas con múltiples campos:                      │
+ *       - Texto de la tarea                                                    │
+ *       - Fecha y hora                                                         │
+ *       - Color y tipo de tarea                                                │
+ *       - Repetición (una vez, diaria, días laborables o personalizada)        │
+ *       - Selección de días personalizados (si repeat = custom)                │
+ *       - Recordatorios con opciones de tiempo y aviso del día anterior        │
+ *   • Muestra mensaje de confirmación al guardar cambios.                      │
+ *   • Controla estado interno mediante hook useTaskForm.                       │
+ *                                                                              │
+ * Props:                                                                       │
+ *   • task (object): tarea a editar; si no se pasa, se crea una nueva.         │
+ *   • onClose (function): función para cerrar el formulario/modal.             │
+ *   • onSubmit (function): función para guardar los cambios o nueva tarea.     │
+ *                                                                              │
+ * Layout y estilo:                                                             │
+ *   • Modal/contendor con scroll interno y altura máxima (70vh).               │
+ *   • Inputs estilizados con borde púrpura y tipografía Poppins.               │
+ *   • Selector de color y tipo con botones y dropdowns.                        │
+ *   • Timer para elegir hora y minutos de manera interactiva.                  │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
+import { Check } from "lucide-react";
 import { useTaskForm } from "../../hooks/task/useTaskForm";
-import { AVAILABLE_TYPES, AVAILABLE_COLORS } from "../../utils/constants";
-import { Button } from "../commons/Button";
+import { AVAILABLE_TYPES, AVAILABLE_COLORS, DAYS } from "../../utils/constants";
 import { Timer } from "../commons/Timer";
-import { useState } from "react";
+import { ButtonClose } from "../commons/buttons/ButtonClose";
+import { ButtonDefault } from "../commons/buttons/ButtonDefault";
+import { ColorPicker } from "../commons/ColorPicker";
+import { InputField } from "../commons/InputField"
+import { SelectField } from "../commons/SelectField"
+import { CheckboxField } from "../commons/CheckboxField"
 
 export const Form_Task = ({ task, onClose, onSubmit }) => {
     const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
-    const [selectedColor, setSelectedColor] = useState(AVAILABLE_COLORS[0].value);
 
     return (
-        <form className="relative bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] flex flex-col">
-            <Button type="button" onClick={onClose} className="absolute top-4 right-4 text-red-400 hover:text-red-700">
-                <X className="w-8 h-8" />
-            </Button>
+        <form className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[70vh] flex flex-col">
+            <ButtonClose onClick={onClose} />
 
             {showConfirmation && (
                 <p className="flex text-green-600 mb-3 font-semibold">
-                    <Check /> Cambios guardados{" "}
+                    <Check /> Cambios guardados
                 </p>
             )}
 
             <h2 className="text-2xl font-extrabold text-purple-500 text-center font-poppins mt-6">Editar tarea</h2>
 
             <div className="overflow-y-auto flex-1 pr-1 hide-scrollbar">
-                <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-4 font-semibold">
-                    <label className="text-gray-500">
-                        Texto:
-                        <input
-                            name="text"
-                            value={formData.text}
-                            onChange={handleChange}
-                            className="border border-purple-400 rounded-lg w-full p-1 font-normal text-gray-600"
-                        />
-                    </label>
-
-                    <label className="text-gray-500">
-                        Fecha:
-                        <input
-                            type="date"
-                            name="date"
-                            value={formData.date}
-                            onChange={handleChange}
-                            className="border w-full border-purple-400 rounded-lg p-1 font-normal text-gray-600"
-                        />
-                    </label>
-
-                    <Timer
-                        hour={formData.hour}
-                        minute={formData.minute}
-                        onChange={(field, value) => handleChange({ target: { name: field, value } })}
+                <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-3 font-semibold">
+                    <InputField
+                        label="Texto"
+                        name="text"
+                        value={formData.text}
+                        placeholder="Ej: Quede con Marcos a las 6 en la plaza"
+                        onChange={handleChange}
                     />
+
+                    <InputField label="Fecha" type="date" name="date" value={formData.date} onChange={handleChange} />
+
+                    <label className="text-gray-500">
+                        Hora:
+                        <Timer
+                            hour={formData.hour}
+                            minute={formData.minute}
+                            onChange={(field, value) => handleChange({ target: { name: field, value } })}
+                        />
+                    </label>
 
                     <label className="font-semibold">
                         Color
-                        <div className="flex gap-1 justify-start flex-wrap mt-2">
-                            {AVAILABLE_COLORS.map((color) => (
-                                <button
-                                    key={color.value}
-                                    type="button"
-                                    onClick={() => handleChange({ target: { name: "color", value: color.value } })}
-                                    className={`w-8 h-8 rounded-full border-2 ${
-                                        formData.color === color.value ? "border-gray-900" : "border-transparent"
-                                    } bg-${color.value}`}
-                                />
-                            ))}
-                        </div>
+                        <ColorPicker
+                            selectedColor={formData.color}
+                            setSelectedColor={(color) => handleChange({ target: { name: "color", value: color } })}
+                        />
                     </label>
 
-                    <label>
-                        Tipo:
-                        <select
-                            name="type"
-                            value={formData.type}
-                            onChange={handleChange}
-                            className="border w-full border-purple-400 rounded-lg p-1 font-normal"
-                        >
-                            {AVAILABLE_TYPES.map((t) => (
-                                <option key={t} value={t}>
-                                    {t}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <SelectField
+                        label="Tipo"
+                        name="type"
+                        value={formData.type}
+                        options={AVAILABLE_TYPES}
+                        onChange={handleChange}
+                    />
 
-                    <label>
-                        Repetición:
-                        <select
-                            name="repeat"
-                            value={formData.repeat || "once"}
-                            onChange={handleChange}
-                            className="border w-full border-purple-400 rounded-lg p-1 font-normal"
-                        >
-                            <option value="once">Una sola vez</option>
-                            <option value="daily">Todos los días</option>
-                            <option value="weekdays">De lunes a viernes</option>
-                            <option value="custom">Personalizado</option>
-                        </select>
-                    </label>
+                    <SelectField
+                        label="Repetición"
+                        name="repeat"
+                        value={formData.repeat || "once"}
+                        options={[
+                            { value: "once", label: "Una sola vez" },
+                            { value: "daily", label: "Todos los días" },
+                            { value: "weekdays", label: "De lunes a viernes" },
+                            { value: "custom", label: "Personalizado" },
+                        ]}
+                        onChange={handleChange}
+                    />
 
                     {formData.repeat === "custom" && (
                         <div className="mt-2 flex justify-between flex-wrap gap-2">
-                            {["L", "M", "X", "J", "V", "S", "D"].map((day, idx) => (
-                                <label key={day} className="flex gap-1 cursor-pointer">
+                            {DAYS.map(({ key, label }, idx) => (
+                                <label key={key} className="flex gap-1 cursor-pointer">
                                     <input
                                         type="checkbox"
                                         name="customDays"
@@ -111,60 +114,44 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                                         onChange={(e) => {
                                             const value = parseInt(e.target.value);
                                             let updated = formData.customDays || [];
-                                            if (e.target.checked) {
-                                                updated = [...updated, value];
-                                            } else {
-                                                updated = updated.filter((v) => v !== value);
-                                            }
+                                            updated = e.target.checked
+                                                ? [...updated, value]
+                                                : updated.filter((v) => v !== value);
                                             handleChange({ target: { name: "customDays", value: updated } });
                                         }}
                                         className="accent-purple-600"
                                     />
-                                    {day}
+                                    {label}
                                 </label>
                             ))}
                         </div>
                     )}
 
-                    <label>
-                        Recordatorio:
-                        <select
-                            name="reminder"
-                            value={formData.reminder || "5"}
-                            onChange={handleChange}
-                            className="border w-full border-purple-400 rounded-lg p-1 font-normal"
-                        >
-                            <option value="5">5 minutos antes</option>
-                            <option value="15">15 minutos antes</option>
-                            <option value="30">30 minutos antes</option>
-                            <option value="60">1 hora antes</option>
-                            <option value="90">1 hora y media antes</option>
-                            <option value="120">2 horas antes</option>
-                        </select>
-                    </label>
+                    <SelectField
+                        label="Recordatorio"
+                        name="reminder"
+                        value={formData.reminder || "5"}
+                        options={[
+                            { value: "5", label: "5 minutos antes" },
+                            { value: "15", label: "15 minutos antes" },
+                            { value: "30", label: "30 minutos antes" },
+                            { value: "60", label: "1 hora antes" },
+                            { value: "90", label: "1 hora y media antes" },
+                            { value: "120", label: "2 horas antes" },
+                        ]}
+                        onChange={handleChange}
+                    />
 
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name="notifyDayBefore"
-                            checked={formData.notifyDayBefore || false}
-                            onChange={(e) =>
-                                handleChange({
-                                    target: {
-                                        name: "notifyDayBefore",
-                                        value: e.target.checked,
-                                    },
-                                })
-                            }
-                            className="accent-purple-500"
-                        />
-                        Avisarme también el día antes
-                    </label>
+                    <CheckboxField
+                        name="notifyDayBefore"
+                        label="Avisarme también el día antes"
+                        checked={formData.notifyDayBefore || false}
+                        onChange={(e) => handleChange({ target: { name: "notifyDayBefore", value: e.target.checked } })}
+                    />
                 </div>
             </div>
-            <Button type="button" onClick={handleSubmit} className="bg-purple-600 text-white py-2 rounded mt-4">
-                Guardar cambios
-            </Button>
+
+            <ButtonDefault type="button" onClick={handleSubmit} text="Guardar cambios" />
         </form>
     );
 };

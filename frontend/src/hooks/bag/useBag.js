@@ -1,72 +1,39 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * useBag: hook para gestionar mochilas y sus notificaciones en Nome.           │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Añadir, actualizar y eliminar mochilas usando el store principal.        │
+ *   • Programa recordatorios automáticos al backend según la configuración.    │
+ *   • Cancela notificaciones previas al actualizar o eliminar una mochila.     │
+ *                                                                              │
+ * Funciones devueltas:                                                         │
+ *   - addBag(bag): añade una mochila y programa su notificación.               │
+ *   - updateBag(bag): actualiza una mochila y reprograma la notificación.      │
+ *   - deleteBag(id): elimina una mochila y cancela su notificación.            │
+ *                                                                              │
+ * Utilidades internas:                                                         │
+ *   - calculateReminderDateTime(bag): calcula la fecha y hora del recordatorio │
+ *     según tipo de mochila y días de notificación.                            │
+ *   - scheduleNotification(bag): envía la tarea al backend.                    │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import { useBagsStore } from "../../store/useBagsStore";
 import { notifyBackend, cancelTaskBackend } from "../../services/notifyBackend";
 import { buildReminderUrl } from "../../utils/buildReminderUrl";
-
-const toLocalDateTimeString = (date) => {
-    const pad = (n) => String(n).padStart(2, "0");
-    const offset = -date.getTimezoneOffset();
-    const sign = offset >= 0 ? "+" : "-";
-    const absOffset = Math.abs(offset);
-    const hoursOffset = String(Math.floor(absOffset / 60)).padStart(2, "0");
-    const minutesOffset = String(absOffset % 60).padStart(2, "0");
-
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
-        date.getMinutes()
-    )}:00${sign}${hoursOffset}:${minutesOffset}`;
-};
-
-export const calculateReminderDateTime = (bag) => {
-    const now = new Date();
-    const [hours, minutes] = (bag.reminderTime || "20:00").split(":").map(Number);
-    const reminder = new Date(now);
-    reminder.setHours(hours, minutes, 0, 0);
-
-    if (bag.type === "personalizada" && Array.isArray(bag.notifyDays) && bag.notifyDays.length) {
-        const dayMap = { L: 1, M: 2, X: 3, J: 4, V: 5, S: 6, D: 0 };
-        const todayDay = now.getDay();
-
-        const daysAhead = bag.notifyDays
-            .map((d) => (dayMap[d] - todayDay + 7) % 7)
-            .sort((a, b) => a - b);
-
-        const nextOffset =
-            daysAhead.find((d) => {
-                const candidate = new Date(reminder);
-                candidate.setDate(candidate.getDate() + d);
-                return candidate > now;
-            }) ?? daysAhead[0] ?? 0;
-
-        reminder.setDate(reminder.getDate() + nextOffset);
-    }
-
-    return reminder;
-};
-
+import { toLocalDateTimeString } from "../../utils/dateUtils";
+import { calculateReminderDateTime } from "../../utils/calculateReminder";
 
 export const useBag = () => {
-    console.log("🟢 useBag hook inicializado");
-
     const { addBag: baseAddBag, updateBag: baseUpdateBag, deleteBag: baseDeleteBag } = useBagsStore();
-
     const scheduleNotification = async (bag) => {
-        console.log("🟡 scheduleNotification llamado con:", bag);
-
         const deviceId = localStorage.getItem("deviceId");
-        if (!deviceId) return console.log("❌ No hay deviceId, saliendo");
-
         const localDate = calculateReminderDateTime(bag);
         const dateTimeString = toLocalDateTimeString(localDate);
         const url = buildReminderUrl("bag", bag.name);
 
-        console.log("📦 Enviando al backend →", {
-            id: bag.id,
-            text: `📚 Recordatorio de mochila: ${bag.name}`,
-            dateTime: dateTimeString,
-            deviceId,
-            type: "bag",
-            notifyMinutesBefore: Number(bag.reminder) || 15,
-            url
-        });
+        if (!deviceId) return console.log("❌ No hay deviceId, saliendo");
 
         try {
             await notifyBackend(
@@ -78,35 +45,30 @@ export const useBag = () => {
                 Number(bag.reminder) || 15,
                 url
             );
-            console.log("✅ notifyBackend completado");
         } catch (e) {
             console.error("❌ Error en notifyBackend:", e);
         }
     };
 
     const wrappedAddBag = async (bag) => {
-        console.log("➕ wrappedAddBag llamado con:", bag);
         baseAddBag(bag);
         await scheduleNotification(bag);
     };
 
     const wrappedUpdateBag = async (bag) => {
-        console.log("🔄 wrappedUpdateBag llamado con:", bag);
         baseUpdateBag(bag);
-
         const deviceId = localStorage.getItem("deviceId");
+
         if (deviceId) {
             await cancelTaskBackend(bag.id, deviceId);
         }
-
         await scheduleNotification(bag);
     };
 
     const wrappedDeleteBag = async (id) => {
-        console.log("🗑️ wrappedDeleteBag llamado con:", id);
         baseDeleteBag(id);
-
         const deviceId = localStorage.getItem("deviceId");
+
         if (deviceId) {
             await cancelTaskBackend(id, deviceId);
         }
@@ -115,6 +77,6 @@ export const useBag = () => {
     return {
         addBag: wrappedAddBag,
         updateBag: wrappedUpdateBag,
-        deleteBag: wrappedDeleteBag
+        deleteBag: wrappedDeleteBag,
     };
 };

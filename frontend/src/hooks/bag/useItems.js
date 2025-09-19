@@ -1,9 +1,32 @@
+/**────────────────────────────────────────────────────────────────────────────────┐
+ * useItems: hook para gestionar elementos (items) dentro de una mochila.          │
+ *                                                                                 │
+ * Funcionalidad:                                                                  │
+ *   • Mantiene el estado local de los elementos marcados como “empaquetados”.     │
+ *   • Permite alternar (toggle) el estado de cada elemento.                       │
+ *   • Notifica al hook padre (onUpdateBag) cuando cambia el estado de empaquetado.│
+ *   • Detecta si todos los elementos de la mochila han sido empaquetados.         │
+ *   • Produce una vibración corta si el navegador lo soporta.                     │
+ *                                                                                 │
+ * Parámetros:                                                                     │
+ *   - bag: objeto mochila con propiedades `items` y `packed`.                     │
+ *   - onUpdateBag: función que se llama al actualizar el estado de empaquetado.   │
+ *                                                                                 │
+ * Devuelve:                                                                       │
+ *   - allItems: todos los elementos de la mochila.                                │
+ *   - localPacked: elementos actualmente marcados como empaquetados.              │
+ *   - toggleItem(nombre): alterna el estado de empaquetado de un elemento.        │
+ *   - isComplete: booleano indicando si todos los elementos están empaquetados.   │
+ *   - packedItems: elementos empaquetados originales del bag.                     │
+ *                                                                                 │
+ * Autor: Ana Castro                                                               │
+└─────────────────────────────────────────────────────────────────────────────────*/
+
 import { useState, useEffect } from "react";
 
 export const useItems = (bag, onUpdateBag) => {
     const allItems = Array.isArray(bag.items) ? bag.items : [];
     const packedItems = Array.isArray(bag.packed) ? bag.packed : [];
-
     const [localPacked, setLocalPacked] = useState(packedItems);
 
     useEffect(() => {

@@ -10,11 +10,13 @@
  *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
-import { AVAILABLE_COLORS } from "../../utils/constants"
+
+import { AVAILABLE_COLORS } from "../../utils/constants";
 
 const COLOR_POOL = AVAILABLE_COLORS.map((c) => c.value);
 
 let colorIndex = 0;
+
 export const getTaskColor = () => {
     const assignColor = () => {
         const color = COLOR_POOL[colorIndex];

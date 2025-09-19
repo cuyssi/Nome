@@ -1,3 +1,19 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente TaskPageLayout: disposición de página para secciones de tareas.   │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Renderiza un título centrado y estilizado.                               │
+ *   • Envuelve el contenido de la página en un contenedor con altura/anchura.  │
+ *   • Ideal para páginas de tareas como Today, Pending, Completed, etc.        │
+ *                                                                              │
+ * Props:                                                                       │
+ *   - title: string que representa el título de la página.                     │
+ *   - children: elementos hijos a renderizar dentro del layout.                │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
+
 export const TaskPageLayout = ({ title, children }) => {
     return (
         <div className="flex flex-col h-[100%] items-center overflow-hidden">

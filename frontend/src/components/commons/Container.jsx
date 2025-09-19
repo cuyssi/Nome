@@ -5,7 +5,7 @@
  * Acepta clases personalizadas para adaptar diseño según contexto.             │
  *                                                                              │
  * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
+└──────────────────────────────────────────────────────────────────────────────*/
 
 const Container = ({ children, outerClass = "", innerClass = "" }) => {
     return (

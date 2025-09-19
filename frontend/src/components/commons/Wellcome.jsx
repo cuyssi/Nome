@@ -7,7 +7,7 @@
  └─────────────────────────────────────────────────────────────────────────────*/
 
 import logo_nome from "../../assets/logo_nome.png";
-import NotificationToggle from "../notifications/NotificationToggle";
+import { NotificationToggle } from "../notifications/NotificationToggle";
 
 const Welcome = () => {
     return (

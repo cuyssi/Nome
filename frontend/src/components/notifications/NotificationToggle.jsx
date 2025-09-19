@@ -1,32 +1,46 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente NotificationToggle: botón de suscripción a notificaciones push.   │
+ * Permite al usuario activar o desactivar notificaciones del navegador.        │
+ * Muestra el estado actual mediante iconos (campana encendida/apagada)         │
+ * y un mensaje de confirmación breve al realizar cambios.                      │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • isSubscribed → indica si el usuario está suscrito.                       │
+ *   • message → mensaje temporal de estado (ej. "Suscripción activada").       │
+ *   • subscribeUser() → activa la suscripción a notificaciones push.           │
+ *   • unsubscribeUser() → desactiva la suscripción.                            │
+ *   • handleToggle() → alterna entre suscripción y desuscripción.              │
+ *   • Vibración opcional si el dispositivo lo soporta.                         │
+ * Layout y estilo:                                                             │
+ *   • Posicionamiento absoluto en la esquina superior derecha.                 │
+ *   • Botón con icono dinámico: Bell verde si suscrito, BellOff rojo si no.    │
+ *   • Mensaje flotante con animación fadeIn.                                   │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import { usePushNotifications } from "../../hooks/notification/usePushNotifications";
 import { Bell, BellOff } from "lucide-react";
-import { Button } from "../commons/Button";
 
-function NotificationToggle() {
-  const { isSubscribed, message, subscribeUser, unsubscribeUser } = usePushNotifications();
+export function NotificationToggle() {
+    const { isSubscribed, message, subscribeUser, unsubscribeUser } = usePushNotifications();
 
-  const handleToggle = async () => {
-    if (navigator.vibrate) navigator.vibrate(150);
-    isSubscribed ? await unsubscribeUser() : await subscribeUser();
-  };
+    const handleToggle = async () => {
+        if (navigator.vibrate) navigator.vibrate(150);
+        isSubscribed ? await unsubscribeUser() : await subscribeUser();
+    };
 
-  return (
-    <div style={{ fontSize: "1.5rem" }} className="absolute top-0 right-0">
-      <Button
-        onClick={handleToggle}
-        style={{ fontSize: "1.5rem" }}
-        className="absolute top-6 right-6"
-      >
-        {isSubscribed ? <Bell className="text-green-500" /> : <BellOff className="text-red-500" />}
-      </Button>
+    return (
+        <>
+            <button onClick={handleToggle} className="absolute top-3.5 right-12">
+                {isSubscribed ? <Bell className="text-green-500 w-5 h-5" /> : <BellOff className="text-red-500 w-5 h-5" />}
+            </button>
 
-      {message && (
-        <p className="absolute top-16 right-6 bg-white text-black px-3 py-1 rounded-lg shadow-md animate-fadeIn">
-          {message}
-        </p>
-      )}
-    </div>
-  );
+            {message && (
+                <p className="absolute top-16 right-6 bg-white text-black px-3 py-1 rounded-lg shadow-md animate-fadeIn">
+                    {message}
+                </p>
+            )}
+        </>
+    );
 }
-
-export default NotificationToggle;

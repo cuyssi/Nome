@@ -5,7 +5,7 @@
  * Permite pasar clases custom vía props para ajustar el diseño.                │
  *                                                                              │
  * @author: Ana Castro                                                          │
- └─────────────────────────────────────────────────────────────────────────────*/
+└─────────────────────────────────────────────────────────────────────────────*/
 
 export const Container_Card = ({ children, outerClass = "", innerClass = "" }) => {
     return (

@@ -17,16 +17,21 @@ import { Tasks_list } from "../components/task/Tasks_list";
 import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTasks } from "../hooks/task/useTasks";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
-import { Button } from "../components/commons/Button";
-import { useTutoTask } from "../hooks/task/useTutoTask";
-import { TutoTasks } from "../components/tutorials/TutoTasks";
+import { useTutorialStore } from "../store/useTutorialStore";
+import { stepsTasks } from "../components/tutorials/tutorials";
+import { TutorialModal } from "../components/tutorials/TutorialModal";
 import { useFilteredTasks } from "../hooks/task/useFilteredTasks";
 
-export const Tasks = ({ type, exclude }) => {
+const TAB_LABELS = ["deberes", "trabajo", "examenes"];
+
+export const Tasks = () => {
     const [activeTab, setActiveTab] = useState("deberes");
-    const { tasks, reload } = useTasks(type, exclude);
+    const { tasks, reload } = useTasks();
     const { deberesTasks, trabajoTasks, examenesTasks } = useFilteredTasks(tasks);
-    const { shouldShowTutorial, setShowModal, hideTutorial } = useTutoTask(activeTab);
+    const hideTutorial = useTutorialStore((state) => state.hideTutorial);
+    const isHidden = useTutorialStore((state) => state.isHidden);
+    const tutorialKey = `dates-${activeTab}`;
+    const shouldShowTutorial = !isHidden(tutorialKey);
 
     const {
         isOpen,
@@ -38,58 +43,44 @@ export const Tasks = ({ type, exclude }) => {
         showConfirmation,
     } = useTaskEditor(reload);
 
-    useEffect(() => {
-        reload();
-    }, [activeTab]);
+    const tabTasks = {
+        deberes: deberesTasks,
+        trabajo: trabajoTasks,
+        examenes: examenesTasks,
+    };
+
+    useEffect(() => reload(), [activeTab]);
 
     return (
         <div className="flex flex-col h-full items-center overflow-hidden">
             <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-14 mb-10">Tareas</h2>
-            <div className="w-full">
-                <Button
-                    onClick={() => setActiveTab("deberes")}
-                    className={`relative px-6 py-2 border border-purple-400 border-l-black rounded-tr-xl font-semibold transition ${
-                        activeTab === "deberes" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
-                    }`}
-                >
-                    Deberes
-                </Button>
 
-                <Button
-                    onClick={() => setActiveTab("trabajo")}
-                    className={`relative px-6 py-2 border border-purple-400 rounded-t-xl font-semibold transition ${
-                        activeTab === "trabajo" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
-                    }`}
-                >
-                    Trabajos
-                </Button>
-
-                <Button
-                    onClick={() => setActiveTab("examenes")}
-                    className={`flex-1 relative px-6 py-2 border border-purple-400 rounded-t-xl font-semibold transition ${
-                        activeTab === "examenes" ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
-                    }`}
-                >
-                    Exámenes
-                </Button>
+            <div className="flex w-full">
+                {TAB_LABELS.map((tab) => (
+                    <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`relative px-6 py-2 border border-purple-400 rounded-t-xl font-semibold transition ${
+                            activeTab === tab ? "bg-black border-b-black z-20 text-white" : "bg-gray-600"
+                        }`}
+                    >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                    </button>
+                ))}
             </div>
 
-            <div
-                className={`flex flex-col pt-14 items-center relative border border-black border-t-purple-400 -mt-0.5 w-full h-[100vh] px-4 py-6 transition-colors duration-300 ${
-                    ["deberes", "trabajo", "examenes"].includes(activeTab) ? "bg-black" : "bg-gray-200"
-                }`}
-            >
-                <Tasks_list
-                    key={renderKey}
-                    tasks={
-                        activeTab === "trabajo" ? trabajoTasks : activeTab === "examenes" ? examenesTasks : deberesTasks
-                    }
-                    openModalWithTask={openModalWithTask}
-                />
+            <div className="flex flex-col pt-14 items-center relative border border-black border-t-purple-400 -mt-0.5 w-full h-[100vh] px-4 py-6 transition-colors duration-300 bg-black">
+                <Tasks_list key={renderKey} tasks={tabTasks[activeTab]} openModalWithTask={openModalWithTask} />
             </div>
 
             {shouldShowTutorial && (
-                <TutoTasks activeTab={activeTab} setShowModal={setShowModal} hideTutorial={hideTutorial} />
+                <TutorialModal
+                    key={tutorialKey}
+                    activeTab={tutorialKey}
+                    steps={stepsTasks[activeTab]}
+                    isOpen={shouldShowTutorial}
+                    onNeverShowAgain={() => hideTutorial(tutorialKey)}
+                />
             )}
 
             <TaskModalManager
@@ -99,7 +90,6 @@ export const Tasks = ({ type, exclude }) => {
                 onEdit={handleEditTask}
                 onClose={handleCloseModal}
             />
-            
         </div>
     );
 };

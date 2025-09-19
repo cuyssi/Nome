@@ -1,8 +1,30 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente Task_count: muestra un resumen visual de las tareas del día.      │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Muestra botones de navegación hacia secciones principales:               │
+ *       - Deberes (tasks)                                                      │
+ *       - Horario (schedule)                                                   │
+ *   • Muestra un resumen de las tareas para hoy:                               │
+ *       - Totales                                                              │
+ *       - Pendientes                                                           │
+ *       - Completadas                                                          │
+ *   • Calcula los conteos usando isTaskActiveOnDate y isTaskCompletedForDate.  │
+ *                                                                              │
+ * Layout y estilo:                                                             │
+ *   • Uso de Container para dar bordes y fondo con gradiente decorativo.       │
+ *   • Íconos de Lucide-react (NotebookPen y CalendarDays) en los botones.      │
+ *   • Texto con gradientes, sombras y colores temáticos según estado.          │
+ *   • Flexbox para organizar columnas y centrar los elementos.                 │
+ *                                                                               │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import Container from "../commons/Container";
 import { Link } from "react-router-dom";
 import { NotebookPen, CalendarDays } from "lucide-react";
 import { useStorageStore, isTaskActiveOnDate } from "../../store/storageStore";
-import { toLocalYMD } from "../../utils/toLocalYMD";
+import { toLocalYMD } from "../../utils/dateUtils";
 
 const Task_count = () => {
     const { tasks, isTaskCompletedForDate } = useStorageStore();

@@ -1,3 +1,26 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * useVoiceRecorder: hook para grabar audio con el micrófono del usuario.       │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Permite iniciar, detener y alternar la grabación de audio.               │
+ *   • Reproduce un beep al iniciar y al finalizar la grabación.                │
+ *   • Devuelve el audio como Blob y como File listo para enviar o guardar.     │
+ *   • Gestiona internamente el MediaRecorder y AudioContext.                   │
+ *                                                                              │
+ * Estado devuelto:                                                             │
+ *   - recording: boolean indicando si se está grabando.                        │
+ *   - audioBlob: Blob con la grabación final.                                  │
+ *   - audioFile: File generado a partir del Blob.                              │
+ *                                                                              │
+ * Funciones devueltas:                                                         │
+ *   - startRecording(): inicia la grabación.                                   │
+ *   - stopRecording(): detiene la grabación.                                   │
+ *   - toggleRecording(): alterna entre iniciar y detener la grabación con beep.│
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
+
 import { useState, useRef } from "react";
 import beep_start from "../../assets/beep_start.mp3";
 import beep_end from "../../assets/beep_end.mp3";

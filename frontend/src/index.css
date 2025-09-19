@@ -1,3 +1,18 @@
+/**──────────────────────────────────────────────────────────────────────────────┐
+ * Estilos globales y utilidades de la app                                       │
+ *                                                                               │
+ * Incluye:                                                                      │
+ *   • Tailwind base, components y utilities                                     │
+ *   • Reseteo de html, body y #root (100% ancho/alto, sin margen, font-family)  │
+ *   • Optimización de renderizado y antialiasing                                │
+ *   • Clases para ocultar scrollbars manteniendo scroll funcional:              │
+ *       - .hide-scrollbar                                                       │
+ *       - .scroll-hide                                                          │
+ *   • Contenedor simulado de móvil: .mobile-frame                               │
+ *   • Estilo para el día actual en FullCalendar: .fc-day-today                  │
+ *                                                                               │
+ * Autor: Ana Castro                                                             │
+└───────────────────────────────────────────────────────────────────────────────*/
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +23,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   overflow: hidden; 
-  font-family: "Inter", "Arial", sans-serif;
+  font-family: "poppins", "Inter", "Arial", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -34,14 +49,13 @@ html, body, #root {
   background-color: rgba(172, 166, 166, 0.428) !important;
 }
 
-/* Clases para ocultar scrollbar pero mantener scroll funcional */
 .scroll-hide::-webkit-scrollbar {
-  width: 4px;             /* ancho de la barra horizontal */
-  height: 4px;            /* altura de la barra vertical */
+  width: 4px;             
+  height: 4px;            
 }
 
 .scroll-hide::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3); /* color discreto */
+  background: rgba(0, 0, 0, 0.3); 
   border-radius: 9999px;
 }
 
@@ -50,8 +64,8 @@ html, body, #root {
 }
 
 .scroll-hide {
-  scrollbar-width: thin;        /* Firefox */
+  scrollbar-width: thin;  
   scrollbar-color: rgba(0,0,0,0.3) transparent;
-  -webkit-overflow-scrolling: touch; /* iOS touch smooth */
+  -webkit-overflow-scrolling: touch;
 }
 

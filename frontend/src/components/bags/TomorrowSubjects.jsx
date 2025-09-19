@@ -1,14 +1,34 @@
+/**────────────────────────────────────────────────────────────────────────────────────┐
+ * Componente TomorrowSubjects: muestra las asignaturas asociadas a una mochila        │
+ * para el día siguiente y permite marcarlas como completadas.                         │
+ *                                                                                     │
+ * Props:                                                                              │
+ *   • bag: objeto de mochila que contiene los items (asignaturas) y datos.            │
+ *   • isOpen: boolean que controla la visibilidad del modal.                          │
+ *   • onClose: función para cerrar el modal.                                          │
+ *   • onUpdateBag: función llamada al actualizar la mochila.                          │
+ *                                                                                     │
+ * Funcionamiento:                                                                     │
+ *   • Usa el hook useTomorrowSubjects para obtener:                                   │
+ *       - subjects: lista de asignaturas para el día siguiente.                       │
+ *       - isTomorrowBagComplete: indica si todas las asignaturas están marcadas.      │
+ *       - toggleSubject: función para marcar/desmarcar una asignatura.                │
+ *       - dayKey: clave del día (L, M, X, J, V) para acceder a la info de la mochila. │
+ *   • Renderiza un Modal que contiene:                                                │
+ *       - Título dinámico con el día completo.                                        │
+ *       - Mensaje de éxito si todas las asignaturas están completadas.                │
+ *       - Lista de asignaturas con checkboxes para marcar completadas.                │
+ *       - Mensaje si no hay asignaturas.                                              │
+ *       - Botón de cierre fijo en la esquina superior derecha.                        │
+ *                                                                                     │
+ * Autor: Ana Castro                                                                   │
+ *────────────────────────────────────────────────────────────────────────────────────*/
+
 import { Modal } from "../commons/Modal";
 import { useTomorrowSubjects } from "../../hooks/bag/useTomorrowSubjects";
-import { X, Check } from "lucide-react";
-
-const fullDays = {
-    L: "Lunes",
-    M: "Martes",
-    X: "Miércoles",
-    J: "Jueves",
-    V: "Viernes",
-};
+import { Check } from "lucide-react";
+import { FULL_DAYS } from "../../utils/constants";
+import { ButtonClose } from "../commons/buttons/ButtonClose";
 
 export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
     const { subjects, isTomorrowBagComplete, toggleSubject, dayKey } = useTomorrowSubjects({
@@ -23,7 +43,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
         <Modal isOpen={isOpen}>
             <div className="relative bg-black border border-purple-600 rounded-xl p-6 w-full max-w-md text-white shadow-lg">
                 <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold mt-10">
-                    Asignaturas {fullDays[dayKey]}
+                    Asignaturas {FULL_DAYS[dayKey]}
                 </h2>
 
                 {isTomorrowBagComplete && (
@@ -46,6 +66,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                                     onChange={() => toggleSubject(subject.name)}
                                     className="accent-blue-500 w-5 h-5"
                                 />
+                                
                                 <span
                                     className={`text-lg ${
                                         bag.items?.[dayKey]?.includes(subject.name) ? "line-through" : ""
@@ -53,14 +74,13 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                                 >
                                     {subject.name}
                                 </span>
+                                
                             </li>
                         ))}
                     </ul>
                 )}
 
-                <button onClick={onClose} className="absolute top-4 right-4 text-red-400 hover:text-red-700">
-                    <X className="w-8 h-8" />
-                </button>
+                <ButtonClose onClick={onClose} />
             </div>
         </Modal>
     );

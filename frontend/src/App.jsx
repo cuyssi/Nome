@@ -1,3 +1,24 @@
+/**──────────────────────────────────────────────────────────────────────────────┐
+ * Componente principal de la aplicación.                                        │
+ *                                                                               │
+ * Funcionalidad:                                                                │
+ *   • Inicializa el deviceId si no existe.                                      │
+ *   • Suscribe al usuario a notificaciones push al montar el componente.        │
+ *   • Define rutas principales usando React Router:                             │
+ *       - "/" → Home                                                            │
+ *       - "/tasks" → Tasks                                                      │
+ *       - "/dates" → Dates                                                      │
+ *       - "/today" → Today_tasks                                                │
+ *       - "/completed" → Completed_tasks                                        │
+ *       - "/pending" → Pending_tasks                                            │
+ *       - "/calendar" → Calendar_page                                           │
+ *       - "/schedule" → Schedule_page                                           │
+ *       - "/bags" → Bags                                                        │
+ *   • Contenedor principal con estilos responsivos usando Tailwind y clsx.      │
+ *                                                                               │
+ * Autor: Ana Castro                                                             │
+└───────────────────────────────────────────────────────────────────────────────*/
+
 import "./App.css";
 import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
@@ -9,24 +30,16 @@ import { Completed_tasks } from "./pages/Completed_tasks";
 import { Pending_tasks } from "./pages/Pending_tasks";
 import { Today_tasks } from "./pages/Today_tasks";
 import { ensureDeviceId } from "./utils/ensureDeviceId";
-import { usePushNotifications } from "./hooks/notification/usePushNotifications";
 import { Schedule_page } from "./pages/Schedule_page";
 import { Calendar_page } from "./pages/Calendar_page";
 import { Bags } from "./pages/Bags";
+import { HelpToggle } from "./components/tutorials/HelpToggle";
+
 import clsx from "clsx";
 
 function App() {
-    const { subscribeUser } = usePushNotifications();
     useEffect(() => {
         ensureDeviceId();
-
-        (async () => {
-            try {
-                await subscribeUser();
-            } catch (err) {
-                console.error("❌ No se pudo suscribir automáticamente:", err);
-            }
-        })();
     }, []);
 
     return (
@@ -50,6 +63,7 @@ function App() {
                         <Route path="/schedule" element={<Schedule_page />} />
                         <Route path="/bags" element={<Bags />} />
                     </Routes>
+                    <HelpToggle />
                 </main>
                 <Footer />
             </div>

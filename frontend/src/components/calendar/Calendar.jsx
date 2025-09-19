@@ -1,11 +1,36 @@
+/**──────────────────────────────────────────────────────────────────────────────────────────┐
+ * Componente Calendar: muestra un calendario mensual con tareas asociadas a fechas.         │
+ *                                                                                           │
+ * Props:                                                                                    │
+ *   • openModalWithTask: función que abre un modal para crear o editar una tarea.           │
+ *                                                                                           │
+ * Funcionamiento:                                                                           │
+ *   • Usa el hook useCalendarTasks para manejar la lógica de tareas:                        │
+ *       - tasksByDate(date): devuelve las tareas de una fecha concreta.                     │
+ *       - selectedDateTasks: tareas del día actualmente seleccionado.                       │
+ *       - isModalOpen / setIsModalOpen: control del modal de tareas.                        │
+ *       - handleDateClick(date): al hacer click en un día se selecciona la fecha.           │
+ *       - handleDeleteTask(id): elimina una tarea.                                          │
+ *       - toggleCompletedForDate(taskId, date): marca o desmarca una tarea como completada. │
+ *       - isTaskCompletedForDate(taskId, date): devuelve true si la tarea está completada.  │
+ *       - selectedDate: fecha actualmente seleccionada.                                     │
+ *   • Renderiza FullCalendar con:                                                           │
+ *       - Vista mensual (dayGridMonth) y navegación previa/siguiente.                       │
+ *       - Estilo especial para el día actual.                                               │
+ *       - Indicadores de color según si todas las tareas del día están completadas.         │
+ *   • Modal de tareas del día seleccionado:                                                 │
+ *       - Lista las tareas con opciones para editar, marcar completadas o borrar.           │
+ *       - Botón para añadir nueva tarea usando openModalWithTask.                           │
+ *                                                                                           │
+ * Autor: Ana Castro                                                                         │
+ *──────────────────────────────────────────────────────────────────────────────────────────*/
+
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Button } from "../commons/Button";
-import { Modal } from "../commons/Modal";
-import { X, Trash2, Pencil } from "lucide-react";
 import { useCalendarTasks } from "../../hooks/calendar/useCalendarTasks";
-import { toLocalYMD } from "../../utils/toLocalYMD";
+import { toLocalYMD } from "../../utils/dateUtils";
+import { DayTasksModal } from "./DayTasksModal";
 
 export const Calendar = ({ openModalWithTask }) => {
     const {
@@ -49,73 +74,16 @@ export const Calendar = ({ openModalWithTask }) => {
                 dateClick={handleDateClick}
             />
 
-            <Modal isOpen={isModalOpen}>
-                <div className="relative bg-white p-4 rounded-md w-80 flex flex-col gap-2">
-                    <Button
-                        className="absolute top-2 right-2 text-red-400 hover:text-red-700"
-                        onClick={() => setIsModalOpen(false)}
-                    >
-                        <X className="w-6 h-6" />
-                    </Button>
-
-                    <h2 className="text-lg font-bold mb-2 text-purple-600">Tareas del día</h2>
-
-                    {selectedDateTasks.length === 0 ? (
-                        <p>No hay tareas</p>
-                    ) : (
-                        <ul className="flex flex-col gap-1">
-                            {selectedDateTasks.map((task) => {
-                                const completedToday = isTaskCompletedForDate(task.id, selectedDate);
-                                console.log("🔹 Rendering task", task.id, "completedToday:", completedToday);
-                                return (
-                                    <li key={task.id} className="border-b py-1 text-gray-400">
-                                        <div className="flex justify-between items-center">
-                                            <span
-                                                className={
-                                                    isTaskCompletedForDate(task.id, selectedDate)
-                                                        ? "line-through text-gray-400"
-                                                        : ""
-                                                }
-                                            >
-                                                [{task.hour}] {task.text}
-                                            </span>
-                                            <div className="flex gap-2">
-                                                <Button
-                                                    onClick={() => openModalWithTask(task)}
-                                                    className="text-blue-400 hover:text-blue-700"
-                                                >
-                                                    <Pencil className="w-4 h-4" />
-                                                </Button>
-                                                <Button
-                                                    className="text-green-400 hover:text-green-700"
-                                                    onClick={() =>
-                                                        toggleCompletedForDate(task.id, toLocalYMD(new Date()))
-                                                    }
-                                                >
-                                                    ✓
-                                                </Button>
-                                                <Button
-                                                    className="text-red-400 hover:text-red-700"
-                                                    onClick={() => handleDeleteTask(task.id)}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    )}
-
-                    <button
-                        onClick={() => openModalWithTask({})}
-                        className="mt-4 w-full px-4 py-2 bg-purple-600 text-white rounded-md"
-                    >
-                        Nueva tarea
-                    </button>
-                </div>
-            </Modal>
+            <DayTasksModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                tasks={selectedDateTasks}
+                selectedDate={selectedDate}
+                openModalWithTask={openModalWithTask}
+                handleDeleteTask={handleDeleteTask}
+                toggleCompletedForDate={toggleCompletedForDate}
+                isTaskCompletedForDate={isTaskCompletedForDate}
+            />
         </div>
     );
 };

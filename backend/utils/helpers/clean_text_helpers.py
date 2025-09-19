@@ -1,34 +1,62 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # Utilidades para limpiar texto de referencias temporales y formatear listas.
-# - `clean_date_and_fragment` elimina horas, fragmentos como "por la tarde",
+# - clean_date_and_fragment-> elimina horas, fragmentos como "por la tarde",
 #   y palabras de referencia temporal como "mañana", "hoy".
-# - `format_lists_with_commas` coloca comas correctas en listas de elementos
+#
+# - remove_weekday_phrases(text)-> elimina el nombre del día y el artículo que
+#   lo precede, fragmentos como "el lunes".
+#
+# - format_lists_with_commas-> coloca comas correctas en listas de elementos
 #   o números, evitando errores como comas antes de artículos y duplicadas.
+#
 # Devuelven el texto limpio y listo para procesar fechas o transcripciones.
 # ──────────────────────────────────────────────────────────────────────────────
 
 import re
 
+def sanitize_fragment(fragment: str) -> str:
+    if not fragment:
+        return fragment
+
+    frag = fragment.strip()
+    if re.search(r"\b(en|con|de|a|al|del)$", frag, flags=re.IGNORECASE):
+        frag = " ".join(frag.split()[:-1])
+
+    return frag
+
+
 def clean_date_and_fragment(text, fragments=None):
     if not fragments:
         fragments = []
+
     elif isinstance(fragments, str):
         fragments = [fragments]
 
+    fragments = [sanitize_fragment(f) for f in fragments if f]
     for fragment in fragments:
-        if fragment:
-            fragment_esc = re.escape(fragment.strip())
-            text = re.sub(rf'\b(?:para\s+)?(?:el|la|los|las)?\s*{fragment_esc}\b', '', text, flags=re.IGNORECASE)
+        fragment_esc = re.escape(fragment.strip())
+        text = re.sub(
+            rf'\b(?:a\s+)?(?:para\s+)?(?:el|la|los|las)?\s*{fragment_esc}\b',
+            '',
+            text,
+            flags=re.IGNORECASE
+        )
 
     text = re.sub(r"\b(a\s+)?(la|las)\s+\d{1,2}(:\d{2})?\b", "", text, flags=re.IGNORECASE)
     text = re.sub(r"\b\d{1,2}(:\d{2})?\b", "", text)
     text = re.sub(r"\b(por|de)\s+la\s+(mañana|tarde|noche|madrugada)\b", "", text, flags=re.IGNORECASE)
-    text = re.sub(r"\b(mañana|hoy|pasado mañana|esta noche|esta tarde|esta mañana)\b", "", text, flags=re.IGNORECASE)
-
+    text = re.sub(
+        r"\b(mañana(\s+por\s+la\s+(mañana|tarde|noche|madrugada))?|"
+        r"hoy|pasado\s+mañana|esta\s+(noche|tarde|mañana))\b",
+        "",
+        text,
+        flags=re.IGNORECASE
+    )
     text = re.sub(r"\s{2,}", " ", text).strip()
     text = text[0].upper() + text[1:] if text else text
 
     return text
+
 
 def remove_weekday_phrases(text):
     weekdays = [

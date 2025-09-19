@@ -1,3 +1,23 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente Item_List: lista visual vertical de elementos.                    │
+ * Renderiza un array de elementos con un componente renderizador personalizado.│
+ * Soporta desplazamiento vertical con estilos optimizados para touch y scroll. │
+ *                                                                              │
+ * Props:                                                                       │
+ *   • items: array de elementos a mostrar.                                     │
+ *   • renderItem: función que recibe un elemento y retorna un JSX para render. │
+ *   • className: clases adicionales para personalizar estilos del contenedor.  │
+ *                                                                              │
+ * Características:                                                             │
+ *   • Flex-col con gap entre elementos.                                        │
+ *   • Altura limitada al 90% del contenedor padre.                             │
+ *   • Scroll vertical con scrollbar oculto.                                    │
+ *   • Cursor de "agarre" y compatibilidad táctil (touch-pan-x, touch-pan-y).   │
+ *   • padding inferior extra para evitar solapamiento de elementos flotantes.  │
+ *                                                                              │
+ * @author: Ana Castro                                                          │
+ └─────────────────────────────────────────────────────────────────────────────*/
+
 export const Item_List = ({ items = [], renderItem, className = "" }) => {
     return (
         <div

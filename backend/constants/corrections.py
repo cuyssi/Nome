@@ -44,4 +44,7 @@ CORRECTIONS = {
     "el mario": "el Atrio",
     "Débiles": "Deberes",
     "eddy": "quedé",
+    "en las lianas": "en las Meanas",
+    "en las peanas": "en las Meanas",
+    "con barcos": "con Marcos",
 }

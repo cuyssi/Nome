@@ -9,7 +9,7 @@
 
 import { Task_card } from "./Task_card";
 import { useTasks } from "../../hooks/task/useTasks";
-import { toLocalYMD } from "../../utils/toLocalYMD";
+import { toLocalYMD } from "../../utils/dateUtils";
 
 export const Tasks_list = ({ tasks = [], openModalWithTask, className = "" }) => {
     const { deleteTask } = useTasks();

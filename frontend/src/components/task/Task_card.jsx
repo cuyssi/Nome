@@ -1,9 +1,38 @@
-import { Container_Card } from "../commons/Container_Card";
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente Task_card: representa visualmente una tarea dentro de la lista.   │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Muestra la información principal de la tarea:                            │
+ *       - Texto de la tarea                                                    │
+ *       - Fecha y hora (opcional)                                              │
+ *       - Estado de completada (tachado si está completada)                    │
+ *   • Soporta gestos táctiles y de puntero para:                               │
+ *       - Arrastrar para marcar como completada                                │
+ *       - Swipe para editar o eliminar (visualización de opciones)             │
+ *   • Interacción con el hook useCard para animaciones y gestos.               │
+ *   • Colores dinámicos según estado y tipo de tarea.                          │
+ *                                                                              │
+ * Props:                                                                       │
+ *   • task (object): objeto tarea a mostrar.                                   │
+ *   • onDelete (function): función para eliminar la tarea.                     │
+ *   • onEdit (function): función para editar la tarea.                         │
+ *                                                                              │
+ * Layout y estilo:                                                             │
+ *   • Contenedor principal con bordes redondeados y transición de color.       │
+ *   • Indicadores visuales para eliminación/edición al deslizar.               │
+ *   • Texto de tarea estilizado con tachado si está completada.                │
+ *   • Usa Container_Card para el fondo y borde con gradiente decorativo.       │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import { Trash2, Pencil } from "lucide-react";
 import { useCard } from "../../hooks/commons/useCard";
 import { useStorageStore } from "../../store/storageStore";
-import { toLocalYMD } from "../../utils/toLocalYMD";
-import { getRepeatLabel } from "../../utils/getRepeatLabel"
+import { toLocalYMD } from "../../utils/dateUtils";
+import { getRepeatLabel } from "../../utils/getRepeatLabel";
+import { SwipeCard } from "../commons/SwipeCard";
+import { SwipeAction } from "../commons/SwipeAction";
 
 export const Task_card = ({ task, onDelete, onEdit }) => {
     const isCompleted = useStorageStore.getState().isTaskCompletedForDate(task.id, toLocalYMD(new Date()));
@@ -12,76 +41,30 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
         gestureHandlers,
         state: { dragOffset, isRemoving },
         color,
-        
     } = useCard(task, onDelete, onEdit, markAsCompleted);
 
-
-
-    
     return (
-        <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
+        <SwipeCard
+            dragOffset={dragOffset}
+            isRemoving={isRemoving}
+            color={color}
+            gestureHandlers={gestureHandlers}
+            leftAction={<SwipeAction icon={Trash2} label="¿Eliminar?" />}
+            rightAction={<SwipeAction icon={Pencil} label="¿Editar?" />}
+        >
+            {(task.date || task.hour) && (
+                <div className="flex flex-1 flex-col border border-black border-r-gray-900 rounded-l-xl h-full w-full px-3 gap-1 justify-center text-center">
+                    <p className="text-gray-400 font-semibold text-3xl flex justify-center">{getRepeatLabel(task)}</p>
+                    <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
+                </div>
+            )}
             <div
-                className={`absolute inset-0 w-full z-0 flex items-center justify-between rounded-xl transition-colors duration-150 ease-in ${
-                    dragOffset > 120
-                        ? "bg-red-900"
-                        : dragOffset > 80
-                        ? "bg-red-500"
-                        : dragOffset > 0
-                        ? "bg-red-400"
-                        : dragOffset < -120
-                        ? "bg-yellow-900"
-                        : dragOffset < -80
-                        ? "bg-yellow-500"
-                        : dragOffset < 0
-                        ? "bg-yellow-200"
-                        : "bg-gray-400"
+                className={`flex flex-2 text-center justify-center items-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
+                    isCompleted ? "line-through text-white decoration-2 decoration-red-400 scale-[0.97]" : "text-white"
                 }`}
             >
-                <div className="flex flex-col ml-4 justify-center items-center">
-                    <Trash2 className="text-white w-8 h-8" />
-                    <p className="text-white"> ¿Eliminar?</p>
-                </div>
-                <div className="flex flex-col mr-4 justify-center items-center">
-                    <Pencil className="text-white w-8 h-8" />
-                    <p className="text-white"> ¿Editar?</p>
-                </div>
+                {task.text}
             </div>
-            <div
-                onTouchStart={gestureHandlers.handleTouchStart}
-                onTouchMove={gestureHandlers.handleTouchMove}
-                onTouchEnd={gestureHandlers.handleTouchEnd}
-                onPointerDown={(e) => {
-                    gestureHandlers.handlePointerStart(e);
-                    gestureHandlers.handleLongPressStart();
-                }}
-                onPointerMove={gestureHandlers.handlePointerMove}
-                onPointerUp={(e) => {
-                    gestureHandlers.handlePointerEnd(e);
-                    gestureHandlers.handleLongPressEnd();
-                }}
-                className={`relative rounded-xl z-10 ${color.bg} transition-transform duration-150 ease-out ${
-                    isRemoving ? "opacity-0 scale-90 blur-sm" : ""
-                }`}
-                style={{ transform: `translateX(${dragOffset}px)` }}
-            >
-                <Container_Card outerClass={`${color.bg}`} innerClass={`${color.border}`}>
-                    {(task.date || task.hour) && (
-                        <div className="flex flex-1 flex-col border border-black border-r-gray-900 rounded-l-xl h-full w-full px-3 gap-1 justify-center text-center">
-                            <p className="text-gray-400 font-semibold text-3xl flex justify-center">{getRepeatLabel(task)}</p>
-                            <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
-                        </div>
-                    )}
-                    <div
-                        className={`flex flex-2 text-center justify-center items-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
-                            isCompleted
-                                ? "line-through text-white decoration-4 decoration-red-400 scale-[0.97]"
-                                : "text-white"
-                        }`}
-                    >
-                        {task.text}
-                    </div>
-                </Container_Card>
-            </div>
-        </div>
+        </SwipeCard>
     );
 };

@@ -1,3 +1,27 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * useBagModalManager: hook para gestionar modales de mochilas.                 │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Controla la apertura/cierre de modales para mochilas.                    │
+ *   • Mantiene el estado de la mochila seleccionada y el modo del modal.       │
+ *   • Muestra confirmaciones temporales tras editar una mochila.               │
+ *   • Permite abrir un modal directamente desde el nombre de la mochila.       │
+ *                                                                              │
+ * Estado devuelto:                                                             │
+ *   - isOpen: indica si el modal está abierto.                                 │
+ *   - selectedBag: mochila actualmente seleccionada.                           │
+ *   - mode: modo del modal ('edit', 'school', 'items', etc.).                  │
+ *   - showConfirmation: muestra confirmación temporal al editar.               │
+ *                                                                              │
+ * Funciones devueltas:                                                         │
+ *   - openModalWithBag(bag, modalMode): abre el modal con la mochila indicada. │
+ *   - handleEdit(updatedBag): actualiza la mochila y muestra confirmación.     │
+ *   - handleClose(): cierra el modal y resetea estados.                        │
+ *   - openBagFromURL(bagName, bagsList): abre modal buscando mochila por nombre│
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import { useState } from "react";
 import { useBagsStore } from "../../store/useBagsStore";
 
@@ -9,7 +33,6 @@ export const useBagModalManager = () => {
     const { editBag } = useBagsStore();
 
     const openModalWithBag = (bag, modalMode = "edit") => {
-        console.log("🧨 Abriendo modal con:", bag, "modo:", modalMode);
         setSelectedBag(bag);
         setMode(modalMode);
         setIsOpen(true);

@@ -1,33 +1,30 @@
-import { Plus, X } from "lucide-react";
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * Componente CreateBag: modal para crear nuevas mochilas.                      │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Mochilas sugeridas: botones predefinidos con nombre, color, items y      │
+ *     días de notificación.                                                    │
+ *   • Mochilas personalizadas: permite introducir nombre, agregar items        │
+ *     manualmente y seleccionar días de recordatorio.                          │
+ *                                                                              │
+ * Props:                                                                       │
+ *   • onClose: función para cerrar el modal.                                   │
+ *   • onSubmit: función llamada al crear la mochila, pasando los datos de      │
+ *     la mochila creada.                                                       │
+ *                                                                              │
+ * Hooks internos:                                                              │
+ *   • useCreateBag: gestiona estado del nombre, items, días de notificación    │
+ *     y acciones de creación.                                                  │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
+import { Plus } from "lucide-react";
 import { useCreateBag } from "../../hooks/bag/useCreateBag";
 import { DaySelector } from "../commons/DaySelector";
-
-const predefinedBags = [
-    {
-        name: "Gimnasio",
-        color: "green-400",
-        type: "personalizada",
-        items: ["Toalla", "Proteína", "Zapatillas", "Botella"],
-        notifyDays: ["T", "J"],
-        notifyTime: "19:00",
-    },
-    {
-        name: "Playa",
-        color: "blue-400",
-        type: "personalizada",
-        items: ["Crema solar", "Gafas", "Toalla", "Chanclas"],
-        notifyDays: ["L", "M", "X", "J", "V"],
-        notifyTime: "20:00",
-    },
-    {
-        name: "Piscina",
-        color: "orange-400",
-        type: "personalizada",
-        items: ["Gorro", "Bañador", "Toalla", "Sandalias"],
-        notifyDays: ["L", "M", "X", "J", "V"],
-        notifyTime: "20:00",
-    },
-];
+import { PREDEFINED_BAGS } from "../../utils/constants";
+import { ButtonClose } from "../commons/buttons/ButtonClose";
+import { ButtonDefault } from "../commons/buttons/ButtonDefault";
 
 export const CreateBag = ({ onClose, onSubmit }) => {
     const {
@@ -54,21 +51,22 @@ export const CreateBag = ({ onClose, onSubmit }) => {
 
             <div className="mb-6">
                 <h3 className="text-lg text-gray-600 font-semibold mb-2">Mochilas sugeridas:</h3>
+
                 <div className="flex flex-col gap-3">
-                    {predefinedBags.map((bag, i) => (
-                        <button
+                    {PREDEFINED_BAGS.map((bag, i) => (
+                        <ButtonDefault
                             key={i}
+                            text={bag.name}
                             onClick={() => handleAddPredefined(bag)}
-                            className={`bg-${bag.color} text-gray-600 px-4 py-2 rounded-lg hover:opacity-80 transition`}
-                        >
-                            {bag.name}
-                        </button>
+                            className={`bg-${bag.color} text-gray-600`}
+                        />
                     ))}
                 </div>
             </div>
 
             <div>
                 <h3 className="text-lg text-gray-600 font-semibold mb-2">Personalizada:</h3>
+                
                 <input
                     type="text"
                     placeholder="Nombre de la mochila"
@@ -76,6 +74,7 @@ export const CreateBag = ({ onClose, onSubmit }) => {
                     onChange={(e) => setCustomName(e.target.value)}
                     className="w-full mb-2 px-3 py-2 rounded bg-gray-200 text-gray-900"
                 />
+                
                 <div className="flex gap-2 mb-2">
                     <input
                         type="text"
@@ -84,33 +83,35 @@ export const CreateBag = ({ onClose, onSubmit }) => {
                         onChange={(e) => setNewItem(e.target.value)}
                         className="flex-1 px-3 py-2 rounded bg-gray-200 text-gray-900"
                     />
-                    <button
+
+                    <ButtonDefault
+                        type="button"
                         onClick={handleAddCustomItem}
-                        className="bg-purple-500 px-3 py-2 rounded hover:bg-purple-500"
-                    >
-                        <Plus className="inline mr-1" />
-                    </button>
+                        text={<Plus className="inline mr-1" />}
+                        className="bg-purple-500"
+                    />
                 </div>
+
                 <ul className="list-disc list-inside text-sm text-gray-500 mb-4">
                     {customItems.map((item, i) => (
                         <li key={i}>{item}</li>
                     ))}
                 </ul>
-                <button
+
+                <ButtonDefault
+                    type="button"
                     onClick={handleCreateCustomBag}
-                    className="mt-6 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition w-full"
-                >
-                    Crear mochila personalizada
-                </button>
+                    text="Crear mochila personalizada"
+                    className="mx-auto block rounded-lg mb-6 bg-purple-500"
+                />
             </div>
+            
             <div className="mb-4">
                 <h4 className="text-sm font-semibold mb-2">Días de recordatorio</h4>
                 <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
             </div>
 
-            <button onClick={onClose} className="absolute top-4 right-4 text-red-400 hover:text-red-700">
-                <X className="w-8 h-8" />
-            </button>
+            <ButtonClose onClick={onClose} />
         </div>
     );
 };

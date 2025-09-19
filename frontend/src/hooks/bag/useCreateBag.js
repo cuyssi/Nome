@@ -1,3 +1,26 @@
+/**─────────────────────────────────────────────────────────────────────────────┐
+ * useCreateBag: hook para crear mochilas (bags) nuevas.                        │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Permite crear mochilas personalizadas con nombre, color y elementos.     │
+ *   • Permite añadir elementos de forma individual antes de crear la mochila.  │
+ *   • Permite añadir mochilas predefinidas directamente.                       │
+ *   • Calcula la fecha y hora de recordatorio automáticamente.                 │
+ *                                                                              │
+ * Estado devuelto:                                                             │
+ *   - customName: nombre de la mochila personalizada.                          │
+ *   - customItems: elementos añadidos a la mochila.                            │
+ *   - newItem: texto del nuevo elemento a añadir.                              │
+ *   - notifyDays: días en los que se desea recibir recordatorio.               │
+ *                                                                              │
+ * Funciones:                                                                   │
+ *   - handleAddPredefined(bag): añade una mochila predefinida.                 │
+ *   - handleAddCustomItem(): añade un elemento a la mochila personalizada.     │
+ *   - handleCreateCustomBag(): crea la mochila personalizada y la guarda.      │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
+└──────────────────────────────────────────────────────────────────────────────*/
+
 import { useState } from "react";
 import { useBag } from "../../hooks/bag/useBag";
 import { calculateReminderDateTime } from "../../utils/calculateReminder";

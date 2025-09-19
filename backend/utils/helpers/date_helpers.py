@@ -1,8 +1,9 @@
-# ──────────────────────────────────────────────────────────────────────────────
-# Función para comprobar si una fecha es hoy.
-# - `is_today` recibe un objeto datetime y devuelve True si coincide con la fecha actual.
-# Útil para marcar tareas o eventos como "hoy".
-# ──────────────────────────────────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────
+# Funciones para manejar fechas y días de la semana
+# - is_today(dt)-> Devuelve True si la fecha coincide con el día actual.
+# - adjust_weekday_forward(dt, text, now)-> Ajusta la fecha al siguiente día de la semana
+#   mencionado en el texto, si corresponde.
+# ────────────────────────────────────────────────────────────────
 
 from datetime import datetime, timedelta
 from constants.weekday_map import WEEKDAY_MAP
@@ -25,4 +26,5 @@ def adjust_weekday_forward(dt: datetime, text: str, now: datetime) -> datetime:
             new_date = now + timedelta(days=days_ahead)
             dt = dt.replace(year=new_date.year, month=new_date.month, day=new_date.day)
             break
+
     return dt

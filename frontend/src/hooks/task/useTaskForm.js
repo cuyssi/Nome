@@ -1,3 +1,26 @@
+/**────────────────────────────────────────────────────────────────────────────────────────────────┐
+ * useTaskForm: hook para gestionar el formulario de creación o edición de tareas.                 │
+ *                                                                                                 │
+ * Funcionalidad:                                                                                  │
+ *   • Mantiene el estado local del formulario (`formData`) incluyendo texto, fecha, hora, color,  │
+ *     tipo de tarea, repetición, días personalizados y recordatorio.                              │
+ *   • Inicializa el formulario con los valores de una tarea existente si se pasa `task`.          │
+ *   • Convierte fechas ingresadas manualmente a un formato consistente (YYYY-MM-DD y HH:MM).      │
+ *   • Normaliza la fecha para mostrarla en el backend como DD/MM.                                 │
+ *   • Construye el `dateTime` completo usando `buildDateTimeFromManual`.                          │
+ *   • Genera un nuevo ID con `uuidv4` si la tarea es nueva.                                       │
+ *   • Llama a `onSubmit(finalTask)` para enviar la tarea creada o editada.                        │
+ *   • Controla la confirmación visual (`showConfirmation`) y cierra el formulario tras 1.5s.      │
+ *                                                                                                 │
+ * Devuelve:                                                                                       │
+ *   - formData: estado del formulario con todos los campos de la tarea.                           │
+ *   - showConfirmation: boolean para mostrar confirmación visual.                                 │
+ *   - handleChange(e): función para actualizar los campos del formulario según su `name`.         │
+ *   - handleSubmit(e): función para procesar y enviar la tarea al backend o store.                │
+ *                                                                                                 │
+ * Autor: Ana Castro                                                                               │
+└─────────────────────────────────────────────────────────────────────────────────────────────────*/
+
 import { useState, useEffect } from "react";
 import { buildDateTimeFromManual } from "../../utils/dateUtils";
 import { v4 as uuidv4 } from "uuid";
@@ -30,6 +53,7 @@ export function useTaskForm(task, onSubmit, onClose) {
         repeat: "once",
         customDays: [],
         reminder: "5",
+        notifyDayBefore: false,
     });
 
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -47,6 +71,7 @@ export function useTaskForm(task, onSubmit, onClose) {
                 repeat: task.repeat || "once",
                 customDays: task.customDays || [],
                 reminder: task.reminder || "5",
+                notifyDayBefore: task.notifyDayBefore ?? false,
             });
         }
     }, [task]);
@@ -81,6 +106,7 @@ export function useTaskForm(task, onSubmit, onClose) {
                   repeat: formData.repeat,
                   customDays: formData.customDays,
                   reminder: formData.reminder,
+                  notifyDayBefore: formData.notifyDayBefore,
               }
             : {
                   id: uuidv4(),
@@ -94,6 +120,7 @@ export function useTaskForm(task, onSubmit, onClose) {
                   repeat: formData.repeat,
                   customDays: formData.customDays,
                   reminder: formData.reminder,
+                  notifyDayBefore: formData.notifyDayBefore,
               };
 
         onSubmit(finalTask);
