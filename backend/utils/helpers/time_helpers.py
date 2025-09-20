@@ -8,12 +8,24 @@
 import re
 from datetime import datetime, timedelta
 
-def adjust_ambiguous_hour(dt: datetime, now: datetime):
-    if dt.date() != now.date():
-        return dt
+def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
+    text = text.lower()
+    explicit_hour = re.search(r'\b\d{1,2}(:\d{2})\b', text) is not None
 
-    if dt.hour < 12 and dt < now:
-        dt = dt.replace(hour=dt.hour + 12)
+    has_morning = "de la mañana" in text or "por la mañana" in text
+    has_tarde = "de la tarde" in text or "por la tarde" in text
+    has_noche = "de la noche" in text or "por la noche" in text
+    has_madrugada = "de la madrugada" in text or "por la madrugada" in text
+
+    if explicit_hour and dt < now:
+        if has_morning or has_madrugada:
+            dt += timedelta(days=1)
+        elif has_tarde or has_noche:
+            if dt.hour < 12:
+                dt = dt.replace(hour=dt.hour + 12)
+        else:
+            if dt.hour < 12:
+                dt = dt.replace(hour=dt.hour + 12)
 
     return dt
 
@@ -29,7 +41,13 @@ def correct_minus_expressions(text):
             return match.group(0)
 
         new_hour = hour - 1 if hour > 0 else 23
-        return f"{new_hour}:{60 - m:02d}"
+        result = f"{new_hour}:{60 - m:02d}"
+
+        if "de la tarde" in text.lower() or "por la tarde" in text.lower():
+            new_hour_24 = new_hour + 12 if new_hour < 12 else new_hour
+            result = f"{new_hour_24}:{60 - m:02d}"
+
+        return result
 
     return re.sub(r"\b(\d{1,2}(?::\d{2})?)\s+menos\s+(\w+)\b", replacement, text, flags=re.IGNORECASE)
 

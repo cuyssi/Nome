@@ -53,22 +53,42 @@ export function useTaskEditor() {
     const handleEdit = (updatedTask) => {
         if (!updatedTask || !deviceId) return;
 
-        const formattedDateTime =
-            updatedTask.dateTime instanceof Date ? formatDateForBackend(updatedTask.dateTime) : updatedTask.dateTime;
+        const isEditing = !!selectedTask?.id;
 
-        const mergedTask = {
-            ...selectedTask,
-            ...updatedTask,
-            dateTime: formattedDateTime ?? selectedTask?.dateTime,
-            deviceId,
-            notifyDayBefore: updatedTask.notifyDayBefore ?? selectedTask?.notifyDayBefore ?? false,
-        };
+        if (isEditing) {
+            const formattedDateTime =
+                updatedTask.dateTime instanceof Date
+                    ? formatDateForBackend(updatedTask.dateTime)
+                    : updatedTask.dateTime;
 
-        const { id, ...updatedFields } = mergedTask;
-        if (id) {
+            const mergedTask = {
+                ...selectedTask,
+                ...updatedTask,
+                dateTime: formattedDateTime ?? selectedTask?.dateTime,
+                deviceId,
+                notifyDayBefore: updatedTask.notifyDayBefore ?? selectedTask?.notifyDayBefore ?? false,
+            };
+
+            const { id, ...updatedFields } = mergedTask;
             updateTask(id, updatedFields);
         } else {
-            addTask(updatedFields);
+            const fullTask = {
+                id: crypto.randomUUID(),
+                text: updatedTask.text,
+                text_raw: updatedTask.text,
+                date: updatedTask.date,
+                hour: updatedTask.hour,
+                dateTime: updatedTask.dateTime,
+                color: updatedTask.color || "red-400",
+                type: updatedTask.type || "task",
+                repeat: updatedTask.repeat || "once",
+                customDays: updatedTask.customDays || [],
+                reminder: updatedTask.reminder || "5",
+                notifyDayBefore: updatedTask.notifyDayBefore ?? false,
+                deviceId,
+            };
+
+            addTask(fullTask);
         }
 
         reload();

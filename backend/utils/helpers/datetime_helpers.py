@@ -44,34 +44,61 @@ def parse_day_reference(text: str, base: datetime):
 
 def detect_dates_in_text(text: str):
     now = datetime.now()
+    text_lower = text.lower()
+    day_fragment = None
+    data = []
 
-    # Detectar expresiones relativas antes de parsear
-    if "pasado mañana" in text:
+    if "pasado mañana" in text_lower:
         dt = now + timedelta(days=2)
         day_fragment = "pasado mañana"
-        data = []
-    elif "mañana" in text:
+        hour_match = re.search(r'\b(\d{1,2}):(\d{2})\b', text)
+        if hour_match:
+            hour = int(hour_match.group(1))
+            minute = int(hour_match.group(2))
+            dt = dt.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        else:
+            dt = dt.replace(hour=15, minute=30, second=0, microsecond=0)
+
+    elif "mañana" in text_lower and "pasado mañana" not in text_lower:
         dt = now + timedelta(days=1)
         day_fragment = "mañana"
-        data = []
+        hour_match = re.search(r'\b(\d{1,2}):(\d{2})\b', text)
+        if hour_match:
+            hour = int(hour_match.group(1))
+            minute = int(hour_match.group(2))
+            dt = dt.replace(hour=hour, minute=minute, second=0, microsecond=0)
+        else:
+            dt = dt.replace(hour=15, minute=30, second=0, microsecond=0)
+
     else:
         data = search_dates(text, settings={"RELATIVE_BASE": now})
         dt_day_ref, day_fragment = parse_day_reference(text, base=now)
 
-        if not data and not dt_day_ref:
-            dt = now.replace(hour=15, minute=30, second=0, microsecond=0)
-            return dt, [], None, None
-
         if dt_day_ref:
             dt = dt_day_ref
-        else:
+        elif data:
             dates_with_hour = [(txt, dt) for txt, dt in data if re.search(r"\d{1,2}[:h]\d{2}", txt)]
             txt, dt = dates_with_hour[-1] if dates_with_hour else data[-1]
             day_fragment = txt
+        else:
+            dt = None
 
-    dt = adjust_ambiguous_hour(dt, now)
+    if dt is None:
+        hour_match = re.search(r'\b(\d{1,2}):(\d{2})\b', text)
+        if hour_match:
+            hour = int(hour_match.group(1))
+            minute = int(hour_match.group(2))
+            dt = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+
+            if dt < now and ("de la mañana" in text_lower or "por la mañana" in text_lower):
+                dt += timedelta(days=1)
+
+            day_fragment = hour_match.group(0)
+        else:
+            dt = now.replace(hour=15, minute=30, second=0, microsecond=0)
+
+    dt = adjust_ambiguous_hour(dt, now, text)
     dt = adjust_weekday_forward(dt, text, now)
     dt, time_fragment = adjust_time_context(dt, text)
 
     return dt, data, time_fragment, day_fragment
-

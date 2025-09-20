@@ -40,7 +40,7 @@ export const useTasks = (type, exclude = false) => {
     const [tasks, setTasks] = useState([]);
     const todayYMD = toLocalYMD(new Date());
     const todayTasks = tasks.filter((task) => isTaskActiveOnDate(task, todayYMD));
-    
+
     useEffect(() => {
         const filtered = type ? filterByType(rawTasks, type, exclude) : rawTasks;
         setTasks(filtered);
@@ -77,6 +77,7 @@ export const useTasks = (type, exclude = false) => {
 
     const wrappedAddTask = async (task) => {
         baseAddTask(task);
+
         if (task.dateTime && task.text) {
             try {
                 const isoDate = formatDateForBackend(task.dateTime);
