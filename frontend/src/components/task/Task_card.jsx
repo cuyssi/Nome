@@ -42,7 +42,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                 </div>
             )}
             <div
-                className={`flex flex-2 text-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
+                className={`flex flex-2 px-2 h-full w-full text-sm text-white transition-all duration-300 ${
                     isCompleted ? "line-through text-white decoration-2 decoration-red-400 scale-[0.97]" : "text-white"
                 }`}
             >

@@ -44,7 +44,7 @@ export const TabbedTaskView = ({ title, tabLabels, tabTasks, tutorialSteps, tuto
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`relative w-full py-2 border border-purple-400 rounded-t-xl font-semibold transition
+                        className={`relative w-full p-2 border border-purple-400 rounded-t-xl font-semibold transition
               ${activeTab === tab ? "bg-black border-b-black px-5 z-30 text-white" : "bg-gray-600"}
               ${index === 0 ? " border-l-black rounded-tl-none " : ""}
             `}
