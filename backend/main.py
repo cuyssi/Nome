@@ -5,7 +5,7 @@
 # - Asegura que el modelo Vosk esté disponible
 # - Configura el ciclo de vida de la app (lifespan):
 #     • Reprograma tareas pendientes al arrancar
-#     • Cancela timers al apagar
+#     • Cancela y limpia timers al apagar
 # - Habilita CORS para el frontend
 # - Incluye los routers:
 #     • /transcribe → transcripción de audio
@@ -21,7 +21,7 @@ from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from api.transcribe import router as transcribe_router
 from api.notifications.router import router as notifications_router
-from api.notifications.subscriptions import active_timers
+from api.notifications.subscriptions import active_timers, scheduled_tasks, subscriptions
 from services.notifications.scheduler import schedule_notification
 
 load_dotenv()
@@ -30,8 +30,6 @@ ensure_vosk_model()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    from api.notifications.subscriptions import scheduled_tasks, subscriptions
-
     for device_id, tasks in scheduled_tasks.items():
         if device_id in subscriptions:
             for task in tasks:
@@ -39,10 +37,11 @@ async def lifespan(app: FastAPI):
                     schedule_notification(task)
                     task["rescheduled"] = True
     yield
-    for timer in active_timers:
+
+    for timer in list(active_timers):
         if timer.is_alive():
             timer.cancel()
-
+        active_timers.remove(timer)
 
 app = FastAPI(lifespan=lifespan)
 

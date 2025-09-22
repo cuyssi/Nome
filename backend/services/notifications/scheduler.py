@@ -18,7 +18,9 @@ from services.notifications.storage import save_data
 from api.notifications.subscriptions import subscriptions, scheduled_tasks, active_timers, task_lock
 import asyncio
 
+
 def cancelar_timer_existente(task):
+    """Cancelar cualquier timer activo asociado a una tarea concreta."""
     with task_lock:
         for timer in list(active_timers):
             if timer.args and isinstance(timer.args[0], dict):
@@ -30,14 +32,16 @@ def cancelar_timer_existente(task):
 
 
 def reprogram_if_repeating(task):
+    """Si la tarea o mochila es repetitiva, calcula la próxima fecha y la reprograba."""
     repeat = task.get("repeat") or "once"
 
-    if repeat == "once":
-        return False
     current_dt = isoparse(task["dateTime"])
     next_dt = None
 
-    if repeat == "daily":
+    if task.get("type") == "bag":
+        next_dt = current_dt + timedelta(days=1)
+
+    elif repeat == "daily":
         next_dt = current_dt + timedelta(days=1)
 
     elif repeat == "weekdays":
@@ -55,15 +59,19 @@ def reprogram_if_repeating(task):
 
     if next_dt:
         task["dateTime"] = next_dt.isoformat()
-        print(f"📆 Próxima fecha calculada: {next_dt}")
+        print(f"📆 Próxima fecha calculada para '{task.get('title') or task.get('name')}': {next_dt}")
+
         schedule_notification(task)
-        print(f"🔁 Tarea '{task['title']}' reprogramada para {next_dt.strftime('%A %H:%M')}")
+        save_data(subscriptions, scheduled_tasks)
+
+        print(f"🔁 '{task.get('title') or task.get('name')}' reprogramada para {next_dt.strftime('%A %H:%M')}")
         return True
 
     return False
 
 
 def notify_device(task):
+    """Enviar la notificación push al dispositivo y gestionar su ciclo de vida."""
     try:
         with task_lock:
             device_id = task.get("deviceId")
@@ -89,20 +97,21 @@ def notify_device(task):
             send_push_notification(subscription, payload)
 
             task_id = task.get("id")
-            was_reprogrammed = reprogram_if_repeating(task)
 
-            if not was_reprogrammed and task_id and device_id in scheduled_tasks:
+            if device_id in scheduled_tasks:
                 scheduled_tasks[device_id] = [
-                    t for t in scheduled_tasks[device_id]
-                    if t.get("id") != task_id
+                    t for t in scheduled_tasks[device_id] if t.get("id") != task_id
                 ]
 
-                if is_daybefore:
-                    base_id = task_id.replace("-daybefore", "")
-                    for t in scheduled_tasks[device_id]:
-                        if t.get("id") == base_id:
-                            t["notifyDayBefore"] = False
-                save_data(subscriptions, scheduled_tasks)
+            if is_daybefore:
+                base_id = task_id.replace("-daybefore", "")
+                for t in scheduled_tasks.get(device_id, []):
+                    if t.get("id") == base_id:
+                        t["notifyDayBefore"] = False
+
+            was_reprogrammed = reprogram_if_repeating(task)
+
+            save_data(subscriptions, scheduled_tasks)
 
             for timer in list(active_timers):
                 if timer.args and isinstance(timer.args[0], dict):
@@ -118,6 +127,7 @@ def notify_device(task):
 
 
 def schedule_notification(task):
+    """Programar una tarea con su timer y opcionalmente con notificación de día antes."""
     device_id = task.get("deviceId")
     if not device_id:
         return
@@ -135,8 +145,8 @@ def schedule_notification(task):
 
     scheduled_tasks[device_id].append(task)
     save_data(subscriptions, scheduled_tasks)
-    delay = calcular_delay(task["dateTime"], notify_minutes_before)
 
+    delay = calcular_delay(task["dateTime"], notify_minutes_before)
     if delay is not None:
         timer = threading.Timer(delay, notify_device, args=[task])
         timer.start()
@@ -167,15 +177,14 @@ def schedule_notification(task):
 
         base_id = task['id']
         for t in list(scheduled_tasks[device_id]):
-
             if t.get("id") == f"{base_id}-daybefore":
                 cancelar_timer_existente(t)
                 scheduled_tasks[device_id].remove(t)
 
         scheduled_tasks[device_id].append(task_daybefore)
         save_data(subscriptions, scheduled_tasks)
-        delay_daybefore = calcular_delay(task_daybefore["dateTime"], 0)
 
+        delay_daybefore = calcular_delay(task_daybefore["dateTime"], 0)
         if delay_daybefore is not None:
             timer_daybefore = threading.Timer(delay_daybefore, notify_device, args=[task_daybefore])
             timer_daybefore.start()

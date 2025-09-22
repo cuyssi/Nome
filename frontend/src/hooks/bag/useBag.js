@@ -42,8 +42,11 @@ export const useBag = () => {
                 dateTimeString,
                 deviceId,
                 "bag",
-                Number(bag.reminder) || 15,
-                url
+                0,
+                url,
+                bag.notifyDayBefore || false,
+                "custom",
+                bag.notifyDays || []
             );
         } catch (e) {
             console.error("❌ Error en notifyBackend:", e);

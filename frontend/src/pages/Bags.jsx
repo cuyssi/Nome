@@ -41,7 +41,7 @@ import { ButtonDefault } from "../components/commons/buttons/ButtonDefault"
 
 
 export const Bags = () => {
-    const { bags, editBag } = useBagsStore();
+    const { bags, updateBag } = useBagsStore();
     const { deleteBag } = useBag();
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("bags"));
@@ -51,7 +51,7 @@ export const Bags = () => {
 
     const handleUpdateBag = (updatedBag, options = {}) => {
         const { closeAfterSave = false, skipConfirmation = false } = options;
-        editBag(updatedBag);
+        updateBag(updatedBag);
 
         if (closeAfterSave) {
             handleEdit(updatedBag);

@@ -51,7 +51,10 @@ export const stepsBags = {
     escolar: [
         {
             title: "Mochila escolar",
-            content: <p>Se genera automáticamente cada día con tus asignaturas del día siguiente...</p>,
+            content: (
+                <p>Se genera automáticamente cada día con tus asignaturas del día siguiente...Cuando termines el tutorial, edítala
+                y fija la hora a la que quieres que te llegue la notificación.</p>
+            ),
             position: { top: "50%", left: "50%" },
             highlight: {
                 position: {
@@ -114,10 +117,10 @@ export const stepsBags = {
         {
             title: "Elimina mochilas",
             content: (
-                <p>
-                    Si ya no necesitas una mochila, deslízala a la derecha para borrarla...
+                <div>
+                    <p>Si ya no necesitas una mochila, deslízala a la derecha para borrarla...</p>
                     <p className="font-bold text-red-400 text-xs mt-2">*La mochila escolar no se puede eliminar</p>
-                </p>
+                </div>
             ),
             position: { top: "50%", left: "50%" },
             highlight: {
@@ -136,30 +139,33 @@ export const stepsCalendar = [
     {
         title: "Tu calendario",
         content: (
-            <p>
-                Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas las
-                tareas están completadas.
+            <div>
+                <p>
+                    Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas las
+                    tareas están completadas.
+                </p>
                 <p className="text-red-400 text-xs mt-2">
                     * Si aún no tienes ninguna tarea creada no verás ningún punto.
                 </p>
-            </p>
+            </div>
         ),
         position: { top: "35%", left: "50%" },
     },
     {
         title: "Consulta tus tareas",
         content: (
-            <p>
-                Pincha en el día en donde creaste la tarea anteriormente. Se abrirá un panel donde puedes ver la tarea y
-                editarla.
+            <div>
+                <p>
+                    Pincha en el día en donde creaste la tarea anteriormente. Se abrirá un panel donde puedes ver la tarea y
+                    editarla.
+                </p>
                 <p className="text-red-400 text-xs mt-2">
                     * Si no puedes ver el día con la tarea puedes mover esta ventana deslizandola con el dedo.
                 </p>
-            </p>
+            </div>
         ),
         position: { top: "35%", left: "50%" },
     },
-    
     {
         title: "Marca como completada",
         content: (
@@ -175,7 +181,7 @@ export const stepsCalendar = [
         content: (
             <p>
                 Las tareas pueden repetirse:
-                    <span className="italic text-purple-400"> diariamente, entre semana o en días personalizados.</span> Nome las mostrará
+                <span className="italic text-purple-400"> diariamente, entre semana o en días personalizados.</span> Nome las mostrará
                 automáticamente según tu configuración.
             </p>
         ),

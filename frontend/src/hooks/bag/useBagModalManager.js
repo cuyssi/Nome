@@ -30,7 +30,7 @@ export const useBagModalManager = () => {
     const [selectedBag, setSelectedBag] = useState(null);
     const [mode, setMode] = useState(null);
     const [showConfirmation, setShowConfirmation] = useState(false);
-    const { editBag } = useBagsStore();
+    const { updateBag } = useBagsStore();
 
     const openModalWithBag = (bag, modalMode = "edit") => {
         setSelectedBag(bag);
@@ -40,7 +40,7 @@ export const useBagModalManager = () => {
 
     const handleEdit = (updatedBag) => {
         setSelectedBag(updatedBag);
-        editBag(updatedBag);
+        updateBag(updatedBag);
         setShowConfirmation(true);
 
         setTimeout(() => {
