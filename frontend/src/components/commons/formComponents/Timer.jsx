@@ -1,7 +1,5 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
  * Componente Timer: selector de hora y minutos.                                │
- * Permite al usuario ajustar la hora y los minutos mediante botones o input.   │
- * Ideal para recordatorios o alarmas dentro de formularios o modales.          │
  *                                                                              │
  * Props:                                                                       │
  *   • hour: string → valor de la hora en formato "HH" (00-23).                 │
@@ -9,11 +7,6 @@
  *   • onChange: función (field, value) → se llama al cambiar hora o minutos.   │
  *                 `field` es "hour" o "minute", `value` es el nuevo string.    │
  *                                                                              │
- * Características:                                                             │
- *   • Incrementa/decrementa hora y minutos con botones "+" y "-".              │
- *   • Permite entrada manual con validación de rango (hora 0-23, min 0-59).    │
- *   • Formato de dos dígitos con `padStart`.                                   │
- *   • Layout flexible con etiquetas y botones alineados horizontalmente.       │
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 

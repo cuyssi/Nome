@@ -1,5 +1,5 @@
 /**───────────────────────────────────────────────────────────────────────────────────┐
- * Componente HelpToggle: botón flotante para abrir el centro de ayuda.              │
+ * Componente HelpToggle: botón flotante para abrir el centro de ayuda.               │
  *                                                                                    │
  * Estado interno:                                                                    │
  *   - helpOpen → controla si el modal de ayuda está visible                          │
@@ -7,10 +7,6 @@
  * Funcionalidad:                                                                     │
  *   - Muestra un botón con ícono de interrogación                                    │
  *   - Al hacer clic, abre el componente <Help /> con tutoriales interactivos         │
- *                                                                                    │
- * Estilo:                                                                            │
- *   - Posición absoluta en esquina superior derecha                                  │
- *   - Ícono morado con sombra y transición al pasar el cursor                        │
  *                                                                                    │
  * Autor: Ana Castro                                                                  │
 └────────────────────────────────────────────────────────────────────────────────────*/

@@ -20,7 +20,7 @@
 import { useMemo } from "react";
 
 export const useFilteredDates = (tasks) => {
-    const tiposExcluir = ["medico", "deberes", "trabajo", "examen", "otros"];
+    const tiposExcluir = ["médicos", "deberes", "trabajo", "examen", "otros"];
 
     const citasTasks = useMemo(() => {
         return tasks.filter((t) => {
@@ -32,7 +32,7 @@ export const useFilteredDates = (tasks) => {
     const medicoTasks = useMemo(() => {
         return tasks.filter((t) => {
             const tipos = Array.isArray(t.type) ? t.type : [t.type];
-            return tipos.includes("medico");
+            return tipos.includes("médicos");
         });
     }, [tasks]);
 

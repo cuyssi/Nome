@@ -148,24 +148,23 @@ export const Help = ({ isOpen, onClose }) => {
 
                 {/* Pestañas internas si la sección tiene tabs */}
                 {isTabbed && (
-  <div className="mt-4 flex justify-center">
-    <select
-      value={activeTab}
-      onChange={(e) => {
-        setActiveTab(e.target.value);
-        setStepIndex(0);
-      }}
-      className="text-sm px-3 py-2 rounded-md border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-    >
-      {Object.entries(section.tabs).map(([tabKey, { label }]) => (
-        <option key={tabKey} value={tabKey}>
-          {label}
-        </option>
-      ))}
-    </select>
-  </div>
-)}
-
+                    <div className="mt-4 flex justify-center">
+                        <select
+                            value={activeTab}
+                            onChange={(e) => {
+                                setActiveTab(e.target.value);
+                                setStepIndex(0);
+                            }}
+                            className="text-sm px-3 py-2 rounded-md border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        >
+                            {Object.entries(section.tabs).map(([tabKey, { label }]) => (
+                                <option key={tabKey} value={tabKey}>
+                                    {label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
 
                 {/* Contenido del paso actual */}
                 <div className="mt-2 space-y-4">

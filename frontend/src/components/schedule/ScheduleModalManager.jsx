@@ -17,11 +17,6 @@
  *   • onEdit (function): función llamada al guardar cambios en la asignatura.  │
  *   • onClose (function): función llamada al cerrar el modal.                  │
  *                                                                              │
- * Layout y estilo:                                                             │
- *   • Modal centrado y responsivo.                                             │
- *   • Mensaje de confirmación con icono Check y animación fadeIn.              │
- *   • Form_Schedule con inputs y selector de color para edición/creación.      │
- *                                                                              │
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 

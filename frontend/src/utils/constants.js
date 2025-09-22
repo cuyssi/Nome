@@ -9,7 +9,7 @@
  * Autor: Ana Castro                                                   │
 └─────────────────────────────────────────────────────────────────────*/
 
-export const AVAILABLE_TYPES = ["deberes", "trabajo", "examen", "medico", "cita", "otros"];
+export const AVAILABLE_TYPES = ["deberes", "trabajo", "examen", "médicos", "cita", "otros"];
 
 export const AVAILABLE_COLORS = [
     { value: "red-400", label: "Rojo" },

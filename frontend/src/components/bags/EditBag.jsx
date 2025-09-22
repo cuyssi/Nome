@@ -22,14 +22,13 @@
 └─────────────────────────────────────────────────────────────────────────────*/
 
 import { useBagEditor } from "../../hooks/bag/useBagEditor";
-import { Timer } from "../commons/Timer";
-import { DaySelector } from "../commons/DaySelector";
+import { Timer } from "../commons/formComponents/Timer";
+import { DaySelector } from "../commons/formComponents/DaySelector";
 import { ButtonClose } from "../commons/buttons/ButtonClose";
 import { ButtonTrash } from "../commons/buttons/ButtonTrash";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
-import { ColorPicker } from "../commons/ColorPicker";
-import { InputField } from "../commons/InputField";
-import { CheckboxField } from "../commons/CheckboxField";
+import { ColorPicker } from "../commons/formComponents/ColorPicker";
+import { InputField } from "../commons/formComponents/InputField";
 
 export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
   const {
@@ -44,8 +43,6 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
     setSelectedColor,
     reminderTime,
     setReminderTime,
-    notifyDayBefore,
-    setNotifyDayBefore,
     notifyDays,
     setNotifyDays,
   } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
@@ -61,20 +58,17 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
       <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
         <div className="overflow-y-auto flex-1 hide-scrollbar space-y-6">
           <InputField
-            label="Nombre"
+            label="Nombre:"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
+          
+            <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />          
 
           <div>
-            <label className="block font-semibold mb-1 text-gray-600">Color</label>
-            <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
-          </div>
-
-          <div>
-            <label className="block font-semibold text-gray-600 mb-2">Ítems</label>
+            <label className="block font-semibold text-gray-500">Ítems:</label>
             <div className="space-y-2">
               {items.map((item, index) => (
                 <div key={index} className="flex gap-2 items-center">
@@ -83,7 +77,7 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
                     value={item}
                     onChange={(e) => handleItemChange(index, e.target.value)}
                   />
-                  <ButtonTrash onClick={() => handleRemoveItem(index)} />
+                  <ButtonTrash onClick={() => handleRemoveItem(index)} className="pt-1"/>
                 </div>
               ))}
               <button
@@ -97,25 +91,19 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="block font-semibold text-gray-600">Recordatorio</label>
+            <label className="block font-semibold text-gray-500">Recordatorio:</label>
             <Timer
               hour={reminderTime.hour}
               minute={reminderTime.minute}
               onChange={(name, value) =>
                 setReminderTime({ ...reminderTime, [name]: value })
               }
-            />
-            <CheckboxField
-              name="notifyDayBefore"
-              label="Avisar día antes"
-              checked={notifyDayBefore}
-              onChange={(e) => setNotifyDayBefore(e.target.checked)}
-            />
+            />            
           </div>
 
           <div>
-            <label className="block font-semibold mb-1 text-gray-600">
-              Días de recordatorio
+            <label className="block font-semibold mb-1 text-gray-500">
+              Días de recordatorio:
             </label>
             <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
           </div>

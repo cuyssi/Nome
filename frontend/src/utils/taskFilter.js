@@ -53,7 +53,7 @@ export const splitTasksByCategory = (tasks) => ({
     deberes: filterByType(tasks, ["deberes", "ejercicios", "estudiar"]),
     trabajos: filterByType(tasks, "trabajo"),
     examenes: filterByType(tasks, ["examen", "prueba", "evaluación"]),
-    medico: filterByType(tasks, "medico"),
+    médicos: filterByType(tasks, "medico"),
     otros: filterByType(tasks, "otros"),
     citas: filterByType(tasks, ["medico", "deberes", "trabajo", "examen", "otros"], true),
 });

@@ -45,6 +45,7 @@ export const Bags = () => {
     const { deleteBag } = useBag();
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("bags"));
+    const allSteps = Object.values(stepsBags).flat();
     const { isOpen, selectedBag, mode, showConfirmation, openModalWithBag, handleEdit, handleClose, openBagFromURL } =
         useBagModalManager();
 
@@ -88,7 +89,7 @@ export const Bags = () => {
             {shouldShowTutorial && (
                 <TutorialModal
                     activeTab="bags"
-                    steps={stepsBags}
+                    steps={allSteps}
                     isOpen={shouldShowTutorial}
                     onNeverShowAgain={() => hideTutorial("bags")}
                 />

@@ -11,10 +11,6 @@
  *   • unsubscribeUser() → desactiva la suscripción.                            │
  *   • handleToggle() → alterna entre suscripción y desuscripción.              │
  *   • Vibración opcional si el dispositivo lo soporta.                         │
- * Layout y estilo:                                                             │
- *   • Posicionamiento absoluto en la esquina superior derecha.                 │
- *   • Botón con icono dinámico: Bell verde si suscrito, BellOff rojo si no.    │
- *   • Mensaje flotante con animación fadeIn.                                   │
  *                                                                              │
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/

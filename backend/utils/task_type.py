@@ -28,7 +28,7 @@ class useTaskType:
         if self.cita_keywords & lemmas:
             return "cita"
         elif self.medico_keywords & lemmas:
-            return "medico"
+            return "médicos"
         elif self.deberes_keywords & lemmas:
             return "deberes"
         elif self.trabajo_keywords & lemmas:

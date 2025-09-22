@@ -1,14 +1,6 @@
 /**──────────────────────────────────────────────────────────────────────────────┐
  * Componente Schedule: tabla interactiva de horario de asignaturas.             │
- * Permite visualizar, añadir, eliminar y editar horas y asignaturas.            │
- *                                                                               │
- * Funcionalidad:                                                                │
- *   • Muestra los días en columnas y las horas en filas.                        │
- *   • Cada celda representa una asignatura (nombre + color) editable.           │
- *   • Permite hacer click en horas para editarlas (prompt).                     │
- *   • Permite añadir o eliminar horas mediante botones en la parte inferior.    │
- *   • Al hacer click en una celda de asignatura se abre un modal de edición     │
- *     mediante ScheduleModalManager.                                            │
+ * Permite visualizar, añadir, eliminar y editar horas y asignaturas.            │ 
  *                                                                               │
  * Estado y hooks:                                                               │
  *   • useSchedule(): hook que gestiona días, horas, asignaturas y modales.      │
@@ -18,11 +10,6 @@
  *   • getTextClass(bgColor) → devuelve clase de texto según el color de fondo.  │
  *   • updateHour, addHour, removeHour → funciones para manipular horas.         │
  *                                                                               │
- * Layout y estilo:                                                              │
- *   • Tabla responsive con scroll horizontal.                                   │
- *   • Colores de fondo dinámicos según la asignatura.                           │
- *   • Hover y cursor pointer para indicar celdas interactivas.                  │
- *   • Botones de acción con colores distintos (añadir: púrpura, eliminar: rojo).│
  * Autor: Ana Castro                                                             │
 └───────────────────────────────────────────────────────────────────────────────*/
 

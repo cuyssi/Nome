@@ -26,6 +26,7 @@
  *──────────────────────────────────────────────────────────────────────────────────────────*/
 
 import FullCalendar from "@fullcalendar/react";
+import esLocale from "@fullcalendar/core/locales/es";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useCalendarTasks } from "../../hooks/calendar/useCalendarTasks";
@@ -46,12 +47,16 @@ export const Calendar = ({ openModalWithTask }) => {
     } = useCalendarTasks();
 
     return (
-        <div className="w-full max-w-md mx-auto bg-black text-red-400">
+        <div className="w-full max-w-md mx-auto bg-black text-purple-400">
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
+                firstDay={1}                
+                locale={esLocale}
                 headerToolbar={{ right: "prev,next" }}
                 titleFormat={{ year: "numeric", month: "long" }}
+                contentHeight={372}
+                fixedWeekCount={false}
                 dayCellClassNames={(arg) =>
                     arg.isToday ? "text-white font-poppins bg-gray-600" : "text-purple-400 font-bold font-poppins"
                 }
@@ -70,7 +75,7 @@ export const Calendar = ({ openModalWithTask }) => {
                         </>
                     );
                 }}
-                height="auto"
+                
                 dateClick={handleDateClick}
             />
 

@@ -69,3 +69,21 @@ html, body, #root {
   -webkit-overflow-scrolling: touch;
 }
 
+div::-webkit-scrollbar {
+  display: none;
+}
+
+
+.fc .fc-toolbar-title {
+  color: #f07c7c; 
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+}
+
+.fc .fc-toolbar-title::first-letter {
+  text-transform: uppercase; /* la pone en mayúscula */
+  color: #f07c7c; /* opcional: color diferente para la inicial */
+  font-size: 1.5rem; /* opcional: más grande */
+}
+

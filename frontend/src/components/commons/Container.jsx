@@ -1,7 +1,7 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * Componente visual reutilizable con envoltura decorativa.                     │
+ * Componente visual reutilizable con envoltura decorativa. Es el que se utiliza│
+ * en botones y tarjetas en el home.                                            │
  * Aplica borde con gradiente en el exterior y fondo negro en el interior.      │
- * Ideal para botones, tarjetas o secciones con contenido estilizado.           │
  * Acepta clases personalizadas para adaptar diseño según contexto.             │
  *                                                                              │
  * @author: Ana Castro                                                          │

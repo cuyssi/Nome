@@ -21,7 +21,7 @@
 
 import { Plus } from "lucide-react";
 import { useCreateBag } from "../../hooks/bag/useCreateBag";
-import { DaySelector } from "../commons/DaySelector";
+import { DaySelector } from "../commons/formComponents/DaySelector";
 import { PREDEFINED_BAGS } from "../../utils/constants";
 import { ButtonClose } from "../commons/buttons/ButtonClose";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";

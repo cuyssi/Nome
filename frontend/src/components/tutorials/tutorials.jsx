@@ -17,7 +17,19 @@
  * Autor: Ana Castro                                                             │
 └───────────────────────────────────────────────────────────────────────────────*/
 
-import { Backpack, Plus, Pencil, Repeat, Bell, Mic, SquarePen, Notebook, NotebookPen } from "lucide-react";
+import {
+    Backpack,
+    Plus,
+    Pencil,
+    Repeat,
+    Bell,
+    Mic,
+    SquarePen,
+    Notebook,
+    NotebookPen,
+    Trash,
+    Check,
+} from "lucide-react";
 
 export const stepsBags = {
     mochilas: [
@@ -27,13 +39,27 @@ export const stepsBags = {
                 <p>En esta sección puedes crear mochilas personalizadas para organizar lo que necesitas preparar...</p>
             ),
             position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "8%",
+                    left: "15%",
+                    transform: "translate(-50%, -100%) rotate(130deg)",
+                },
+            },
         },
     ],
     escolar: [
         {
             title: "Mochila escolar",
             content: <p>Se genera automáticamente cada día con tus asignaturas del día siguiente...</p>,
-            position: { top: "62%", left: "50%" },
+            position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "15%",
+                    left: "15%",
+                    transform: "translate(-50%, -100%) rotate(150deg)",
+                },
+            },
         },
     ],
     crear: [
@@ -45,28 +71,63 @@ export const stepsBags = {
                     nuevas...
                 </p>
             ),
-            position: { top: "56%", left: "50%" },
+            position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "85%",
+                    left: "50%",
+                    transform: "translate(-50%, -100%) rotate(180deg)",
+                },
+            },
         },
     ],
     personalizar: [
         {
             title: "Personaliza tus mochilas",
             content: <p>Desliza una mochila a la izquierda para editarla...</p>,
-            position: { top: "56%", left: "50%" },
+            position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "26%",
+                    left: "60%",
+                    transform: "translate(-50%, -100%) rotate(270deg)",
+                },
+                animationClass: "animate-bounceStrong",
+            },
         },
     ],
     consultar: [
         {
             title: "Consulta y marca tareas",
             content: <p>Pulsa una mochila para abrirla. Verás los elementos que contiene...</p>,
-            position: { top: "59%", left: "50%" },
+            position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "15%",
+                    left: "15%",
+                    transform: "translate(-50%, -100%) rotate(150deg)",
+                },
+            },
         },
     ],
     eliminar: [
         {
             title: "Elimina mochilas",
-            content: <p>Si ya no necesitas una mochila, deslízala a la derecha para borrarla...</p>,
-            position: { top: "59%", left: "50%" },
+            content: (
+                <p>
+                    Si ya no necesitas una mochila, deslízala a la derecha para borrarla...
+                    <p className="font-bold text-red-400 text-xs mt-2">*La mochila escolar no se puede eliminar</p>
+                </p>
+            ),
+            position: { top: "50%", left: "50%" },
+            highlight: {
+                position: {
+                    top: "25%",
+                    left: "40%",
+                    transform: "translate(-20%, -90%) rotate(90deg)",
+                },
+                animationClass: "animate-bounceStrong",
+            },
         },
     ],
 };
@@ -74,43 +135,49 @@ export const stepsBags = {
 export const stepsCalendar = [
     {
         title: "Tu calendario",
-        content:
-            "Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas las tareas están completadas.",
-        position: { top: "50%", left: "50%" },
+        content: (
+            <p>
+                Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas las
+                tareas están completadas.
+                <p className="text-red-400 text-xs mt-2">
+                    * Si aún no tienes ninguna tarea creada no verás ningún punto.
+                </p>
+            </p>
+        ),
+        position: { top: "35%", left: "50%" },
     },
     {
         title: "Consulta tus tareas",
-        content:
-            "Haz clic en cualquier día para ver sus tareas. Se abrirá un panel donde puedes editarlas, marcarlas como hechas o eliminarlas.",
-        position: { top: "50%", left: "50%" },
-    },
-    {
-        title: "Crear o editar tareas",
         content: (
-            <>
-                Pulsa <span className="font-bold text-purple-400">“Nueva tarea”</span> para añadir una. También puedes
-                editar una existente con el icono <Pencil className="inline w-4 h-4 text-blue-400" />.
-            </>
+            <p>
+                Pincha en el día en donde creaste la tarea anteriormente. Se abrirá un panel donde puedes ver la tarea y
+                editarla.
+                <p className="text-red-400 text-xs mt-2">
+                    * Si no puedes ver el día con la tarea puedes mover esta ventana deslizandola con el dedo.
+                </p>
+            </p>
         ),
-        position: { top: "50%", left: "50%" },
+        position: { top: "35%", left: "50%" },
     },
+    
     {
         title: "Marca como completada",
-        content:
-            "Marca una tarea como hecha con el icono ✓. El punto del calendario se volverá verde si todas están completadas.",
+        content: (
+            <p>
+                El punto del calendario se volverá verde si todas
+                están completas.
+            </p>
+        ),
         position: { top: "50%", left: "50%" },
     },
     {
         title: "Repeticiones inteligentes",
         content: (
-            <>
-                Las tareas pueden repetirse: diariamente, entre semana o en días personalizados. Nome las mostrará
+            <p>
+                Las tareas pueden repetirse:
+                    <span className="italic text-purple-400"> diariamente, entre semana o en días personalizados.</span> Nome las mostrará
                 automáticamente según tu configuración.
-                <div className="mt-4 flex justify-center gap-2 text-sm text-gray-600">
-                    <Repeat className="w-5 h-5 text-yellow-500" />
-                    <span>Ideal para rutinas y hábitos</span>
-                </div>
-            </>
+            </p>
         ),
         position: { top: "50%", left: "50%" },
     },
@@ -185,13 +252,21 @@ export const stepsHome = [
                     Esta es tu pantalla principal. Aquí verás tus tareas, podrás grabar nuevas y acceder a todo lo
                     importante.
                 </p>
+
                 <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
                     <Bell className="w-6 h-6 text-green-600" />
                     <span>Si no lo está ya, activa las notificaciones pulsando en el icono.</span>
                 </div>
+                <p className="text-red-400 text-xs mt-4">
+                    * Si en algún momento te molesta esta ventana puedes moverla arrastrandola a donde quieras 😉
+                </p>
             </>
         ),
         position: { top: "50%", left: "50%" },
+        highlight: {
+            selector: "#bell-toggle",
+            position: { top: "15%", left: "84%" },
+        },
     },
     {
         title: "Vamos a probar algo",
@@ -199,26 +274,43 @@ export const stepsHome = [
             <>
                 <p>
                     Pulsa el botón morado <Mic className="inline w-6 h-6 text-purple-600" /> y di:
-                    <span className="italic text-pink-400"> "Quedé con Marcos en las canchas a las 6"</span>.
+                    <span className="italic text-red-400"> "Quedé con Marcos en las canchas a las 9"</span>. Luego,
+                    vuelve a presionarlo para parar la grabación.
                 </p>
 
-                <div className=" mt-4 flex justify-center text-sm text-gray-600">
-                    <SquarePen className="w-6 h-6 text-blue-600" />
-                    <p className="text-center w-[75%]">También puedes añadir tareas manualmente tocando el lápiz</p>
-                </div>
+                <p className="w-full mt-4 text-xs text-red-400">
+                    También puedes añadir tareas a mano tocando el icono del lápiz{" "}
+                    <SquarePen className="inline w-4 h-4 text-blue-600" />
+                </p>
             </>
         ),
         position: { top: "32%", left: "50%" },
+        highlight: {
+            selector: "#bell-toggle",
+            position: {
+                top: "68%",
+                left: "84%",
+                transform: "translate(-50%, -100%) rotate(230deg)",
+            },
+        },
     },
     {
         title: "¡Perfecto!",
         content: (
             <p>
                 Ahora podrás ver tus citas en <Notebook className="inline w-4 h-4 text-purple-600" /> (abajo a la
-                izquierda), pero espera, aún hay más, continuemos...
+                izquierda), pero espera no vaya ahí todavía, continuemos...pulsa en siguiente
             </p>
         ),
-        position: { top: "65%", left: "50%" },
+        position: { top: "61%", left: "50%" },
+        highlight: {
+            selector: "#notebook",
+            position: {
+                top: "93%",
+                left: "8%",
+                transform: "translate(-50%, -100%) rotate(180deg)",
+            },
+        },
     },
     {
         title: "Organiza tus deberes",
@@ -229,7 +321,14 @@ export const stepsHome = [
                 trabajos escolares.
             </p>
         ),
-        position: { top: "61%", left: "50%" },
+        position: { top: "63%", left: "50%" },
+        highlight: {
+            position: {
+                top: "48%",
+                left: "28%",
+                transform: "translate(-50%, -100%) rotate(0deg)",
+            },
+        },
     },
     {
         title: "Horario",
@@ -239,7 +338,14 @@ export const stepsHome = [
                 tienes que meter en la mochila <Backpack className="inline text-purple-600" /> para el día siguiente.
             </p>
         ),
-        position: { top: "62%", left: "50%" },
+        position: { top: "64%", left: "50%" },
+        highlight: {
+            position: {
+                top: "48%",
+                left: "75%",
+                transform: "translate(-50%, -100%) rotate(0deg)",
+            },
+        },
     },
     {
         title: "Tareas para hoy",
@@ -250,6 +356,13 @@ export const stepsHome = [
             </p>
         ),
         position: { top: "78%", left: "50%" },
+        highlight: {
+            position: {
+                top: "45%",
+                left: "10%",
+                transform: "translate(-50%, -100%) rotate(130deg)",
+            },
+        },
     },
 ];
 
@@ -330,7 +443,7 @@ export const stepsTasks = {
                     <span className="italic text-gray-400 mt-2">Ej. Deberes de matemáticas pag.143, ej: 2, 3 y 5.</span>
                 </p>
             ),
-            position: { top: "50%", left: "50%" },
+            position: { top: "55%", left: "50%" },
         },
     ],
     trabajo: [
@@ -344,7 +457,7 @@ export const stepsTasks = {
                     <span className="italic text-gray-400 mt-2">Ej. Trabajo de ciencias sobre el sistema solar.</span>
                 </p>
             ),
-            position: { top: "50%", left: "50%" },
+            position: { top: "55%", left: "50%" },
         },
     ],
     examenes: [
@@ -352,12 +465,13 @@ export const stepsTasks = {
             title: "Exámenes",
             content: (
                 <p>
-                    Aquí se agrupan tareas que contengan la palabra <span className="italic text-purple-600">"examen"</span>.<br></br>
+                    Aquí se agrupan tareas que contengan la palabra{" "}
+                    <span className="italic text-purple-600">"examen"</span>.<br></br>
                     <br></br>
                     <span className="italic text-gray-400 mt-2">Ej: Examen de historia el 24 de Octubre.</span>
                 </p>
             ),
-            position: { top: "50%", left: "50%" },
+            position: { top: "55%", left: "50%" },
         },
     ],
 };

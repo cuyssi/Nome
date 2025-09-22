@@ -13,15 +13,7 @@
  *     en una fecha concreta.                                                    │
  *   • isTaskCompletedForDate (func): devuelve true si una tarea está completada │
  *     en la fecha seleccionada.                                                 │
- *                                                                               │
- * Funcionamiento:                                                               │
- *   • Si no hay tareas, muestra el mensaje "No hay tareas".                     │
- *   • Si existen tareas:                                                        │
- *       - Lista cada tarea con hora y texto.                                    │
- *       - Permite editar (lápiz), completar (check) o eliminar (papelera).      │
- *       - Las tareas completadas aparecen tachadas.                             │
- *   • Incluye botón "Nueva tarea" para crear una tarea desde cero.              │
- *                                                                               │
+ *                                                                               │ 
  * Autor: Ana Castro                                                             │
 └───────────────────────────────────────────────────────────────────────────────*/
 
@@ -60,7 +52,7 @@ export const DayTasksModal = ({
                                     className="text-gray-400"
                                     style={
                                         isTaskCompletedForDate(task.id, selectedDate)
-                                            ? { textDecoration: "line-through", textDecorationColor: "#f87171" } // red-400
+                                            ? { textDecoration: "line-through", textDecorationColor: "#f87171" }
                                             : {}
                                     }
                                 >
@@ -68,9 +60,7 @@ export const DayTasksModal = ({
                                 </p>
                                 <div className="flex gap-1 ml-1">
                                     <ButtonPencil onClick={() => openModalWithTask(task)} />
-                                    <ButtonCheck
-                                        onClick={() => toggleCompletedForDate(task.id, toLocalYMD(new Date()))}
-                                    />
+                                    <ButtonCheck onClick={() => toggleCompletedForDate(task.id, selectedDate)} />
                                     <ButtonTrash onClick={() => handleDeleteTask(task.id)} />
                                 </div>
                             </div>

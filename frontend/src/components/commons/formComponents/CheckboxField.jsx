@@ -12,7 +12,7 @@
 
 export const CheckboxField = ({ name, label, checked, onChange }) => {
     return (
-        <label className="flex items-center gap-2 mb-4">
+        <label className="flex items-center gap-2 mb-4 text-gray-500 font-semibold">
             <input type="checkbox" name={name} checked={checked} onChange={onChange} className="accent-purple-500" />
             {label}
         </label>

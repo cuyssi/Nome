@@ -35,7 +35,6 @@ export const Pending_tasks = () => {
     const { updateTask, isTaskCompletedForDate } = useStorageStore();
     const todayYMD = toLocalYMD(new Date());
     const pendingTasks = todayTasks.filter((task) => !isTaskCompletedForDate(task.id, todayYMD));
-
     const { renderKey, isOpen, selectedTask, openModalWithTask, handleEdit, handleClose, showConfirmation } =
         useTaskEditor(reload, updateTask);
 

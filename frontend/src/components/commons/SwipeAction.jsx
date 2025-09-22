@@ -5,10 +5,6 @@
  *   - icon → componente de ícono (ej. HeroIcon o SVG personalizado)                  │
  *   - label → texto descriptivo de la acción                                         │
  *                                                                                    │
- * Estilo:                                                                            │
- *   - Ícono y texto en blanco, tamaño fijo para el ícono (w-8 h-8)                   │
- *   - Pensado para usarse dentro de gestos tipo swipe (ej. eliminar, editar)         │
- *                                                                                    │
  * Autor: Ana Castro                                                                  │
 └────────────────────────────────────────────────────────────────────────────────────*/
 

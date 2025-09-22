@@ -11,11 +11,6 @@
  *   - rightAction → componente visual para acción derecha (ej. editar)               │
  *   - children → contenido principal de la tarjeta                                   │
  *                                                                                    │
- * Estilo:                                                                            │
- *   - Fondo dinámico según dragOffset (getDragColor)                                 │
- *   - Animación suave al deslizar o eliminar                                         │
- *   - Acciones laterales visibles detrás del contenido                               │
- *                                                                                    │
  * Autor: Ana Castro                                                                  │
 └────────────────────────────────────────────────────────────────────────────────────*/
 

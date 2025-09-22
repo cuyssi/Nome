@@ -26,6 +26,7 @@ def sanitize_fragment(fragment: str) -> str:
 
 
 def clean_date_and_fragment(text, fragments=None):
+    print(f"[Clean date and fragmen] fragment antes: {fragments}")
     if not fragments:
         fragments = []
 
@@ -54,7 +55,7 @@ def clean_date_and_fragment(text, fragments=None):
     )
     text = re.sub(r"\s{2,}", " ", text).strip()
     text = text[0].upper() + text[1:] if text else text
-
+    print(f"[Clean date and fragment] text despues: {text }")
     return text
 
 

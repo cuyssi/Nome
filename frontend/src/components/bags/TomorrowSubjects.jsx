@@ -6,20 +6,7 @@
  *   • bag: objeto de mochila que contiene los items (asignaturas) y datos.            │
  *   • isOpen: boolean que controla la visibilidad del modal.                          │
  *   • onClose: función para cerrar el modal.                                          │
- *   • onUpdateBag: función llamada al actualizar la mochila.                          │
- *                                                                                     │
- * Funcionamiento:                                                                     │
- *   • Usa el hook useTomorrowSubjects para obtener:                                   │
- *       - subjects: lista de asignaturas para el día siguiente.                       │
- *       - isTomorrowBagComplete: indica si todas las asignaturas están marcadas.      │
- *       - toggleSubject: función para marcar/desmarcar una asignatura.                │
- *       - dayKey: clave del día (L, M, X, J, V) para acceder a la info de la mochila. │
- *   • Renderiza un Modal que contiene:                                                │
- *       - Título dinámico con el día completo.                                        │
- *       - Mensaje de éxito si todas las asignaturas están completadas.                │
- *       - Lista de asignaturas con checkboxes para marcar completadas.                │
- *       - Mensaje si no hay asignaturas.                                              │
- *       - Botón de cierre fijo en la esquina superior derecha.                        │
+ *   • onUpdateBag: función llamada al actualizar la mochila.                          │ *                                                                                     │
  *                                                                                     │
  * Autor: Ana Castro                                                                   │
  *────────────────────────────────────────────────────────────────────────────────────*/

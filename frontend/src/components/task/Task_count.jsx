@@ -1,24 +1,19 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Componente Task_count: muestra un resumen visual de las tareas del día.      │
- *                                                                              │
- * Funcionalidad:                                                               │
- *   • Muestra botones de navegación hacia secciones principales:               │
- *       - Deberes (tasks)                                                      │
- *       - Horario (schedule)                                                   │
- *   • Muestra un resumen de las tareas para hoy:                               │
- *       - Totales                                                              │
- *       - Pendientes                                                           │
- *       - Completadas                                                          │
- *   • Calcula los conteos usando isTaskActiveOnDate y isTaskCompletedForDate.  │
- *                                                                              │
- * Layout y estilo:                                                             │
- *   • Uso de Container para dar bordes y fondo con gradiente decorativo.       │
- *   • Íconos de Lucide-react (NotebookPen y CalendarDays) en los botones.      │
- *   • Texto con gradientes, sombras y colores temáticos según estado.          │
- *   • Flexbox para organizar columnas y centrar los elementos.                 │
+/**──────────────────────────────────────────────────────────────────────────────┐
+ * Componente Task_count: resumen visual de tareas del día.                      │
+ * Muestra enlaces de tareas totales, pendientes y hechas.│
  *                                                                               │
- * Autor: Ana Castro                                                            │
-└──────────────────────────────────────────────────────────────────────────────*/
+ * Estado y hooks:                                                               │
+ *   • useStorageStore(): accede a las tareas almacenadas y su estado.           │
+ *   • isTaskCompletedForDate(id, date) → verifica si una tarea está completada. │
+ *   • isTaskActiveOnDate(task, date) → determina si una tarea está activa hoy.  │
+ *   • todayYMD → fecha actual en formato YYYY-MM-DD.                            │
+ *   • totalTodayCount → número total de tareas activas hoy.                     │
+ *   • completedTodayCount → número de tareas completadas hoy.                   │
+ *   • pendingTodayCount → número de tareas pendientes hoy.                      │
+ *                                                                               │
+ * Autor: Ana Castro                                                             │
+└───────────────────────────────────────────────────────────────────────────────*/
+
 
 import Container from "../commons/Container";
 import { Link } from "react-router-dom";

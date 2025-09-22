@@ -1,7 +1,7 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * Componente contenedor reutilizable.                                          │
- * Envuelve elementos con estilos externos e internos personalizables.          │
- * Ideal para tarjetas, bloques con contenido o botones distribuidos.           │
+ * Componente contenedor reutilizable, es el contenedor que contiene las tasks  │
+ * y las bags.                                                                  │
+ * Envuelve los elementos en una card con borde estético.               │
  * Permite pasar clases custom vía props para ajustar el diseño.                │
  *                                                                              │
  * @author: Ana Castro                                                          │

@@ -1,7 +1,7 @@
 module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  safelist: [
-    "bg-red-400",
+    content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+    safelist: [
+        "bg-red-400",
         "bg-blue-400",
         "bg-yellow-400",
         "bg-purple-400",
@@ -44,9 +44,14 @@ module.exports = {
                     "0%": { opacity: "0", transform: "translateY(-6px)" },
                     "100%": { opacity: "1", transform: "translateY(0)" },
                 },
+                bounceStrong: {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "100%": { transform: "translateY(-80%)" },
+                },
             },
             animation: {
                 fadeIn: "fadeIn 0.5s ease-out forwards",
+                bounceStrong: "bounceStrong 1.5s infinite",
             },
         },
     },

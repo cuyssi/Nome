@@ -34,8 +34,7 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
     const [name, setName] = useState(bag?.name || "");
     const [items, setItems] = useState(Array.isArray(bag?.items) ? bag.items : []);
     const [selectedColor, setSelectedColor] = useState(bag?.color || AVAILABLE_COLORS[0].value);
-    const [notifyDays, setNotifyDays] = useState(bag?.notifyDays || ["L", "M", "X", "J", "V"]);
-    const [notifyDayBefore, setNotifyDayBefore] = useState(bag?.notifyDayBefore || false);    
+    const [notifyDays, setNotifyDays] = useState(bag?.notifyDays || ["L", "M", "X", "J", "V"]); 
     const [reminderTime, setReminderTime] = useState(
         bag?.reminderTime
             ? { hour: bag.reminderTime.split(":")[0], minute: bag.reminderTime.split(":")[1] }
@@ -53,8 +52,7 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
                 ? { hour: bag.reminderTime.split(":")[0], minute: bag.reminderTime.split(":")[1] }
                 : { hour: "20", minute: "00" }
         );
-        setNotifyDays(bag.notifyDays || ["L", "M", "X", "J", "V"]);
-        setNotifyDayBefore(bag.notifyDayBefore || false);
+        setNotifyDays(bag.notifyDays || ["L", "M", "X", "J", "V"]);        
     }, [bag]);
 
     const handleSubmit = (e) => {
@@ -72,7 +70,6 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
             color: selectedColor,
             reminderTime: `${reminderTime.hour}:${reminderTime.minute}`,
             notifyDays,
-            notifyDayBefore,
             dateTime,
         };
 
@@ -99,8 +96,6 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
         setReminderTime,
         notifyDays,
         setNotifyDays,
-        notifyDayBefore,
-        setNotifyDayBefore,
         handleSubmit,
         handleAddItem,
         handleItemChange,

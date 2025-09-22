@@ -8,13 +8,6 @@
  *   • renderItem: función que recibe un elemento y retorna un JSX para render. │
  *   • className: clases adicionales para personalizar estilos del contenedor.  │
  *                                                                              │
- * Características:                                                             │
- *   • Flex-col con gap entre elementos.                                        │
- *   • Altura limitada al 90% del contenedor padre.                             │
- *   • Scroll vertical con scrollbar oculto.                                    │
- *   • Cursor de "agarre" y compatibilidad táctil (touch-pan-x, touch-pan-y).   │
- *   • padding inferior extra para evitar solapamiento de elementos flotantes.  │
- *                                                                              │
  * @author: Ana Castro                                                          │
  └─────────────────────────────────────────────────────────────────────────────*/
 

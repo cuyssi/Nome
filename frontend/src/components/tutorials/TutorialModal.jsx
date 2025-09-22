@@ -26,6 +26,9 @@ import { InfoModal } from "./InfoModal";
 import { MoveLeft } from "lucide-react";
 import { useTutorialSteps } from "../../hooks/tutorials/useTutorialSteps";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
+import { PointerOverlay } from "./PointerOverlay";
+import { usePointerOverlay } from "../../hooks/tutorials/usePointerOverlay.js";
+import { useDraggable } from "../../hooks/tutorials/useDraggable.js";
 
 export const TutorialModal = ({
     activeTab,
@@ -35,33 +38,39 @@ export const TutorialModal = ({
     blockInteraction = false,
     onNeverShowAgain,
 }) => {
-
     const { currentStep, nextStep, prevStep, isLastStep } = useTutorialSteps(steps);
     const [visible, setVisible] = useState(isOpen);
     const handleClose = () => setVisible(false);
+    const pointer = usePointerOverlay(currentStep?.highlight || {});
+    const { offset, handleStart } = useDraggable();
+
     const handleNeverShowAgain = () => {
         onNeverShowAgain?.();
         setVisible(false);
-    }
+    };
+
     if (!visible || !currentStep) return null;
 
     return (
-        <InfoModal
-            activeTab={activeTab}
-            isOpen={visible}
-            onClose={handleClose}
-            onNeverShowAgain={handleNeverShowAgain}
-            backdropBlur={backdropBlur}
-            blockInteraction={blockInteraction}
-            position={currentStep.position || { top: "50%", left: "50%" }}
-        >
-            <div className="space-y-6">
+        <>
+            {currentStep.highlight && <PointerOverlay {...pointer} />}
+            <InfoModal
+                activeTab={activeTab}
+                isOpen={visible}
+                onClose={handleClose}
+                onNeverShowAgain={handleNeverShowAgain}
+                backdropBlur={backdropBlur}
+                blockInteraction={blockInteraction}
+                position={currentStep.position || { top: "50%", left: "50%" }}
+                offset={offset}
+                onDragStart={handleStart}
+            >
                 {currentStep.title && (
                     <h3 className="text-purple-600 text-xl font-bold text-center">{currentStep.title}</h3>
                 )}
-                <div>{currentStep.content}</div>
+                <div className="mt-6">{currentStep.content}</div>
 
-                <div className="absolute flex justify-between items-center fixed">
+                <div className="flex justify-between items-center mt-8">
                     {currentStep.step > 0 ? (
                         <ButtonDefault
                             icon={<MoveLeft className="inline mr-1" />}
@@ -83,7 +92,7 @@ export const TutorialModal = ({
                         />
                     )}
                 </div>
-            </div>
-        </InfoModal>
+            </InfoModal>
+        </>
     );
 };

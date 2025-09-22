@@ -14,6 +14,7 @@
  *   - backdropBlur (bool): si el fondo detrás del modal debe difuminarse.      │
  *   - blockInteraction (bool): si bloquea interacción con el fondo.            │
  *   - position (object): posición del modal, { top, left }.                    │
+ *   - height (string): altura del modal (ej. "65%", "400px").                  │
  *   - hideInternalFooter (bool): si oculta el footer interno con botones.      │
  *                                                                              │
  * Autor: Ana Castro                                                            │
@@ -31,21 +32,32 @@ export const InfoModal = ({
     backdropBlur = true,
     blockInteraction = true,
     position = { top: "50%", left: "50%" },
+    height = "auto",
     hideInternalFooter = false,
+    offset = { x: 0, y: 0 },
+    onDragStart,
 }) => {
     return (
         <Modal isOpen={isOpen} backdropBlur={backdropBlur} blockInteraction={blockInteraction}>
             <div
-                className="absolute bg-white rounded-lg px-2 py-2 w-[90%] h-[65%] text-sm text-gray-700 font-poppins shadow-xl"
+                className="absolute bg-white rounded-lg px-4 py-4 w-[90%] max-w-[500px] min-w-[280px] mx-auto
+             text-sm text-gray-700 font-poppins border border-gray-300 shadow-xl"
+                onMouseDown={onDragStart}
+                onTouchStart={onDragStart}
                 style={{
                     top: position.top,
                     left: position.left,
-                    transform: "translate(-50%, -50%)",
+                    transform: `translate(calc(-50% + ${offset.x}px), calc(-50% + ${offset.y}px))`,
+                    height,
+                    maxHeight: "80vh",
+                    overflow: "auto",
+                    touchAction: "none",
                 }}
             >
                 <ButtonClose onClick={onClose} />
 
                 <div className="mb-10 mt-8 text-base font-poppins p-2">{children}</div>
+
                 {!hideInternalFooter && (
                     <ButtonDefault
                         onClick={onNeverShowAgain}

@@ -1,28 +1,11 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
  * Componente Task_card: representa visualmente una tarea dentro de la lista.   │
- *                                                                              │
- * Funcionalidad:                                                               │
- *   • Muestra la información principal de la tarea:                            │
- *       - Texto de la tarea                                                    │
- *       - Fecha y hora (opcional)                                              │
- *       - Estado de completada (tachado si está completada)                    │
- *   • Soporta gestos táctiles y de puntero para:                               │
- *       - Arrastrar para marcar como completada                                │
- *       - Swipe para editar o eliminar (visualización de opciones)             │
- *   • Interacción con el hook useCard para animaciones y gestos.               │
- *   • Colores dinámicos según estado y tipo de tarea.                          │
- *                                                                              │
+ *                                                                              │                                                                              
  * Props:                                                                       │
  *   • task (object): objeto tarea a mostrar.                                   │
  *   • onDelete (function): función para eliminar la tarea.                     │
  *   • onEdit (function): función para editar la tarea.                         │
- *                                                                              │
- * Layout y estilo:                                                             │
- *   • Contenedor principal con bordes redondeados y transición de color.       │
- *   • Indicadores visuales para eliminación/edición al deslizar.               │
- *   • Texto de tarea estilizado con tachado si está completada.                │
- *   • Usa Container_Card para el fondo y borde con gradiente decorativo.       │
- *                                                                              │
+ *                                                                              │ 
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
@@ -59,7 +42,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
                 </div>
             )}
             <div
-                className={`flex flex-2 text-center justify-center items-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
+                className={`flex flex-2 text-center px-2 h-full w-full text-base text-white transition-all duration-300 ${
                     isCompleted ? "line-through text-white decoration-2 decoration-red-400 scale-[0.97]" : "text-white"
                 }`}
             >

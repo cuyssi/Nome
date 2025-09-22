@@ -8,22 +8,18 @@
  *   - options → array de opciones (string o { label, value })                        │
  *   - onChange → función que se ejecuta al cambiar la selección                      │
  *                                                                                    │
- * Estilo:                                                                            │
- *   - Borde morado, esquinas redondeadas, fuente normal                              │
- *   - Ocupa todo el ancho disponible                                                 │
- *                                                                                    │
  * Autor: Ana Castro                                                                  │
 └────────────────────────────────────────────────────────────────────────────────────*/
 
 export const SelectField = ({ label, name, value, options, onChange }) => {
     return (
-        <label>
+        <label className="text-gray-500 font-semibold">
             {label}:
             <select
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="border w-full border-purple-400 rounded-lg p-1 font-normal"
+                className="border w-full border-purple-400 rounded-lg p-1 font-normal mt-1.5"
             >
                 {options.map((opt) =>
                     typeof opt === "string" ? (
