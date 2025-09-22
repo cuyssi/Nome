@@ -6,16 +6,22 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 import re
+from typing import Optional
 from datetime import datetime, timedelta
 
-def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
-    text = text.lower()
-    explicit_hour = re.search(r'\b\d{1,2}(:\d{2})\b', text) is not None
+def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str, day_fragment: Optional[str] = None):
 
-    has_morning = "de la mañana" in text or "por la mañana" in text
-    has_tarde = "de la tarde" in text or "por la tarde" in text
-    has_noche = "de la noche" in text or "por la noche" in text
-    has_madrugada = "de la madrugada" in text or "por la madrugada" in text
+    text_lower = text.lower()
+    explicit_hour = re.search(r'\b\d{1,2}(:\d{2})?\b', text) is not None
+    has_morning = "de la mañana" in text_lower or "por la mañana" in text_lower
+    has_tarde = "de la tarde" in text_lower or "por la tarde" in text_lower
+    has_noche = "de la noche" in text_lower or "por la noche" in text_lower
+    has_madrugada = "de la madrugada" in text_lower or "por la madrugada" in text_lower
+
+    if day_fragment and not any([has_morning, has_tarde, has_noche, has_madrugada]):
+        if dt.hour < 8 or dt.hour > 20:
+            dt = dt.replace(hour=14, minute=30)
+        return dt
 
     if explicit_hour and dt < now:
         if has_morning or has_madrugada:

@@ -108,7 +108,7 @@ def detect_dates_in_text(text: str):
         else:
             dt = now.replace(hour=15, minute=30, second=0, microsecond=0)
 
-    dt = adjust_ambiguous_hour(dt, now, text)
+    dt = adjust_ambiguous_hour(dt, now, text, day_fragment=day_fragment)
     dt = adjust_weekday_forward(dt, text, now)
     dt, time_fragment = adjust_time_context(dt, text)
     print(
