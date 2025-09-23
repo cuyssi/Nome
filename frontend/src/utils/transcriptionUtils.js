@@ -30,7 +30,11 @@ export const getFormattedTasks = (transcription) => {
     }
 
     const isToday = transcription.isToday;
-    return { text_raw, text, dateTime, isToday };
+    const repeat = transcription.repeat || "once";           
+    const customDays = transcription.customDays || [];
+    console.log("Parsed transcription:", { text_raw, text, dateTime, isToday, repeat, customDays });
+
+    return { text_raw, text, dateTime, isToday, repeat, customDays };
 };
 
 

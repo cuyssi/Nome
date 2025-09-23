@@ -31,6 +31,8 @@ async def transcribe_audio(file: UploadFile = File(...)):
         "patterns": result["patterns"],
         "uuid": result["uuid"],
         "isToday": is_today(result["datetime"]),
+        "repeat": result["repeat"],
+        "customDays": result["customDays"],
     }
 
     print(f"Transcribe raw: {text_raw}")
@@ -38,5 +40,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
     print(f"Datetime: {result['datetime']}")
     print(f"Hour: {result['time']}, Is today: {response['isToday']}")
     print(f"Tipo: {result['type']}, UUID: {result['uuid']}")
+    print(f"repeat: {result['repeat']}")
+    print(f"customDays: {result['customDays']}")
 
     return response

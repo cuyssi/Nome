@@ -1,19 +1,6 @@
-# ────────────────────────────────────────────────────────────────
-# main.py
-# Punto de entrada del backend
-# - Carga variables de entorno
-# - Asegura que el modelo Vosk esté disponible
-# - Configura el ciclo de vida de la app (lifespan):
-#     • Reprograma tareas pendientes al arrancar
-#     • Cancela y limpia timers al apagar
-# - Habilita CORS para el frontend
-# - Incluye los routers:
-#     • /transcribe → transcripción de audio
-#     • /notifications → notificaciones push
-# - Endpoint raíz: comprueba si el backend responde
-# ────────────────────────────────────────────────────────────────
-
 import os
+import time
+import threading
 from utils.download_vosk import ensure_vosk_model
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,20 +15,51 @@ load_dotenv()
 ensure_vosk_model()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
+def reprogram_all_tasks():
+    """
+    Reprograma todas las notificaciones pendientes para todos los dispositivos.
+    """
     for device_id, tasks in scheduled_tasks.items():
         if device_id in subscriptions:
             for task in tasks:
-                if not task.get("rescheduled"):
-                    schedule_notification(task)
-                    task["rescheduled"] = True
+                schedule_notification(task)
+    print("🔄 Reprogramadas todas las notificaciones tras suspensión")
+
+
+def watchdog_thread(interval=10, threshold=30):
+    """
+    Hilo que detecta suspensión del sistema midiendo saltos de tiempo anormales.
+    - interval: cada cuánto segundos revisar.
+    - threshold: si el salto es mayor a este valor → asumimos suspensión.
+    """
+    last_check = time.time()
+    while True:
+        time.sleep(interval)
+        now = time.time()
+        delta = now - last_check
+        last_check = now
+
+        if delta > (interval + threshold):
+            print(f"⚠️ Detectada suspensión del sistema (delta={delta:.1f}s)")
+            reprogram_all_tasks()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Al arrancar, reprogramar
+    reprogram_all_tasks()
+
+    # Lanzar watchdog en segundo plano
+    threading.Thread(target=watchdog_thread, daemon=True).start()
+
     yield
 
+    # Al apagar, cancelar timers activos
     for timer in list(active_timers):
         if timer.is_alive():
             timer.cancel()
         active_timers.remove(timer)
+
 
 app = FastAPI(lifespan=lifespan)
 

@@ -26,5 +26,16 @@ def adjust_weekday_forward(dt: datetime, text: str, now: datetime) -> datetime:
             new_date = now + timedelta(days=days_ahead)
             dt = dt.replace(year=new_date.year, month=new_date.month, day=new_date.day)
             break
-
     return dt
+
+def extract_custom_days(text: str):
+    """ Devuelve los índices de los días de la semana mencionados en el texto.
+    Ejemplo: "todos los lunes y martes" → [0, 1] """
+    from constants.weekday_map import WEEKDAY_MAP
+    import re
+
+    custom_days = []
+    for dia, idx in WEEKDAY_MAP.items():
+        if re.search(rf"\b{dia}\b", text, flags=re.IGNORECASE):
+            custom_days.append(idx)
+    return sorted(list(set(custom_days)))

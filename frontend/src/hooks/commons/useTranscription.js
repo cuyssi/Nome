@@ -34,7 +34,7 @@ export const useTranscription = () => {
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);
-            const { text_raw, text, dateTime: rawDateTime } = getFormattedTasks(response);
+            const { text_raw, text, dateTime: rawDateTime, isToday, repeat, customDays } = getFormattedTasks(response);
             const dateTime = normalizeDateTime(rawDateTime);
             const { date, hour, dateWithYear } = dateAndTime(dateTime);
             const type = getTaskType(text);
@@ -55,8 +55,9 @@ export const useTranscription = () => {
                 hour,
                 type,
                 color,
-                repeat: options.repeat || "once",
-                customDays: options.customDays || [],
+                isToday,
+                repeat: repeat || "once",
+                customDays: customDays || [],
                 reminder: options.reminder || 15,
                 deviceId,
                 notifyDayBefore: options.notifyDayBefore || false,

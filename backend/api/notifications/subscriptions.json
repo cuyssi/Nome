@@ -1,4 +1,79 @@
 {
-  "subscriptions": {},
-  "scheduled_tasks": {}
+  "subscriptions": {
+    "f08e4553-3559-4d04-8055-09c30041c9cd": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/cNbrMi0ZUdQ:APA91bHPz2PFD9nfRWRG4AzdJ5fDL2hKNVXyaSTk8L0olMYikKeQ_NTHvSK25HnYTQr5rfB8hdqqRkPZ32hsKZx4-y5BU9SJxIsCZRrcuHfynNkA5hyLzKUv055xtsCnW_Ze5dxzuI15",
+      "expirationTime": null,
+      "keys": {
+        "p256dh": "BOUCClDMAB_yPxKMdk3oxzlyka8BCHNgAhEa7vnca-TydH3cf7UD597C0C5gYpwZNAQGFL6VynSX470nX9AF0IE",
+        "auth": "e9GQye3L23PPvc3_Wd-FAg"
+      }
+    }
+  },
+  "scheduled_tasks": {
+    "f08e4553-3559-4d04-8055-09c30041c9cd": [
+      {
+        "id": "31b18d3e-200d-4c30-8c1e-dc81a3824817",
+        "title": "qued\u00e9 con Pablo en las Meanas",
+        "dateTime": "2025-09-23T14:30:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        },
+        "notifyDayBefore": false,
+        "repeat": "once",
+        "customDays": []
+      },
+      {
+        "id": "default-escolar",
+        "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
+        "dateTime": "2025-09-23T11:09:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "bag",
+        "notifyMinutesBefore": 0,
+        "data": {
+          "url": "/bags?open=escolar"
+        },
+        "notifyDayBefore": false,
+        "repeat": "custom",
+        "customDays": [
+          "V",
+          "J",
+          "X",
+          "M",
+          "L",
+          "D"
+        ]
+      },
+      {
+        "id": "82d64c78-dc04-4a4e-a30c-d7e3690072c8",
+        "title": "Qued\u00e9 con Pablo en las Meanas",
+        "dateTime": "2025-09-23T14:30:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        },
+        "notifyDayBefore": false,
+        "repeat": "once",
+        "customDays": []
+      },
+      {
+        "id": "97442ef7-d798-4059-a07f-68d7ea2737af",
+        "title": "Tengo psic\u00f3loga",
+        "dateTime": "2025-10-17T11:00:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        },
+        "notifyDayBefore": false,
+        "repeat": "once",
+        "customDays": []
+      }
+    ]
+  }
 }

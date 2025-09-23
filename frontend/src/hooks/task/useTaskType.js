@@ -31,7 +31,7 @@ export const useTaskType = () => {
 
   const keywordMap = {
     cita: ["quede"],
-    médicos: ["medico", "especialista", "psicologo"],
+    médicos: ["medico", "especialista", "psicologo", "psicóloga"],
     deberes: ["deberes", "estudiar"],
     trabajo: ["trabajo", "reunion"],
     examen: ["examen", "preparar"],

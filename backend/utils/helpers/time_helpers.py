@@ -6,24 +6,27 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 import re
-from typing import Optional
 from datetime import datetime, timedelta
 
-def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str, day_fragment: Optional[str] = None):
+def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
+    text = text.lower()
+    hour_matches = re.findall(r'\b(\d{1,2})(?::\d{2})?\b', text)
+    hour_number = int(hour_matches[-1]) if hour_matches else None
 
-    text_lower = text.lower()
-    explicit_hour = re.search(r'\b\d{1,2}(:\d{2})?\b', text) is not None
-    has_morning = "de la mañana" in text_lower or "por la mañana" in text_lower
-    has_tarde = "de la tarde" in text_lower or "por la tarde" in text_lower
-    has_noche = "de la noche" in text_lower or "por la noche" in text_lower
-    has_madrugada = "de la madrugada" in text_lower or "por la madrugada" in text_lower
+    has_morning = "de la mañana" in text or "por la mañana" in text
+    has_tarde = "de la tarde" in text or "por la tarde" in text
+    has_noche = "de la noche" in text or "por la noche" in text
+    has_madrugada = "de la madrugada" in text or "por la madrugada" in text
+    no_context = not any([has_morning, has_tarde, has_noche, has_madrugada])
 
-    if day_fragment and not any([has_morning, has_tarde, has_noche, has_madrugada]):
-        if dt.hour < 8 or dt.hour > 20:
-            dt = dt.replace(hour=14, minute=30)
+    # ✅ Ajuste para horas ambiguas sin contexto en cualquier fecha
+    if hour_number is not None and no_context and hour_number <= 7:
+        dt = dt.replace(hour=hour_number + 12)
+        print(f"[adjust_ambiguous_hour] ajustando hora ambigua sin contexto → {dt}")
         return dt
 
-    if explicit_hour and dt < now:
+    # Ajustes normales si la hora ya pasó hoy
+    if dt < now:
         if has_morning or has_madrugada:
             dt += timedelta(days=1)
         elif has_tarde or has_noche:
@@ -63,51 +66,27 @@ def adjust_time_context(dt: datetime, text: str):
     used_fragment = None
     explicit_hour = re.search(r'\b\d{1,2}(:\d{2})?\b', text) is not None
 
-    if "por la mañana" in text:
-        used_fragment = "por la mañana"
+    if "por la mañana" in text or "de la mañana" in text:
+        used_fragment = "mañana"
         if not explicit_hour:
-            dt = dt.replace(hour=9, minute=0, second=0, microsecond=0)
-    elif "de la mañana" in text:
-        used_fragment = "de la mañana"
+            dt = dt.replace(hour=9, minute=0)
+    elif "por la tarde" in text or "de la tarde" in text:
+        used_fragment = "tarde"
         if not explicit_hour:
-            dt = dt.replace(hour=9, minute=0, second=0, microsecond=0)
-
-    elif "por la noche" in text:
-        used_fragment = "por la noche"
-        if explicit_hour and 1 <= dt.hour <= 11:
+            dt = dt.replace(hour=15, minute=0)
+        elif dt.hour < 12:
             dt = dt.replace(hour=dt.hour + 12)
-        elif not explicit_hour:
-            dt = dt.replace(hour=21, minute=0, second=0, microsecond=0)
-
-    elif "de la noche" in text:
-        used_fragment = "de la noche"
-        if explicit_hour and 1 <= dt.hour <= 11:
-            dt = dt.replace(hour=dt.hour + 12)
-        elif not explicit_hour:
-            dt = dt.replace(hour=21, minute=0, second=0, microsecond=0)
-
-    elif "por la tarde" in text:
-        used_fragment = "por la tarde"
-        if explicit_hour and 1 <= dt.hour <= 11:
-            dt = dt.replace(hour=dt.hour + 12)
-        elif not explicit_hour:
-            dt = dt.replace(hour=15, minute=0, second=0, microsecond=0)
-
-    elif "de la tarde" in text:
-        used_fragment = "de la tarde"
-        if explicit_hour and 1 <= dt.hour <= 11:
-            dt = dt.replace(hour=dt.hour + 12)
-        elif not explicit_hour:
-            dt = dt.replace(hour=15, minute=0, second=0, microsecond=0)
-
-    elif "por la madrugada" in text:
-        used_fragment = "por la madrugada"
+    elif "por la noche" in text or "de la noche" in text:
+        used_fragment = "noche"
         if not explicit_hour:
-            dt = dt.replace(hour=3, minute=0, second=0, microsecond=0)
-
-    elif "de la madrugada" in text:
-        used_fragment = "de la madrugada"
+            dt = dt.replace(hour=21, minute=0)
+        elif dt.hour < 12:
+            dt = dt.replace(hour=dt.hour + 12)
+    elif "por la madrugada" in text or "de la madrugada" in text:
+        used_fragment = "madrugada"
         if not explicit_hour:
-            dt = dt.replace(hour=3, minute=0, second=0, microsecond=0)
+            dt = dt.replace(hour=3, minute=0)
 
     return dt, used_fragment
+
+

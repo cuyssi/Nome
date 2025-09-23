@@ -38,8 +38,13 @@ with open(CUSTOM_WORDS_PATH, "r", encoding="utf-8") as f:
 
 @lru_cache(maxsize=1)
 def get_model():
-    print("Cargando modelo Vosk...")
-    return Model(MODEL_PATH)
+    try:
+        path = MODEL_PATH
+        print("Cargando modelo Vosk...")
+        return Model(path)
+    except Exception as e:
+        print(f"[get_model] Error al cargar el modelo: {e}")
+        raise
 
 
 def clean_audio(input_path: str, output_path: str) -> None:

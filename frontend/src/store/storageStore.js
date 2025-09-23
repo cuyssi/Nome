@@ -90,8 +90,8 @@ export const useStorageStore = create(
                     Number(newTask.reminder) || 15,
                     url,
                     newTask.notifyDayBefore,
-                    newTask.repeat || "once",
-                    newTask.customDays || []
+                    newTask.repeat,
+                    newTask.customDays
                 );                
             },
 
@@ -118,8 +118,8 @@ export const useStorageStore = create(
                     Number(updatedTask.reminder) || 15,
                     url,
                     updatedTask.notifyDayBefore,
-                    updatedTask.repeat || "once",
-                    updatedTask.customDays || []
+                    updatedTask.repeat,
+                    updatedTask.customDays
                 );
             },
 

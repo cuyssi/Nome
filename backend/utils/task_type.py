@@ -15,11 +15,16 @@ nlp = spacy.load("es_core_news_md")
 
 class useTaskType:
     def __init__(self):
-        self.cita_keywords = {"quedar", "ver", "citar", "reunir"}
-        self.medico_keywords = {"médico", "doctor", "hospital", "consulta"}
+        self.cita_keywords = {"quedar", "ver", "citar", "reunir"}        
         self.deberes_keywords = {"deberes", "ejercicio", "resolver", "estudiar", "tarea"}
         self.trabajo_keywords = {"trabajo", "investigar", "redactar", "informe", "exponer"}
         self.examen_keywords = {"examen", "prueba", "evaluar", "control", "test"}
+        self.medico_keywords = {
+            "médico", "médica",
+            "doctor", "doctora",
+            "hospital", "consulta",
+            "psicólogo", "psicóloga"
+        }
 
     def getTaskType(self, text: str) -> str:
         doc = nlp(text)

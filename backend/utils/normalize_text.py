@@ -60,6 +60,9 @@ def extract_patterns(text):
 
 
 def normalize_time(text):
+    text = re.sub(r'\bla una (\d{1,2})\b', r'1:\1', text)
+    text = re.sub(r'\bla una\b', '1:00', text)
+
     def y_replacer(match):
         h, m = match.groups()
         return f"{h}:{int(m):02d}"
