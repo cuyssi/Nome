@@ -6,9 +6,11 @@
  *   • Al finalizar la grabación, envía el audio a `useTranscription`.          │
  *   • Muestra un aviso animado cuando se está procesando la transcripción.     │
  *   • Botón adicional con icono de lápiz: abre un modal vacío para crear tarea.│
+ *   • Muestra confirmación tras guardar una tarea.                             │
  *                                                                              │
  * Props:                                                                       │
  *   - openModalWithTask: función que abre el modal de edición de tarea.        │
+ *   - showConfirmationForTask: función que muestra confirmación tras guardar.  │
  *                                                                              │
  * Hooks internos:                                                              │
  *   - useVoiceRecorder: gestiona grabación de audio (start/stop/toggle).       │
@@ -22,15 +24,20 @@ import { useVoiceRecorder } from "../../hooks/audio/useVoiceRecorder";
 import { useTranscription } from "../../hooks/commons/useTranscription";
 import { useEffect } from "react";
 
-const Voice_rec = ({ openModalWithTask }) => {
+const Voice_rec = ({ openModalWithTask, showConfirmationForTask }) => {
     const { recording, toggleRecording, audioFile } = useVoiceRecorder();
-    const { sendFile, isProcessing } = useTranscription();
+    const { sendFile, isProcessing } = useTranscription(openModalWithTask);
 
     useEffect(() => {
         if (audioFile) {
-            sendFile(audioFile, { repeat: "once", customDays: [] });
+            sendFile(audioFile, {
+                repeat: "once",
+                customDays: [],
+                onTaskSaved: showConfirmationForTask,                
+            });
         }
     }, [audioFile]);
+    
 
     return (
         <div className="flex w-full h-full justify-center items-center">

@@ -20,7 +20,7 @@
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
-import { Modal } from "../commons/Modal";
+import { Modal } from "../commons/modals/Modal";
 import { Form_Schedule } from "./Form_Schedule";
 import { Check } from "lucide-react";
 

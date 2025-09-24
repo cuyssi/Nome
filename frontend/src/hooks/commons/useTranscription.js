@@ -1,23 +1,41 @@
 /**─────────────────────────────────────────────────────────────────────────────
- * useTranscription: hook para enviar audio, transcribir y crear tarea.
+ * useTranscription: hook para enviar un archivo de audio, transcribirlo y 
+ * crear una tarea automáticamente.
  *
- * - Usa `useTasks` para que las tareas se agreguen al store y se notifique al backend.
- * - Valida `dateTime` para asegurar que siempre sea ISO válido.
+ * Funcionalidad:
+ *   • Envía el audio al backend usando `sendAudioFile`.
+ *   • Convierte la respuesta en tarea(s) formateadas con fecha, hora, tipo, 
+ *     color y recordatorio.
+ *   • Añade la tarea al store usando `useTasks` y notifica al backend si 
+ *     corresponde.
+ *   • Normaliza la fecha/hora para asegurar un ISO válido.
+ *   • Gestiona estado de procesamiento para mostrar loaders o avisos.
+ *
+ * Parámetros de sendFile(file, options):
+ *   - file: archivo de audio a enviar.
+ *   - options: objeto con opciones adicionales:
+ *       • deviceId: id del dispositivo (por defecto se toma de localStorage).
+ *       • reminder: minutos antes del recordatorio (default: 15).
+ *       • notifyDayBefore: boolean para aviso el día anterior (default: false).
+ *       • onTaskSaved: callback que se ejecuta tras guardar la tarea.
+ *
+ * Devuelve:
+ *   • sendFile: función para enviar y procesar un archivo de audio.
+ *   • isProcessing: boolean indicando si se está procesando la transcripción.
  *
  * Autor: Ana Castro
  ─────────────────────────────────────────────────────────────────────────────*/
+
 
 import { useState } from "react";
 import { sendAudioFile } from "../../services/Task_services";
 import { getFormattedTasks, dateAndTime } from "../../utils/transcriptionUtils";
 import { getTaskColor } from "../task/useTaskColor";
-import { useTaskType } from "../task/useTaskType";
 import { useTasks } from "../task/useTasks";
 
 export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const { addTask } = useTasks();
-    const { getTaskType } = useTaskType();
     const { assignColor } = getTaskColor();
     const normalizeDateTime = (dt) => {
         try {
@@ -34,10 +52,17 @@ export const useTranscription = () => {
         try {
             setIsProcessing(true);
             const response = await sendAudioFile(file);
-            const { text_raw, text, dateTime: rawDateTime, isToday, repeat, customDays } = getFormattedTasks(response);
+            const {
+                text_raw,
+                text,
+                dateTime: rawDateTime,
+                type,
+                isToday,
+                repeat,
+                customDays,
+            } = getFormattedTasks(response);
             const dateTime = normalizeDateTime(rawDateTime);
             const { date, hour, dateWithYear } = dateAndTime(dateTime);
-            const type = getTaskType(text);
             const color = assignColor();
             const deviceId = options.deviceId || localStorage.getItem("deviceId");
 
@@ -45,7 +70,7 @@ export const useTranscription = () => {
                 console.warn("⚠️ No se encontró deviceId en localStorage");
             }
 
-            await addTask({
+            const newTask = {
                 id: crypto.randomUUID(),
                 dateTime,
                 text_raw,
@@ -61,7 +86,13 @@ export const useTranscription = () => {
                 reminder: options.reminder || 15,
                 deviceId,
                 notifyDayBefore: options.notifyDayBefore || false,
-            });
+            };
+
+            await addTask(newTask);
+
+            if (options.onTaskSaved) {
+                options.onTaskSaved(newTask);
+            }
         } catch (err) {
             console.error("❌ Error al enviar archivo de audio:", err);
         } finally {

@@ -11,7 +11,7 @@
  * Autor: Ana Castro                                                                   │
  *────────────────────────────────────────────────────────────────────────────────────*/
 
-import { Modal } from "../commons/Modal";
+import { Modal } from "../commons/modals/Modal";
 import { useTomorrowSubjects } from "../../hooks/bag/useTomorrowSubjects";
 import { Check } from "lucide-react";
 import { FULL_DAYS } from "../../utils/constants";

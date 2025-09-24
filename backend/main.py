@@ -10,6 +10,7 @@ from api.transcribe import router as transcribe_router
 from api.notifications.router import router as notifications_router
 from api.notifications.subscriptions import active_timers, scheduled_tasks, subscriptions
 from services.notifications.scheduler import schedule_notification
+import asyncio
 
 load_dotenv()
 ensure_vosk_model()
@@ -46,19 +47,17 @@ def watchdog_thread(interval=10, threshold=30):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Al arrancar, reprogramar
-    reprogram_all_tasks()
-
-    # Lanzar watchdog en segundo plano
-    threading.Thread(target=watchdog_thread, daemon=True).start()
-
-    yield
-
-    # Al apagar, cancelar timers activos
-    for timer in list(active_timers):
-        if timer.is_alive():
-            timer.cancel()
-        active_timers.remove(timer)
+    try:
+        reprogram_all_tasks()
+        threading.Thread(target=watchdog_thread, daemon=True).start()
+        yield
+    except asyncio.CancelledError:
+        print("🛑 Servidor detenido por interrupción")
+    finally:
+        for timer in list(active_timers):
+            if timer.is_alive():
+                timer.cancel()
+            active_timers.remove(timer)
 
 
 app = FastAPI(lifespan=lifespan)

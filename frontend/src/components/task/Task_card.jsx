@@ -36,13 +36,13 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
             rightAction={<SwipeAction icon={Pencil} label="¿Editar?" />}
         >
             {(task.date || task.hour) && (
-                <div className="flex flex-1 flex-col border border-black border-r-gray-900 rounded-l-xl h-full w-full px-3 gap-1 justify-center text-center">
-                    <p className="text-gray-400 font-semibold text-3xl flex justify-center">{getRepeatLabel(task)}</p>
+                <div className="flex flex-1 flex-col w-[30%] h-full border border-black border-r-white rounded-l-xl gap-1 justify-center text-center">
+                    <p className="text-gray-400 font-semibold text-2xl flex justify-center">{getRepeatLabel(task)}</p>
                     <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
                 </div>
             )}
             <div
-                className={`flex flex-2 px-2 h-full w-full text-sm text-white transition-all duration-300 ${
+                className={`flex flex-2 pl-6 h-full w-[70%] text-base text-white transition-all duration-300 ${
                     isCompleted ? "line-through text-white decoration-2 decoration-red-400 scale-[0.97]" : "text-white"
                 }`}
             >

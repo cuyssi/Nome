@@ -62,3 +62,6 @@ export const filterByQuery = (tasks, query) => {
     const nq = normalize(query);
     return tasks.filter((task) => normalize(task.text).includes(nq));
 };
+
+
+

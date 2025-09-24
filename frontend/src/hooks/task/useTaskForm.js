@@ -1,29 +1,24 @@
-/**────────────────────────────────────────────────────────────────────────────────────────────────┐
- * useTaskForm: hook para gestionar el formulario de creación o edición de tareas.                 │
- *                                                                                                 │
- * Funcionalidad:                                                                                  │
- *   • Mantiene el estado local del formulario (`formData`) incluyendo texto, fecha, hora, color,  │
- *     tipo de tarea, repetición, días personalizados y recordatorio.                              │
- *   • Inicializa el formulario con los valores de una tarea existente si se pasa `task`.          │
- *   • Convierte fechas ingresadas manualmente a un formato consistente (YYYY-MM-DD y HH:MM).      │
- *   • Normaliza la fecha para mostrarla en el backend como DD/MM.                                 │
- *   • Construye el `dateTime` completo usando `buildDateTimeFromManual`.                          │
- *   • Genera un nuevo ID con `uuidv4` si la tarea es nueva.                                       │
- *   • Llama a `onSubmit(finalTask)` para enviar la tarea creada o editada.                        │
- *   • Controla la confirmación visual (`showConfirmation`) y cierra el formulario tras 1.5s.      │
- *                                                                                                 │
- * Devuelve:                                                                                       │
- *   - formData: estado del formulario con todos los campos de la tarea.                           │
- *   - showConfirmation: boolean para mostrar confirmación visual.                                 │
- *   - handleChange(e): función para actualizar los campos del formulario según su `name`.         │
- *   - handleSubmit(e): función para procesar y enviar la tarea al backend o store.                │
- *                                                                                                 │
- * Autor: Ana Castro                                                                               │
-└─────────────────────────────────────────────────────────────────────────────────────────────────*/
+/**─────────────────────────────────────────────────────────────────────────────
+ * useTaskForm: hook para gestionar el estado y envío del formulario de tarea.
+ *
+ * Funcionalidad:
+ *   • Inicializa el formulario con datos de una tarea existente o valores por defecto.
+ *   • Mantiene el estado de los campos del formulario (texto, fecha, hora, color, tipo, repetición, recordatorio, etc.).
+ *   • Convierte fechas y horas manuales a formato ISO para `dateTime`.
+ *   • Normaliza la fecha para inputs tipo date y para mostrar en la interfaz.
+ *   • Proporciona funciones para actualizar campos y enviar el formulario.
+ *
+ * Devuelve:
+ *   • formData: objeto con todos los campos del formulario.
+ *   • handleChange(e): actualiza el estado cuando cambian los inputs.
+ *   • buildFinalTask(originalTask): construye el objeto tarea completo listo para guardar.
+ *   • handleSubmit(e): envía la tarea final a la función `onSubmit`.
+ *
+ * Autor: Ana Castro
+ ─────────────────────────────────────────────────────────────────────────────*/
 
 import { useState, useEffect } from "react";
 import { buildDateTimeFromManual } from "../../utils/dateUtils";
-import { v4 as uuidv4 } from "uuid";
 
 function parseDateForInput(dateStr) {
     if (!dateStr) return "";
@@ -42,21 +37,19 @@ function normalizeDate(dateStr) {
     return `${Number(day)}/${Number(month)}`;
 }
 
-export function useTaskForm(task, onSubmit, onClose) {
+export function useTaskForm(task, onSubmit) {
     const [formData, setFormData] = useState({
         text: "",
         date: "",
         hour: "00",
         minute: "00",
         color: "red-400",
-        type: "homework",
+        type: "task",
         repeat: "once",
         customDays: [],
         reminder: "5",
         notifyDayBefore: false,
     });
-
-    const [showConfirmation, setShowConfirmation] = useState(false);
 
     useEffect(() => {
         if (task) {
@@ -67,7 +60,7 @@ export function useTaskForm(task, onSubmit, onClose) {
                 hour: h,
                 minute: m,
                 color: task.color || "red-400",
-                type: task.type || "homework",
+                type: task.type || "task",
                 repeat: task.repeat || "once",
                 customDays: task.customDays || [],
                 reminder: task.reminder || "5",
@@ -81,57 +74,37 @@ export function useTaskForm(task, onSubmit, onClose) {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const buildFinalTask = (originalTask = {}) => {
+        const fullHour = `${formData.hour}:${formData.minute}`;
+        const dateTime = buildDateTimeFromManual(formData.date, fullHour);
+
+        return {
+            ...originalTask,
+            text: formData.text,
+            text_raw: formData.text,
+            date: normalizeDate(formData.date),
+            dateFull: formData.date,
+            hour: fullHour,
+            color: formData.color,
+            type: formData.type,
+            dateTime,
+            repeat: formData.repeat,
+            customDays: formData.customDays,
+            reminder: formData.reminder,
+            notifyDayBefore: formData.notifyDayBefore,
+        };
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        const fullHour = `${formData.hour}:${formData.minute}`;
-        let dateTime;
-
-        try {
-            dateTime = buildDateTimeFromManual(formData.date, fullHour);
-        } catch (err) {
-            console.error("Error building dateTime:", err);
-            return;
-        }
-
-        const finalTask = task?.id
-            ? {
-                  ...task,
-                  text: formData.text,
-                  text_raw: formData.text,
-                  date: normalizeDate(formData.date),
-                  hour: fullHour,
-                  color: formData.color,
-                  type: formData.type,
-                  dateTime,
-                  repeat: formData.repeat,
-                  customDays: formData.customDays,
-                  reminder: formData.reminder,
-                  notifyDayBefore: formData.notifyDayBefore,
-              }
-            : {
-                  id: uuidv4(),
-                  text: formData.text,
-                  text_raw: formData.text,
-                  date: normalizeDate(formData.date),
-                  hour: fullHour,
-                  color: formData.color,
-                  type: formData.type,
-                  dateTime,
-                  repeat: formData.repeat,
-                  customDays: formData.customDays,
-                  reminder: formData.reminder,
-                  notifyDayBefore: formData.notifyDayBefore,
-              };
-
+        const finalTask = buildFinalTask(task || {});
         onSubmit(finalTask);
-        setShowConfirmation(true);
-        setTimeout(() => onClose(), 1500);
     };
 
     return {
         formData,
-        showConfirmation,
         handleChange,
+        buildFinalTask,
         handleSubmit,
     };
 }

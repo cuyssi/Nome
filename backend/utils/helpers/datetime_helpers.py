@@ -1,3 +1,19 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Detección y normalización de fechas en texto en español.
+# - parse_day_reference(text, base)-> detecta referencias explícitas como "el día 15 de julio"
+#   o "15 de julio" y devuelve un objeto datetime y el fragmento de texto detectado.
+#
+# - detect_dates_in_text(text)-> busca fechas y horas dentro de un texto, incluyendo
+#   referencias relativas ("mañana", "pasado mañana") y tiempos ambiguos, y devuelve:
+#   • dt: datetime final ajustado
+#   • data: lista de fechas detectadas por dateparser
+#   • time_fragment: texto de hora detectada
+#   • day_fragment: texto de día detectado
+#
+# Usa dateparser, expresiones regulares y funciones de ajuste de contexto de hora y
+# día para normalizar fechas ambiguas.
+# ──────────────────────────────────────────────────────────────────────────────
+
 import re
 from dateparser.search import search_dates
 from datetime import datetime, timedelta
@@ -8,7 +24,6 @@ from dateparser import parse
 def parse_day_reference(text: str, base: datetime):
     base = base or datetime.now()
 
-    # Caso 1: "el día 8 de octubre"
     match_full = re.search(r"\b(?:el\s+)?día\s+(\d{1,2})\s+de\s+([a-záéíóú]+)\b", text, flags=re.IGNORECASE)
     if match_full:
         day = int(match_full.group(1))
@@ -18,7 +33,6 @@ def parse_day_reference(text: str, base: datetime):
             dt_candidate = dt_candidate.replace(year=dt_candidate.year + 1)
         return dt_candidate, match_full.group(0)
 
-    # Caso 2: "el día 8"
     match_day_only = re.search(r"\b(?:el\s+)?día\s+(\d{1,2})\b", text, flags=re.IGNORECASE)
     if match_day_only:
         day = int(match_day_only.group(1))
@@ -33,7 +47,6 @@ def parse_day_reference(text: str, base: datetime):
         dt_candidate = base.replace(year=year, month=month, day=day, hour=15, minute=30)
         return dt_candidate, match_day_only.group(0)
 
-    # Caso 3: "8 de octubre" o "el 8 de octubre"
     match_simple = re.search(r"\b(?:el\s+)?(\d{1,2})\s+de\s+([a-záéíóú]+)\b", text, flags=re.IGNORECASE)
     if match_simple:
         day = int(match_simple.group(1))
@@ -45,13 +58,13 @@ def parse_day_reference(text: str, base: datetime):
 
     return None, None
 
+
 def detect_dates_in_text(text: str):
     now = datetime.now()
     text_lower = text.lower()
     day_fragment = None
     data = []
 
-    # Evitar confusión entre "mañana" y "de la mañana"
     if "pasado mañana" in text_lower:
         dt = now + timedelta(days=2)
         day_fragment = "pasado mañana"
@@ -98,7 +111,7 @@ def detect_dates_in_text(text: str):
             dt = now.replace(hour=15, minute=30)
 
     dt = adjust_ambiguous_hour(dt, now, text)
-    dt = adjust_weekday_forward(dt, text, now)
+    dt, task_type_override = adjust_weekday_forward(dt, text, now)
     dt, time_fragment = adjust_time_context(dt, text)
 
     print(f"[Detect dates in text] time fragment: {time_fragment}, day fragment: {day_fragment}")

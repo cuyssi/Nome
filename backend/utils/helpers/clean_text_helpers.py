@@ -8,6 +8,9 @@
 #
 # - format_lists_with_commas-> coloca comas correctas en listas de elementos
 #   o números, evitando errores como comas antes de artículos y duplicadas.
+# - clean_repeat_connectors-> elimina nombres de los dias de la semana cuando la 
+#   tarea se repite varios dias, elimina tambien los conectores que las acompañan
+#   como "los", "todos", etc..
 #
 # Devuelven el texto limpio y listo para procesar fechas o transcripciones.
 # ──────────────────────────────────────────────────────────────────────────────
@@ -90,3 +93,21 @@ def format_lists_with_commas(text):
     text = re.sub(r'\s{2,}', ' ', text)
 
     return text.strip()
+
+
+def clean_repeat_connectors(text, custom_days):
+    import re
+    if not custom_days:
+        return text
+
+    text = re.sub(r"\b(cada|todos|todas|los|las|y)\b", "", text, flags=re.IGNORECASE)
+
+    weekdays = [
+        "lunes", "martes", "miércoles", "miercoles",
+        "jueves", "viernes", "sábado", "sabado", "domingo"
+    ]
+    weekday_pattern = r"\b(?:{})\b".format("|".join(weekdays))
+    text = re.sub(weekday_pattern, "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s{2,}", " ", text).strip()
+
+    return text

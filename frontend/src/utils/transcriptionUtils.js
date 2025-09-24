@@ -15,28 +15,28 @@
 export const getFormattedTasks = (transcription) => {
     const text_raw = transcription.text_raw;
     const text = transcription.text;
-
     let dateTime = transcription.datetime;
+
     try {
         if (!dateTime || isNaN(new Date(dateTime).getTime())) {
-            console.warn("⚠️ datetime inválido en transcripción, usando fecha actual");
+            console.warn("datetime inválido en transcripción, usando fecha actual");
             dateTime = new Date().toISOString();
         } else {
             dateTime = new Date(dateTime).toISOString();
         }
     } catch (err) {
-        console.warn("⚠️ error parseando datetime, usando ahora:", err);
+        console.warn("error parseando datetime, usando ahora:", err);
         dateTime = new Date().toISOString();
     }
 
+    const type = transcription.type || "otros";
     const isToday = transcription.isToday;
-    const repeat = transcription.repeat || "once";           
+    const repeat = transcription.repeat || "once";
     const customDays = transcription.customDays || [];
-    console.log("Parsed transcription:", { text_raw, text, dateTime, isToday, repeat, customDays });
+    console.log("Parsed transcription:", { text_raw, text, dateTime, type, isToday, repeat, customDays });
 
-    return { text_raw, text, dateTime, isToday, repeat, customDays };
+    return { text_raw, text, dateTime, type, isToday, repeat, customDays };
 };
-
 
 export const dateAndTime = (data) => {
     try {
@@ -46,7 +46,6 @@ export const dateAndTime = (data) => {
         const year = formattedDate.getFullYear();
         const date = `${day}/${month}`;
         const dateWithYear = `${day}/${month}/${year}`;
-
         const hours = formattedDate.getHours();
         const mins = formattedDate.getMinutes();
         const hour = `${hours}:${mins < 10 ? "0" + mins : mins}`;

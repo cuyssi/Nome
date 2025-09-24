@@ -38,7 +38,7 @@ const Task_count = () => {
                             <Container className="w-[100%] py-3">
                                 <Link to="./tasks" className="flex justify-center items-center gap-1 py-2">
                                     <NotebookPen className="w-7 text-white" />
-                                    <p className="text-white font-poppins text-lg">Deberes</p>
+                                    <p className="text-white font-poppins text-lg">Escuela</p>
                                 </Link>
                             </Container>
                         </div>

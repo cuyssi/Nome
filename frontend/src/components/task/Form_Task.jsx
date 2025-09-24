@@ -1,15 +1,27 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Componente Form_Task: formulario para crear o editar tareas.                 │
- *                                                                              │
- * Props:                                                                       │
- *   • task (object): tarea a editar; si no se pasa, se crea una nueva.         │
- *   • onClose (function): función para cerrar el formulario/modal.             │
- *   • onSubmit (function): función para guardar los cambios o nueva tarea.     │
- *                                                                              │
- * Autor: Ana Castro                                                            │
-└──────────────────────────────────────────────────────────────────────────────*/
+/**────────────────────────────────────────────────────────────────────────────┐
+ * Componente Form_Task: formulario para crear o editar tareas.                │
+ *                                                                             │
+ * Funcionalidad:                                                              │
+ *   • Muestra campos de texto, fecha, hora, color, tipo, repetición y aviso.  │
+ *   • Permite seleccionar días personalizados si la repetición es "custom".   │
+ *   • Gestiona el estado del formulario usando el hook useTaskForm.           │
+ *   • Al presionar Enter en el campo de texto, se pierde el foco en vez de    │
+ *     enviar el formulario, evitando guardar accidentalmente.                 │
+ *   • Botón de cierre para cancelar la edición/creación.                      │
+ *   • Botón de guardar cambios que dispara onSubmit con la tarea final.       │
+ *                                                                             │
+ * Props:                                                                      │
+ *   - task: objeto de la tarea a editar (opcional; si no existe, es nueva).   │
+ *   - onClose: función que cierra el formulario/modal.                        │
+ *   - onSubmit: función que recibe el objeto final de la tarea al guardar.    │
+ *                                                                             │
+ * Hooks internos:                                                             │
+ *   - useTaskForm: gestiona el estado del formulario y la construcción de la  │
+ *     tarea final a partir de los campos.                                     │
+ *                                                                             │
+ * Autor: Ana Castro                                                           │
+└─────────────────────────────────────────────────────────────────────────────*/
 
-import { Check } from "lucide-react";
 import { useTaskForm } from "../../hooks/task/useTaskForm";
 import { AVAILABLE_TYPES } from "../../utils/constants";
 import { Timer } from "../commons/formComponents/Timer";
@@ -22,28 +34,33 @@ import { CheckboxField } from "../commons/formComponents/CheckboxField";
 import { DaySelector } from "../commons/formComponents/DaySelector";
 
 export const Form_Task = ({ task, onClose, onSubmit }) => {
-    const { formData, showConfirmation, handleChange, handleSubmit } = useTaskForm(task, onSubmit, onClose);
+    const { formData, handleChange, handleSubmit } = useTaskForm(task, onSubmit);
 
     return (
-        <form className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[70vh] flex flex-col">
+        <form
+            className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[70vh] flex flex-col"
+            onSubmit={handleSubmit}
+        >
             <ButtonClose onClick={onClose} />
 
-            {showConfirmation && (
-                <p className="flex text-green-600 mb-3 font-semibold">
-                    <Check /> Cambios guardados
-                </p>
-            )}
+            <h2 className="text-2xl font-extrabold text-purple-500 text-center font-poppins mt-6">
+                {task ? "Editar tarea" : "Nueva tarea"}
+            </h2>
 
-            <h2 className="text-2xl font-extrabold text-purple-500 text-center font-poppins mt-6">Editar tarea</h2>
-
-            <div className="overflow-y-auto flex-1 pr-1 hide-scrollbar">
-                <div className="flex flex-col justify-between gap-4 h-full text-gray-600 mt-3 font-semibold">
+            <div className="overflow-y-auto flex-1 pr-1 hide-scrollbar mt-3">
+                <div className="flex flex-col justify-between gap-4 h-full text-gray-600 font-semibold">
                     <InputField
                         label="Texto:"
                         name="text"
                         value={formData.text}
                         placeholder="Ej: Quede con Marcos a las 6 en la plaza"
                         onChange={handleChange}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                e.currentTarget.blur();
+                            }
+                        }}
                     />
 
                     <InputField label="Fecha:" type="date" name="date" value={formData.date} onChange={handleChange} />
@@ -116,7 +133,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                 </div>
             </div>
 
-            <ButtonDefault type="button" onClick={handleSubmit} text="Guardar cambios" />
+            <ButtonDefault type="submit" text="Guardar cambios" />
         </form>
     );
 };

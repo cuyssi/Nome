@@ -22,10 +22,17 @@ import re
 import difflib
 import noisereduce as nr
 import soundfile as sf
+import shutil
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
 CUSTOM_WORDS_PATH = os.path.join(BASE_DIR, "custom_words.json")
+
+for folder in ["rescore", "rnnlm"]:
+    path_to_remove = os.path.join(MODEL_PATH, folder)
+    if os.path.exists(path_to_remove):
+        shutil.rmtree(path_to_remove)
 
 if not os.path.exists(MODEL_PATH):
     raise FileNotFoundError(f"No se encontró el modelo en {MODEL_PATH}")

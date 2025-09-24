@@ -12,20 +12,6 @@
   "scheduled_tasks": {
     "f08e4553-3559-4d04-8055-09c30041c9cd": [
       {
-        "id": "31b18d3e-200d-4c30-8c1e-dc81a3824817",
-        "title": "qued\u00e9 con Pablo en las Meanas",
-        "dateTime": "2025-09-23T14:30:00+02:00",
-        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today"
-        },
-        "notifyDayBefore": false,
-        "repeat": "once",
-        "customDays": []
-      },
-      {
         "id": "default-escolar",
         "title": "\ud83d\udcda Recordatorio de mochila: Escolar",
         "dateTime": "2025-09-23T11:09:00+02:00",
@@ -61,12 +47,40 @@
         "customDays": []
       },
       {
-        "id": "97442ef7-d798-4059-a07f-68d7ea2737af",
-        "title": "Tengo psic\u00f3loga",
-        "dateTime": "2025-10-17T11:00:00+02:00",
+        "id": "10c707f3-b7a4-467c-86c9-3d64f81fd30c",
+        "title": "Qued\u00e9 con Fernando en las Meanas",
+        "dateTime": "2025-09-24T22:30:00+02:00",
         "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
         "type": "task",
         "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        },
+        "notifyDayBefore": false,
+        "repeat": "once",
+        "customDays": []
+      },
+      {
+        "id": "31b18d3e-200d-4c30-8c1e-dc81a3824817",
+        "title": "qued\u00e9 con Pablo en las Meanas",
+        "dateTime": "2025-09-23T14:30:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "task",
+        "notifyMinutesBefore": 15,
+        "data": {
+          "url": "/today"
+        },
+        "notifyDayBefore": false,
+        "repeat": "once",
+        "customDays": []
+      },
+      {
+        "id": "2a0ecd4c-7dfe-4aec-b433-82dcbaec87d0",
+        "title": "quede con pedro",
+        "dateTime": "2025-10-01T22:00:00+02:00",
+        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
+        "type": "task",
+        "notifyMinutesBefore": 5,
         "data": {
           "url": "/today"
         },

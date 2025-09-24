@@ -7,11 +7,13 @@
 
 import re
 from datetime import datetime, timedelta
+from typing import Tuple
 
 def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
     text = text.lower()
-    hour_matches = re.findall(r'\b(\d{1,2})(?::\d{2})?\b', text)
-    hour_number = int(hour_matches[-1]) if hour_matches else None
+    hour_matches = re.findall(r'\b(\d{1,2})(?::(\d{2}))?\b', text)
+    hour_number = int(hour_matches[-1][0]) if hour_matches else None
+    minute_number = int(hour_matches[-1][1]) if hour_matches and hour_matches[-1][1] else 0
 
     has_morning = "de la mañana" in text or "por la mañana" in text
     has_tarde = "de la tarde" in text or "por la tarde" in text
@@ -19,13 +21,11 @@ def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
     has_madrugada = "de la madrugada" in text or "por la madrugada" in text
     no_context = not any([has_morning, has_tarde, has_noche, has_madrugada])
 
-    # ✅ Ajuste para horas ambiguas sin contexto en cualquier fecha
     if hour_number is not None and no_context and hour_number <= 7:
-        dt = dt.replace(hour=hour_number + 12)
+        dt = dt.replace(hour=hour_number + 12, minute=minute_number)
         print(f"[adjust_ambiguous_hour] ajustando hora ambigua sin contexto → {dt}")
         return dt
 
-    # Ajustes normales si la hora ya pasó hoy
     if dt < now:
         if has_morning or has_madrugada:
             dt += timedelta(days=1)
@@ -61,7 +61,7 @@ def correct_minus_expressions(text):
     return re.sub(r"\b(\d{1,2}(?::\d{2})?)\s+menos\s+(\w+)\b", replacement, text, flags=re.IGNORECASE)
 
 
-def adjust_time_context(dt: datetime, text: str):
+def adjust_time_context(dt: datetime, text: str) -> Tuple[datetime, str | None]:
     text = text.lower()
     used_fragment = None
     explicit_hour = re.search(r'\b\d{1,2}(:\d{2})?\b', text) is not None
@@ -73,7 +73,7 @@ def adjust_time_context(dt: datetime, text: str):
     elif "por la tarde" in text or "de la tarde" in text:
         used_fragment = "tarde"
         if not explicit_hour:
-            dt = dt.replace(hour=15, minute=0)
+            dt = dt.replace(hour=16, minute=0)
         elif dt.hour < 12:
             dt = dt.replace(hour=dt.hour + 12)
     elif "por la noche" in text or "de la noche" in text:
@@ -88,5 +88,3 @@ def adjust_time_context(dt: datetime, text: str):
             dt = dt.replace(hour=3, minute=0)
 
     return dt, used_fragment
-
-

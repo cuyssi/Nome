@@ -20,7 +20,7 @@
  * Autor: Ana Castro                                                            │
  └─────────────────────────────────────────────────────────────────────────────*/
 
-import { Modal } from "../commons/Modal";
+import { Modal } from "../commons/modals/Modal";
 import { ButtonClose } from "../commons/buttons/ButtonClose";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
 

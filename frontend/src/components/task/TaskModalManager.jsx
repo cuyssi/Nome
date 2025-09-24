@@ -2,35 +2,62 @@
  * Componente TaskModalManager: gestiona la visualización del modal de tareas.  │
  *                                                                              │
  * Funcionalidad:                                                               │
- *   • Muestra un modal usando Modal.                                           │
- *   • Si showConfirmation es true, muestra un mensaje de éxito.                │
- *   • Si showConfirmation es false, renderiza Form_Task para edición/creación. │
+ *   • Controla la apertura/cierre de un modal usando Modal.                   │
+ *   • Si showConfirmation es true, muestra TaskSavedModal con mensaje de      │
+ *     tarea guardada y ubicación dentro de la app.                             │
+ *   • Si showConfirmation es false, renderiza Form_Task para crear o editar   │
+ *     una tarea.                                                               │
+ *   • Gestiona la limpieza de la última tarea guardada al cerrar el modal.    │
  *                                                                              │
  * Props:                                                                       │
- *   - isOpen: boolean que controla si el modal está abierto.                   │
- *   - selectedTask: objeto con la tarea seleccionada.                          │
- *   - showConfirmation: boolean para mostrar mensaje de confirmación.          │
- *   - onEdit: función que maneja la edición o creación de la tarea.            │
+ *   - isOpen: boolean que indica si el modal está abierto.                     │
+ *   - selectedTask: objeto de la tarea seleccionada (para editar).            │
+ *   - showConfirmation: boolean que controla si se muestra confirmación.      │
+ *   - onEdit: función que recibe la tarea final tras crear o editar.          │
  *   - onClose: función que cierra el modal.                                    │
- *                                                                              │                                                                              │
+ *                                                                              │
+ * Hooks internos:                                                              │
+ *   - useStorageStore: obtiene la última tarea guardada y permite limpiarla.   │
+ *   - Form_Task: formulario para creación/edición de tareas.                  │
+ *   - TaskSavedModal: modal de confirmación tras guardar la tarea.             │
+ *                                                                              │
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
-
-import { Modal } from "../commons/Modal";
+import { useStorageStore } from "../../store/storageStore";
+import { Modal } from "../commons/modals/Modal";
 import { Form_Task } from "./Form_Task";
-import { Check } from "lucide-react";
+import { TaskSavedModal } from "../commons/modals/TaskSavedModal";
+import { GetTaskLocationMessage } from "../commons/modals/GetTaskLocationMessage";
 
 export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdit, onClose }) => {
+    const lastSavedTask = useStorageStore((state) => state.lastSavedTask);
+    const clearLastSavedTask = useStorageStore((state) => state.clearLastSavedTask);
+    const taskToShow = showConfirmation ? lastSavedTask : selectedTask;
+
     return (
-        <Modal isOpen={isOpen}>
-            {showConfirmation ? (
-                <p className="flex text-green-500 justify-center font-semibold animate-fadeIn">
-                    <Check className="mr-2" /> Cambios guardados con éxito
-                </p>
-            ) : (
-                <Form_Task task={selectedTask} onSubmit={onEdit} onClose={onClose} />
-            )}
-        </Modal>
+        <>
+            {showConfirmation && taskToShow ? (
+                <TaskSavedModal
+                    task={taskToShow}
+                    onClose={() => {
+                        onClose(); 
+                        clearLastSavedTask();
+                    }}
+                    locationMessage={GetTaskLocationMessage(taskToShow)}
+                />
+            ) : isOpen && !showConfirmation ? (
+                <Modal isOpen={true}>
+                    <Form_Task
+                        task={selectedTask}
+                        onSubmit={(finalTask) => {
+                            onEdit(finalTask);
+                            
+                        }}
+                        onClose={onClose}
+                    />
+                </Modal>
+            ) : null}
+        </>
     );
 };

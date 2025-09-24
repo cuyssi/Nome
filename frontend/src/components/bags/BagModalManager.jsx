@@ -20,7 +20,7 @@
  * Autor: Ana Castro                                                                           │         
 └─────────────────────────────────────────────────────────────────────────────────────────────*/
 
-import { Modal } from "../commons/Modal";
+import { Modal } from "../commons/modals/Modal";
 import { CreateBag } from "./CreateBag";
 import { EditBag } from "./EditBag";
 import { BagItems } from "./BagItems";

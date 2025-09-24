@@ -37,7 +37,7 @@ export function getRepeatLabel(task) {
 
     if (task.repeat === "custom" && task.customDays?.length) {
         const dayLabels = DAYS.filter((d, i) => task.customDays.includes(i)).map((d) => d.key);
-        return <span className="text-purple-500 text-sm text-center">{dayLabels.join(", ")}</span>;
+        return <span className="text-purple-500 text-base text-center">{dayLabels.join(", ")}</span>;
     }
 
     return null;
