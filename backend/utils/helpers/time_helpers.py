@@ -1,19 +1,70 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Ajusta horas ambiguas y corrige expresiones temporales en texto.
-# - adjust_ambiguous_hour(dt, now)-> Ajusta horas <12 si corresponde a la tarde/noche.
-# - correct_minus_expressions(text)-> Convierte expresiones tipo "8 menos cinco" a "7:55".
-# - adjust_time_context(dt, text)-> Ajusta la hora según contexto del texto ("mañana", "tarde", etc.)
+# Utilidades para detección y ajuste de expresiones de tiempo en texto.
+# - extract_time_fragment(text) → Extrae fragmentos explícitos de hora en el texto.
+#     • Reconoce formatos numéricos ("a las 5:00", "las 7"), palabras ("cinco de la tarde"),
+#       y contextos horarios ("de la mañana", "por la noche").
+#     • Devuelve el fragmento detectado o None si no hay coincidencias.
+#
+# - adjust_ambiguous_hour(dt, now, text) → Ajusta horas ambiguas sin contexto claro.
+#     • Si la hora ≤ 7 y no hay "mañana/tarde/noche", se interpreta como tarde (suma +12h).
+#     • Si la hora ya pasó respecto a `now`, se corrige al día siguiente o se convierte a formato 24h.
+#     • Devuelve un datetime corregido.
+#
+# - correct_minus_expressions(text) → Corrige expresiones relativas con "menos".
+#     • Ejemplos: "5 menos cuarto" → "4:45", "8 menos diez" → "7:50".
+#     • Adapta al contexto de "de la tarde" para mantener coherencia en 24h.
+#     • Devuelve el texto con la hora reescrita en formato HH:MM.
+#
+# - adjust_time_context(dt, text) → Ajusta el datetime según el contexto horario.
+#     • "de la mañana" → Si no hay hora explícita, fija 09:00.
+#     • "de la tarde" → Si no hay hora, fija 16:00; si hay hora <12, convierte a formato 24h.
+#     • "de la noche" → Si no hay hora, fija 21:00; si hay hora <12, convierte a formato 24h.
+#     • "de la madrugada" → Si no hay hora, fija 03:00.
+#     • Devuelve (datetime ajustado, fragmento usado).
 # ──────────────────────────────────────────────────────────────────────────────
 
+from datetime import timedelta
 import re
-from datetime import datetime, timedelta
-from typing import Tuple
 
-def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
+def extract_time_fragment(text):
+    text_lower = text.lower()
+
+    match = re.search(
+        r"\b(?:a\s+)?la?s?\s*\d{1,2}(?::\d{1,2})?(?:\s*(?:de la|por la)\s+(mañana|tarde|noche|madrugada))",
+        text_lower,
+    )
+    if match:
+        return match.group(0).strip()
+
+    match = re.search(r"\b(?:a\s+)?la?s?\s*\d{1,2}(?::\d{1,2})\b", text_lower)
+    if match:
+        return match.group(0).strip()
+
+    match = re.search(
+        r"\b(?:una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce)"
+        r"(?:\s+y\s+(?:cuarto|media|\d{1,2}))?"
+        r"(?:\s+(?:de la|por la)\s+(mañana|tarde|noche|madrugada))",
+        text_lower,
+    )
+    if match:
+        return match.group(0).strip()
+
+    match = re.search(
+        r"\b(?:de la|por la)\s+(mañana|tarde|noche|madrugada)\b", text_lower
+    )
+    if match:
+        return match.group(0).strip()
+
+    return None
+
+
+def adjust_ambiguous_hour(dt, now, text):
     text = text.lower()
-    hour_matches = re.findall(r'\b(\d{1,2})(?::(\d{2}))?\b', text)
+    hour_matches = re.findall(r"\b(\d{1,2})(?::(\d{2}))?\b", text)
     hour_number = int(hour_matches[-1][0]) if hour_matches else None
-    minute_number = int(hour_matches[-1][1]) if hour_matches and hour_matches[-1][1] else 0
+    minute_number = (
+        int(hour_matches[-1][1]) if hour_matches and hour_matches[-1][1] else 0
+    )
 
     has_morning = "de la mañana" in text or "por la mañana" in text
     has_tarde = "de la tarde" in text or "por la tarde" in text
@@ -23,7 +74,6 @@ def adjust_ambiguous_hour(dt: datetime, now: datetime, text: str):
 
     if hour_number is not None and no_context and hour_number <= 7:
         dt = dt.replace(hour=hour_number + 12, minute=minute_number)
-        print(f"[adjust_ambiguous_hour] ajustando hora ambigua sin contexto → {dt}")
         return dt
 
     if dt < now:
@@ -58,32 +108,40 @@ def correct_minus_expressions(text):
 
         return result
 
-    return re.sub(r"\b(\d{1,2}(?::\d{2})?)\s+menos\s+(\w+)\b", replacement, text, flags=re.IGNORECASE)
+    return re.sub(
+        r"\b(\d{1,2}(?::\d{2})?)\s+menos\s+(\w+)\b",
+        replacement,
+        text,
+        flags=re.IGNORECASE,
+    )
 
 
-def adjust_time_context(dt: datetime, text: str) -> Tuple[datetime, str | None]:
+def adjust_time_context(dt, text):
     text = text.lower()
     used_fragment = None
-    explicit_hour = re.search(r'\b\d{1,2}(:\d{2})?\b', text) is not None
+    explicit_hour = re.search(r"\b\d{1,2}(:\d{2})?\b", text) is not None
 
     if "por la mañana" in text or "de la mañana" in text:
-        used_fragment = "mañana"
+        used_fragment = "de la mañana"
         if not explicit_hour:
             dt = dt.replace(hour=9, minute=0)
+
     elif "por la tarde" in text or "de la tarde" in text:
-        used_fragment = "tarde"
+        used_fragment = "de la tarde"
         if not explicit_hour:
             dt = dt.replace(hour=16, minute=0)
         elif dt.hour < 12:
             dt = dt.replace(hour=dt.hour + 12)
+
     elif "por la noche" in text or "de la noche" in text:
-        used_fragment = "noche"
+        used_fragment = "de la noche"
         if not explicit_hour:
             dt = dt.replace(hour=21, minute=0)
         elif dt.hour < 12:
             dt = dt.replace(hour=dt.hour + 12)
+
     elif "por la madrugada" in text or "de la madrugada" in text:
-        used_fragment = "madrugada"
+        used_fragment = "de la madrugada"
         if not explicit_hour:
             dt = dt.replace(hour=3, minute=0)
 

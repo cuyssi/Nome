@@ -56,13 +56,13 @@ export const InfoModal = ({
             >
                 <ButtonClose onClick={onClose} />
 
-                <div className="mb-10 mt-8 text-base font-poppins p-2">{children}</div>
+                <div className="mb-7 mt-10 text-base font-poppins">{children}</div>
 
                 {!hideInternalFooter && (
                     <ButtonDefault
                         onClick={onNeverShowAgain}
                         text="No mostrar más"
-                        className="bg-transparent text-red-400 fixed bottom-3 right-2"
+                        className="bg-transparent text-red-400 fixed bottom-2 right-2"
                     />
                 )}
             </div>

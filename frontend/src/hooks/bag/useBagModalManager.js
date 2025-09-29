@@ -62,7 +62,7 @@ export const useBagModalManager = () => {
         const normalizedName = bagName.toLowerCase();
         const bag = bagsList.find((b) => b.name.toLowerCase() === normalizedName);
         if (!bag) return;
-        openModalWithBag(bag, bag.name === "Escolar" ? "school" : "items");
+        openModalWithBag(bag, bag.name === "Clase" ? "school" : "items");
     };
 
     return {

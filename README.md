@@ -75,7 +75,7 @@ Cada tarea se guarda en el apartado correspondiente, y el sistema permite visual
 
 - Los usuarios pueden configurar su **horario escolar**.  
 - La sección Mochilas genera automáticamente recordatorios diarios a las 20:00 mostrando los **items del día siguiente** con checklists.  
-- Mochilas predeterminadas: `Escolar`, `Gimnasio`, `Piscina`, `Playa`.  
+- Mochilas predeterminadas: `Clase`, `Gimnasio`, `Piscina`, `Playa`.  
 - Se pueden crear mochilas **personalizadas**, editando:  
   - Color de la mochila  
   - Items de la lista  

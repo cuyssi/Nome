@@ -36,7 +36,11 @@ export const stepsBags = {
         {
             title: "Mochilas",
             content: (
-                <p>En esta sección puedes crear mochilas personalizadas para organizar lo que necesitas preparar...</p>
+                <p className="text-justify">
+                    En esta sección podrás crear mochilas personalizadas para diferentes eventos. Tras configurar una
+                    hora, te llegara una notificación para recordarte que tienes que hacerla y te mostrará el contenido
+                    para que no se te olvide nada.
+                </p>
             ),
             position: { top: "50%", left: "50%" },
             highlight: {
@@ -48,12 +52,14 @@ export const stepsBags = {
             },
         },
     ],
-    escolar: [
+    clase: [
         {
-            title: "Mochila escolar",
+            title: "Mochila clase",
             content: (
-                <p>Se genera automáticamente cada día con tus asignaturas del día siguiente...Cuando termines el tutorial, edítala
-                y fija la hora a la que quieres que te llegue la notificación.</p>
+                <p>
+                    Se genera automáticamente cada día con tus asignaturas del día siguiente...Cuando termines el
+                    tutorial, edítala y fija la hora a la que quieres que te llegue la notificación.
+                </p>
             ),
             position: { top: "50%", left: "50%" },
             highlight: {
@@ -70,7 +76,7 @@ export const stepsBags = {
             title: "Crea tu mochila",
             content: (
                 <p>
-                    Pulsa <span className="font-bold text-purple-400">“Crear mochila”</span> para crear mochilas
+                    Pulsando <span className="font-bold text-purple-400">“Crear mochila”</span> podrás crear mochilas
                     nuevas...
                 </p>
             ),
@@ -117,9 +123,9 @@ export const stepsBags = {
         {
             title: "Elimina mochilas",
             content: (
-                <div>
+                <div className="text-justify">
                     <p>Si ya no necesitas una mochila, deslízala a la derecha para borrarla...</p>
-                    <p className="font-bold text-red-400 text-xs mt-2">*La mochila escolar no se puede eliminar</p>
+                    <p className="font-bold text-green-600 text-sm mt-4">*La mochila Clase no se puede eliminar</p>
                 </div>
             ),
             position: { top: "50%", left: "50%" },
@@ -140,11 +146,11 @@ export const stepsCalendar = [
         title: "Tu calendario",
         content: (
             <div>
-                <p>
-                    Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas las
-                    tareas están completadas.
+                <p className="text-justify">
+                    Aquí puedes ver tus tareas organizadas por día. Los puntos de color verde o rojo indican si todas
+                    las tareas están completadas.
                 </p>
-                <p className="text-red-400 text-xs mt-2">
+                <p className="text-green-600 text-sm mt-4">
                     * Si aún no tienes ninguna tarea creada no verás ningún punto.
                 </p>
             </div>
@@ -154,12 +160,12 @@ export const stepsCalendar = [
     {
         title: "Consulta tus tareas",
         content: (
-            <div>
+            <div className="text-justify">
                 <p>
-                    Pincha en el día en donde creaste la tarea anteriormente. Se abrirá un panel donde puedes ver la tarea y
-                    editarla.
+                    Pincha en el día en donde creaste la tarea anteriormente. Se abrirá un panel donde puedes ver la
+                    tarea y editarla.
                 </p>
-                <p className="text-red-400 text-xs mt-2">
+                <p className="text-green-600 text-xs mt-4">
                     * Si no puedes ver el día con la tarea puedes mover esta ventana deslizandola con el dedo.
                 </p>
             </div>
@@ -168,22 +174,23 @@ export const stepsCalendar = [
     },
     {
         title: "Marca como completada",
-        content: (
-            <p>
-                El punto del calendario se volverá verde si todas
-                están completas.
-            </p>
-        ),
+        content: <p>El punto del calendario se volverá verde si todas las tareas para ese día están completas.</p>,
         position: { top: "50%", left: "50%" },
     },
     {
         title: "Repeticiones inteligentes",
         content: (
-            <p>
-                Las tareas pueden repetirse:
-                <span className="italic text-purple-400"> diariamente, entre semana o en días personalizados.</span> Nome las mostrará
-                automáticamente según tu configuración.
-            </p>
+            <div>
+                <p>
+                    Las tareas pueden repetirse:
+                    <span className="italic text-purple-400 text-sm">
+                        {" "}
+                        <br></br>todos los días, entre semana, fines de semana o en días personalizados.
+                    </span>
+                </p>
+
+                <p className="mt-4">Se mostrarán en el calendario automáticamente según tu configuración.</p>
+            </div>
         ),
         position: { top: "50%", left: "50%" },
     },
@@ -195,11 +202,15 @@ export const stepsDates = {
             title: "Citas personales",
             content: (
                 <div className="text-justify">
-                    Aquí se mostrarán todas tus citas que contengan expresiones como{" "}
+                    <p>Aquí se mostrarán todas tus citas que contengan expresiones como:</p>
                     <span className="italic text-purple-600">“quedé”, “me veré con”, “tengo una cita con”</span>.
-                    <div className="italic text-gray-400 text-sm mt-4">
+                    <p className="italic text-gray-400 text-sm mt-4">
                         Ej. Mañana quedé con Marcos a las cinco y media de la tarde en la plaza.
-                    </div>
+                    </p>
+                    <p className="text-green-600 text-sm mt-8">
+                        * Todas las citas con repetición (Los martes y miercoles, los fines de semana, todos los
+                        dias...etc) se considerarán de tipo "Cita"
+                    </p>
                 </div>
             ),
             position: { top: "50%", left: "50%" },
@@ -208,19 +219,21 @@ export const stepsDates = {
             title: "Cómo gestionar tus citas",
             content: (
                 <div className="text-justify">
-                    Desliza hacia la izquierda para <span className="text-orange-400">editar</span>, hacia la derecha
-                    para <span className="text-red-600">eliminar</span>. Mantén pulsado para marcar como{" "}
-                    <span className="text-green-400">completada</span>.
-                    <div className="mt-4">
-                        Al editar, puedes cambiar el color, la fecha, la hora, configurar repeticiones o ajustar la
+                    <p>
+                        Desliza hacia la izquierda para <span className="text-orange-400">editar</span>, hacia la
+                        derecha para <span className="text-red-600">eliminar</span>. Mantén pulsado para marcar como{" "}
+                        <span className="text-green-400">completada</span>.
+                    </p>
+                    <p className="mt-4">
+                        Al editar, puedes cambiar el color, fecha, hora, configurar repeticiones o ajustar la
                         notificación.
-                    </div>
+                    </p>
                 </div>
             ),
             position: { top: "50%", left: "50%" },
         },
     ],
-    medico: [
+    médicos: [
         {
             title: "Citas médicas",
             content: (
@@ -253,20 +266,21 @@ export const stepsHome = [
     {
         title: "¡Bienvenido a Nome!",
         content: (
-            <>
+            <div className="text-justify">
                 <p>
                     Esta es tu pantalla principal. Aquí verás tus tareas, podrás grabar nuevas y acceder a todo lo
                     importante.
                 </p>
 
-                <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-                    <Bell className="w-6 h-6 text-green-600" />
-                    <span>Si no lo está ya, activa las notificaciones pulsando en el icono.</span>
-                </div>
-                <p className="text-red-400 text-xs mt-4">
-                    * Si en algún momento te molesta esta ventana puedes moverla arrastrandola a donde quieras 😉
+                <p className="mt-4 flex items-center gap-2 text-sm text-gray-600">
+                    <Bell className="w-8 h-8 text-green-600" />
+                    <span>Si no lo está ya (icono en verde), activa las notificaciones pulsando en el icono.</span>
                 </p>
-            </>
+                <p className="text-green-600 text-sm mt-8">
+                    * Si en algún momento te molesta esta ventana, puedes moverla con el dedo, arrástrala a donde
+                    quieras 😉
+                </p>
+            </div>
         ),
         position: { top: "50%", left: "50%" },
         highlight: {
@@ -277,18 +291,18 @@ export const stepsHome = [
     {
         title: "Vamos a probar algo",
         content: (
-            <>
+            <div className="text-justify">
                 <p>
                     Pulsa el botón morado <Mic className="inline w-6 h-6 text-purple-600" /> y di:
-                    <span className="italic text-red-400"> "Quedé con Marcos en las canchas a las 9"</span>. Luego,
-                    vuelve a presionarlo para parar la grabación.
+                    <span className="italic text-purple-600"> "Quedé con Marcos en las canchas a las 9"</span>. Vuelve a
+                    presionarlo para detener la grabación.
                 </p>
 
-                <p className="w-full mt-4 text-xs text-red-400">
+                <p className="w-full mt-4 text-sm text-green-600">
                     También puedes añadir tareas a mano tocando el icono del lápiz{" "}
                     <SquarePen className="inline w-4 h-4 text-blue-600" />
                 </p>
-            </>
+            </div>
         ),
         position: { top: "32%", left: "50%" },
         highlight: {
@@ -303,9 +317,9 @@ export const stepsHome = [
     {
         title: "¡Perfecto!",
         content: (
-            <p>
+            <p className="text-justify">
                 Ahora podrás ver tus citas en <Notebook className="inline w-4 h-4 text-purple-600" /> (abajo a la
-                izquierda), pero espera no vaya ahí todavía, continuemos...pulsa en siguiente
+                izquierda), pero espera no vayas ahí todavía, continuemos... Pulsa en siguiente.
             </p>
         ),
         position: { top: "61%", left: "50%" },
@@ -321,10 +335,9 @@ export const stepsHome = [
     {
         title: "Organiza tus deberes",
         content: (
-            <p>
-                En el botón <NotebookPen className="inline text-purple-400" />
-                "Deberes" puedes añadir tareas como “deberes”, "trabajo" o "examen". Aquí va todo lo relacionado con los
-                trabajos escolares.
+            <p className="text-justify">
+                En el botón <NotebookPen className="inline text-purple-400" /> "Deberes" puedes añadir tareas como
+                “deberes”, "trabajo" o "examen". Aquí va todo lo relacionado con los trabajos escolares.
             </p>
         ),
         position: { top: "63%", left: "50%" },
@@ -339,7 +352,7 @@ export const stepsHome = [
     {
         title: "Horario",
         content: (
-            <p>
+            <p className="text-justify">
                 Aquí podrás meter tu horario de clase. La app lo consulta para avisarte con una notificación de lo que
                 tienes que meter en la mochila <Backpack className="inline text-purple-600" /> para el día siguiente.
             </p>
@@ -356,9 +369,9 @@ export const stepsHome = [
     {
         title: "Tareas para hoy",
         content: (
-            <p className="text-sm">
-                Aquí podrás ver las tareas que tienes para hoy, cuáles están pendientes y cuáles completadas. Puedes
-                pinchar en cada categoría para verlas.
+            <p className="text-justify">
+                Aquí podrás ver el total de las tareas que tienes para hoy, cuáles están pendientes todavía y cuáles
+                completadas. Puedes pinchar en cada categoría para consultarlas.
             </p>
         ),
         position: { top: "78%", left: "50%" },
@@ -423,8 +436,8 @@ export const stepsSchedule = [
         content: (
             <div>
                 <p>
-                    Nome consulta tu horario para preparar automáticamente la mochila escolar del día siguiente. ¡Así no
-                    se te olvida nada!
+                    Nome consulta tu horario para preparar automáticamente la mochila de clase del día siguiente. ¡Así
+                    no se te olvida nada!
                 </p>
                 <div className="mt-4 flex items-center gap-2 justify-center text-sm text-gray-600">
                     <Backpack className="w-5 h-5 text-purple-500" />
@@ -452,7 +465,7 @@ export const stepsTasks = {
             position: { top: "55%", left: "50%" },
         },
     ],
-    trabajo: [
+    trabajos: [
         {
             title: "Trabajos",
             content: (
@@ -466,7 +479,7 @@ export const stepsTasks = {
             position: { top: "55%", left: "50%" },
         },
     ],
-    examenes: [
+    exámenes: [
         {
             title: "Exámenes",
             content: (

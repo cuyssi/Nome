@@ -95,6 +95,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                             { value: "once", label: "Una sola vez" },
                             { value: "daily", label: "Todos los días" },
                             { value: "weekdays", label: "De lunes a viernes" },
+                            { value: "weekend", label: "Solo fines de semana" },
                             { value: "custom", label: "Personalizado" },
                         ]}
                         onChange={handleChange}

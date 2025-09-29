@@ -24,9 +24,11 @@ import { notifyBackend, cancelTaskBackend } from "../../services/notifyBackend";
 import { buildReminderUrl } from "../../utils/buildReminderUrl";
 import { toLocalDateTimeString } from "../../utils/dateUtils";
 import { calculateReminderDateTime } from "../../utils/calculateReminder";
+import { DAYS_TO_NUMBER } from "../../utils/constants";
 
 export const useBag = () => {
     const { addBag: baseAddBag, updateBag: baseUpdateBag, deleteBag: baseDeleteBag } = useBagsStore();
+
     const scheduleNotification = async (bag) => {
         const deviceId = localStorage.getItem("deviceId");
         const localDate = calculateReminderDateTime(bag);
@@ -35,10 +37,14 @@ export const useBag = () => {
 
         if (!deviceId) return console.log("❌ No hay deviceId, saliendo");
 
+        const notifyDaysIndices = (bag.notifyDays || [])
+            .map((day) => DAYS_TO_NUMBER[day])
+            .filter((i) => i !== undefined);
+
         try {
             await notifyBackend(
                 bag.id,
-                `📚 Recordatorio de mochila: ${bag.name}`,
+                `🎒 Prepara tu mochila de ${bag.name}!`,
                 dateTimeString,
                 deviceId,
                 "bag",
@@ -46,7 +52,7 @@ export const useBag = () => {
                 url,
                 bag.notifyDayBefore || false,
                 "custom",
-                bag.notifyDays || []
+                notifyDaysIndices
             );
         } catch (e) {
             console.error("❌ Error en notifyBackend:", e);

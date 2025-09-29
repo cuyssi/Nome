@@ -3,7 +3,7 @@
  *                                                                              │
  * Funcionalidad:                                                               │
  *   • Muestra el nombre de la bolsa.                                           │
- *   • Permite acciones de editar o eliminar (si no es la "Escolar").           │
+ *   • Permite acciones de editar o eliminar (si no es la mochila "Clase").     │
  *   • Usa useCard para manejar gestos de arrastre y animaciones.               │
  *   • Colores y animaciones cambian según dirección y fuerza del gesto.        │
  *                                                                              │
@@ -18,7 +18,7 @@ import { SwipeCard } from "../commons/SwipeCard";
 import { SwipeAction } from "../commons/SwipeAction";
 
 export const Bag_card = ({ bag, onDelete, onOpenModal }) => {
-    const isSchoolBag = bag.name === "Escolar";
+    const isSchoolBag = bag.name === "Clase";
     const {
         gestureHandlers,
         state: { dragOffset, isRemoving, isDragging },

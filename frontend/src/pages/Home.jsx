@@ -28,7 +28,6 @@ export const Home = () => {
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("home"));
 
-
     return (
         <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-black">

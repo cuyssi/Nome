@@ -43,12 +43,17 @@ export const useCalendarTasks = () => {
         return tasks.filter((task) => {
             const taskStartDate = new Date(task.dateTime);
             const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-            const startDateOnly = new Date(taskStartDate.getFullYear(), taskStartDate.getMonth(), taskStartDate.getDate());
+            const startDateOnly = new Date(
+                taskStartDate.getFullYear(),
+                taskStartDate.getMonth(),
+                taskStartDate.getDate()
+            );
 
             if (dateOnly < startDateOnly) return false;
             if (task.repeat === "once") return toLocalYMD(taskStartDate) === dateStr;
             if (task.repeat === "daily") return true;
             if (task.repeat === "weekdays") return day >= 1 && day <= 5;
+            if (task.repeat === "weekend") return day === 0 || day === 6;
             if (task.repeat === "custom") {
                 const customIndex = day === 0 ? 6 : day - 1;
                 return task.customDays?.includes(customIndex);

@@ -1,7 +1,8 @@
 # ──────────────────────────────────────────────────────────────────────────────
 # Endpoints de notificaciones push.
 # - /vapid-public-key → Devuelve la clave pública VAPID para suscripción.
-# - /subscribe → Registra la suscripción push de un dispositivo.
+# - /subscribe → Registra la suscripción push de un dispositivo, para poder enviarle
+#   notificaciones.
 # - /unsubscribe → Elimina la suscripción push asociada a un endpoint.
 # - /schedule-task → Programa una tarea con notificación.
 # - /cancel-task → Cancela una tarea programada y su notificación.
@@ -61,6 +62,7 @@ async def unsubscribe(request: Request):
 @router.post("/schedule-task")
 async def schedule_task(request: Request):
     task = await request.json()
+    print("📥 Task recibida:", task)
 
     if "text" not in task or "dateTime" not in task:
         raise HTTPException(status_code=400, detail="Faltan text o dateTime")

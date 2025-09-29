@@ -19,6 +19,7 @@
 
 import { useState, useEffect } from "react";
 import { buildDateTimeFromManual } from "../../utils/dateUtils";
+import { FULL_WEEKDAYS_NUM } from "../../utils/constants";
 
 function parseDateForInput(dateStr) {
     if (!dateStr) return "";
@@ -77,6 +78,21 @@ export function useTaskForm(task, onSubmit) {
     const buildFinalTask = (originalTask = {}) => {
         const fullHour = `${formData.hour}:${formData.minute}`;
         const dateTime = buildDateTimeFromManual(formData.date, fullHour);
+        const numericCustomDays = formData.customDays || [];
+
+        let repeat;
+        if (numericCustomDays.length === 0) {
+            repeat = "once";
+        } else if (
+            FULL_WEEKDAYS_NUM.every((d) => numericCustomDays.includes(d)) &&
+            numericCustomDays.length === FULL_WEEKDAYS_NUM.length
+        ) {
+            repeat = "weekdays";
+        } else if (numericCustomDays.length === 2 && numericCustomDays.includes(5) && numericCustomDays.includes(6)) {
+            repeat = "weekend";
+        } else {
+            repeat = "custom";
+        }
 
         return {
             ...originalTask,
@@ -88,8 +104,8 @@ export function useTaskForm(task, onSubmit) {
             color: formData.color,
             type: formData.type,
             dateTime,
-            repeat: formData.repeat,
-            customDays: formData.customDays,
+            repeat,
+            customDays: repeat === "custom" ? numericCustomDays : [],
             reminder: formData.reminder,
             notifyDayBefore: formData.notifyDayBefore,
         };

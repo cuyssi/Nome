@@ -4,13 +4,10 @@
  *
  * Funcionalidad:
  *   • Mantiene el estado local de mochilas.
- *   • Incluye siempre una mochila "Escolar" que no se puede borrar.
+ *   • Incluye siempre una mochila "Clase" que no se puede borrar.
  *   • Acciones CRUD: addBag, updateBag, deleteBag (con protección).
  *   • Flag isTomorrowBagComplete para control de estado adicional.
  *
- * Nota:
- *   - La lógica de notificaciones (notifyBackend, cancelTaskBackend) NO está aquí,
- *     vive en useBag.js para mantener DRY.
  *
  * Autor: Ana Castro
  * ──────────────────────────────────────────────────────────────────────────────
@@ -20,8 +17,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const DEFAULT_BAG = {
-  id: "default-escolar",
-  name: "Escolar",
+  id: "default-clase",
+  name: "Clase",
   color: "red-400",
   capacity: 20,
   items: {

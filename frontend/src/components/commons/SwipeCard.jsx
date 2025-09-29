@@ -28,7 +28,7 @@ export const SwipeCard = ({
     children,
 }) => {
     return (
-        <div className="relative w-full min-h-[6rem] overflow-hidden rounded-xl">
+        <div className="relative flex-shrink-0 w-full min-h-[6rem] overflow-hidden rounded-xl">
             <div
                 className={`absolute inset-0 w-full z-0 flex items-center justify-between rounded-xl transition-colors duration-150 ease-in ${getDragColor(
                     dragOffset

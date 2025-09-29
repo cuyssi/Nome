@@ -6,7 +6,7 @@
  *       – "create" → CreateBag: crear nueva mochila.                                          │
  *       – "edit" → EditBag: editar mochila existente.                                         │ 
  *       – "items" → BagItems: ver y marcar items de la mochila.                               │
- *       – "school" → TomorrowSubjects: gestionar asignaturas de la mochila escolar.           │
+ *       – "school" → TomorrowSubjects: gestionar asignaturas de la mochila de clase.           │
  *   • Muestra un mensaje de confirmación si `showConfirmation` es true y no es modo "school". │
  *                                                                                             │
  * Props:                                                                                      │ 

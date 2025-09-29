@@ -9,18 +9,23 @@
 #     • Si notifyDayBefore está activo, programa una notificación adicional el día anterior.
 # ──────────────────────────────────────────────────────────────────────────────
 
-import threading
 from dateutil.parser import isoparse
 from datetime import datetime, timedelta
 from services.notifications.utils import calcular_delay
 from services.notifications.push import send_push_notification
 from services.notifications.storage import save_data
-from api.notifications.subscriptions import subscriptions, scheduled_tasks, active_timers, task_lock
+import threading
 import asyncio
+
+from api.notifications.subscriptions import (
+    subscriptions,
+    scheduled_tasks,
+    active_timers,
+    task_lock,
+)
 
 
 def cancelar_timer_existente(task):
-    """Cancelar cualquier timer activo asociado a una tarea concreta."""
     with task_lock:
         for timer in list(active_timers):
             if timer.args and isinstance(timer.args[0], dict):
@@ -28,13 +33,12 @@ def cancelar_timer_existente(task):
                 if t["id"] == task.get("id") and t["deviceId"] == task.get("deviceId"):
                     timer.cancel()
                     active_timers.remove(timer)
+                    print("\033[95m🛑 Cancelando timers\033[0m")
                     break
 
 
 def reprogram_if_repeating(task):
-    """Si la tarea o mochila es repetitiva, calcula la próxima fecha y la reprograba."""
     repeat = task.get("repeat") or "once"
-
     current_dt = isoparse(task["dateTime"])
     next_dt = None
 
@@ -49,6 +53,11 @@ def reprogram_if_repeating(task):
         while next_dt.weekday() > 4:
             next_dt += timedelta(days=1)
 
+    elif repeat == "weekend":
+        next_dt = current_dt + timedelta(days=1)
+        while next_dt.weekday() < 4:
+            next_dt += timedelta(days=1)
+
     elif repeat == "custom":
         custom_days = task.get("customDays", [])
         if not custom_days:
@@ -59,19 +68,14 @@ def reprogram_if_repeating(task):
 
     if next_dt:
         task["dateTime"] = next_dt.isoformat()
-        print(f"📆 Próxima fecha calculada para '{task.get('title') or task.get('name')}': {next_dt}")
-
         schedule_notification(task)
         save_data(subscriptions, scheduled_tasks)
-
-        print(f"🔁 '{task.get('title') or task.get('name')}' reprogramada para {next_dt.strftime('%A %H:%M')}")
         return True
 
     return False
 
 
 def notify_device(task):
-    """Enviar la notificación push al dispositivo y gestionar su ciclo de vida."""
     try:
         with task_lock:
             device_id = task.get("deviceId")
@@ -82,16 +86,19 @@ def notify_device(task):
 
             tipo = task.get("type", "task")
             is_daybefore = task.get("isDayBefore", False)
-            title = "⏱️ Recordatorio de mochila" if tipo == "bag" else "⏱️ Recordatorio de tarea"
+            title = "Recuerda:" if tipo == "bag" else "⏱️ Recordatorio de tarea"
 
             if is_daybefore:
                 dt_original = isoparse(task.get("originalDateTime", task["dateTime"]))
                 hora_formateada = dt_original.strftime("%H:%M")
                 body = f"Recuerda que mañana tienes '{task['title']}' a las {hora_formateada}"
-                url = "/dates"
+                url = task.get("data", {}).get("url", "/dates")
             else:
-                body = f'Tu tarea "{task["title"]}" es en {task.get("notifyMinutesBefore", 15)} minutos'
-                url = "/today"
+                if task.get("type") == "bag":
+                    body = task["title"]
+                else:
+                    body = f'Tu tarea "{task["title"]}" es en {task.get("notifyMinutesBefore", 15)} minutos'
+                url = task.get("data", {}).get("url", "/today")
 
             payload = {"title": title, "body": body, "data": {"url": url}}
             send_push_notification(subscription, payload)
@@ -111,6 +118,11 @@ def notify_device(task):
 
             was_reprogrammed = reprogram_if_repeating(task)
 
+            if task.get("_reprogram_later"):
+                task["_reprogram_later"] = False
+                print(f"[INFO] Reprogramando tarea lejana {task_id}")
+                schedule_notification(task)
+
             save_data(subscriptions, scheduled_tasks)
 
             for timer in list(active_timers):
@@ -126,8 +138,19 @@ def notify_device(task):
         print(f"❌ Error en notify_device para {task.get('id')}: {e}")
 
 
+def reprogram_all_tasks():
+    for device_id, tasks in scheduled_tasks.items():
+        if device_id in subscriptions:
+            for task in tasks:
+                repeat = task.get("repeat", "once")
+                task_dt = isoparse(task["dateTime"])
+                if repeat != "once" and task_dt < datetime.now(task_dt.tzinfo):
+                    reprogram_if_repeating(task)
+                schedule_notification(task)
+    print("\033[96m🔄 Reprogramadas todas las notificaciones tras suspensión\033[0m")
+
+
 def schedule_notification(task):
-    """Programar una tarea con su timer y opcionalmente con notificación de día antes."""
     device_id = task.get("deviceId")
     if not device_id:
         return
@@ -148,6 +171,17 @@ def schedule_notification(task):
 
     delay = calcular_delay(task["dateTime"], notify_minutes_before)
     if delay is not None:
+        MAX_TIMEOUT = 7 * 24 * 3600
+        if delay > MAX_TIMEOUT:
+            print(
+                f"[INFO] Delay demasiado grande ({delay}s), se limita a {MAX_TIMEOUT}s"
+            )
+            delay = MAX_TIMEOUT
+
+            task["_reprogram_later"] = True
+        else:
+            task["_reprogram_later"] = False
+
         timer = threading.Timer(delay, notify_device, args=[task])
         timer.start()
         active_timers.append(timer)
@@ -160,7 +194,9 @@ def schedule_notification(task):
         )
 
         if fecha_anticipada < datetime.now(fecha_anticipada.tzinfo):
-            fecha_anticipada = datetime.now(fecha_anticipada.tzinfo) + timedelta(seconds=5)
+            fecha_anticipada = datetime.now(fecha_anticipada.tzinfo) + timedelta(
+                seconds=5
+            )
 
         task_daybefore = {
             "id": f"{task['id']}-daybefore",
@@ -175,7 +211,7 @@ def schedule_notification(task):
             "repeat": "once",
         }
 
-        base_id = task['id']
+        base_id = task["id"]
         for t in list(scheduled_tasks[device_id]):
             if t.get("id") == f"{base_id}-daybefore":
                 cancelar_timer_existente(t)
@@ -186,7 +222,9 @@ def schedule_notification(task):
 
         delay_daybefore = calcular_delay(task_daybefore["dateTime"], 0)
         if delay_daybefore is not None:
-            timer_daybefore = threading.Timer(delay_daybefore, notify_device, args=[task_daybefore])
+            timer_daybefore = threading.Timer(
+                delay_daybefore, notify_device, args=[task_daybefore]
+            )
             timer_daybefore.start()
             active_timers.append(timer_daybefore)
             task_daybefore["timer"] = timer_daybefore

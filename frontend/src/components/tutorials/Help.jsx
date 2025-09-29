@@ -24,6 +24,7 @@ import { InfoModal } from "./InfoModal";
 import { stepsTasks, stepsCalendar, stepsBags, stepsDates, stepsSettings } from "./tutorials";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
 import { MoveLeft } from "lucide-react";
+
 const sections = {
     calendar: {
         label: "Calendario",
@@ -37,9 +38,9 @@ const sections = {
                 label: "Mochilas",
                 steps: stepsBags.mochilas || [],
             },
-            escolar: {
-                label: "Mochila escolar",
-                steps: stepsBags.escolar || [],
+            clase: {
+                label: "Mochila clase",
+                steps: stepsBags.clase || [],
             },
             crear: {
                 label: "Crea tu mochila",

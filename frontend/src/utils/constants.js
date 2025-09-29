@@ -41,8 +41,8 @@ export const PREDEFINED_BAGS = [
         color: "green-400",
         type: "personalizada",
         items: ["Toalla", "Proteína", "Zapatillas", "Botella"],
-        notifyDays: ["T", "J"],
-        notifyTime: "19:00",
+        notifyDays: ["L", "M", "X", "J", "V"],
+        notifyTime: "20:00",
     },
     {
         name: "Playa",
@@ -68,6 +68,8 @@ export const FULL_DAYS = {
     X: "Miércoles",
     J: "Jueves",
     V: "Viernes",
+    S: "Sábado",
+    D: "Domingo",
 };
 
 export const DAYS = [
@@ -80,6 +82,18 @@ export const DAYS = [
     { key: "D", label: "D" },
 ];
 
-export const DEFAULT_HOURS = [
-  "08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"
-];
+export const DAYS_TO_NUMBER = {
+    L: 0,
+    M: 1,
+    X: 2,
+    J: 3,
+    V: 4,
+    S: 5,
+    D: 6,
+};
+
+export const FULL_WEEKDAYS_NUM = [0, 1, 2, 3, 4];
+
+const DAYS_INDEX_TO_KEY = ["D", "L", "M", "X", "J", "V", "S"];
+
+export const DEFAULT_HOURS = ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"];

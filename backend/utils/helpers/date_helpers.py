@@ -10,9 +10,10 @@
 # ────────────────────────────────────────────────────────────────
 
 from datetime import datetime, timedelta
-from constants.weekday_map import WEEKDAY_MAP
+from dateparser.search import search_dates
+from constants.constants import WEEKDAY_MAP, WEEKDAYS, WORKDAYS, WEEKEND
 import re
-from typing import Tuple
+
 
 def is_today(dt):
     if not dt:
@@ -22,36 +23,110 @@ def is_today(dt):
     return result
 
 
-def adjust_weekday_forward(dt: datetime, text: str, now: datetime) -> Tuple[datetime, str | None]:
+def parse_day_reference(text, base):
+    base = base or datetime.now()
+    match_full = re.search(
+        r"\b(?:para\s+)?(?:el\s+)?día\s+(\d{1,2})\s+de\s+([a-záéíóú]+)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    if match_full:
+        frag = match_full.group(0)
+        result = search_dates(frag, languages=["es"], settings={"RELATIVE_BASE": base})
+        if result:
+            _, dt_candidate = result[0]
+            if dt_candidate < base:
+                dt_candidate = dt_candidate.replace(year=dt_candidate.year + 1)
+            return dt_candidate, frag
+
+    match_day_only = re.search(
+        r"\b(?:para\s+)?(?:el\s+)?día\s+(\d{1,2})\b", text, flags=re.IGNORECASE
+    )
+    if match_day_only:
+        day = int(match_day_only.group(1))
+        month = base.month
+        year = base.year
+        if day < base.day:
+            if month == 12:
+                month = 1
+                year += 1
+            else:
+                month += 1
+        dt_candidate = base.replace(year=year, month=month, day=day, hour=15, minute=30)
+        return dt_candidate, match_day_only.group(0)
+
+    match_full_date = re.search(
+        r"\b(?:para\s+)?(el|la)?\s*(\d{1,2})\s+de\s+([a-záéíóú]+)\b",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if match_full_date:
+        frag = match_full_date.group(0)
+        result = search_dates(frag, languages=["es"], settings={"RELATIVE_BASE": base})
+        if result:
+            _, dt_candidate = result[0]
+            return dt_candidate, frag
+
+    return None, None
+
+
+def detect_relative_day(text, base):
+    text_lower = text.lower()
+
+    if "pasado mañana" in text_lower:
+        return base + timedelta(days=2), "pasado mañana"
+
+    if re.search(r"\bmañana\b", text_lower) and "pasado mañana" not in text_lower:
+        if not re.search(r"(de|por)\s+la\s+mañana", text_lower):
+            return base + timedelta(days=1), "mañana"
+
+    if "hoy" in text_lower:
+        return base, "hoy"
+
+    return None, None
+
+
+def adjust_weekday_forward(dt, text, now):
     task_type_override = None
+    day_fragment = None
+
     for day_word, target_weekday in WEEKDAY_MAP.items():
-        if re.search(rf"\b{day_word}\b", text, flags=re.IGNORECASE):
+        match = re.search(
+            rf"\b((?:el|este|esta|próximo|pasado)\s+){day_word}\b",
+            text,
+            flags=re.IGNORECASE,
+        )
+        if match:
             days_ahead = (target_weekday - now.weekday()) % 7
             if days_ahead == 0 and dt < now:
                 days_ahead = 7
             new_date = now + timedelta(days=days_ahead)
             dt = dt.replace(year=new_date.year, month=new_date.month, day=new_date.day)
 
-            if re.search(r"\b(el|este|esta)\s+" + day_word + r"\b", text, flags=re.IGNORECASE):
-                task_type_override = "cita"
+            day_fragment = match.group(0)
+            task_type_override = "cita"
             break
 
-    return dt, task_type_override
+    return dt, task_type_override, day_fragment
 
 
-def extract_custom_days(text: str):
+def extract_custom_days(text):
+    text_lower = text.lower()
 
-    from constants.weekday_map import WEEKDAY_MAP
-    import re
+    if "todos los días" in text_lower or "cada día" in text_lower:
+        return "daily", [], "todos los días"
+    if "entre semana" in text_lower:
+        return "weekdays", [0, 1, 2, 3, 4], "entre semana"
+    if "los fines de semana" in text_lower or "el fin de semana" in text_lower:
+        return "weekend", [5, 6], "los fines de semana"
 
-    text = text.lower()
+    pattern = r"\b(" + "|".join(WEEKDAYS) + r")\b"
+    matches = re.findall(pattern, text_lower)
 
-    if not re.search(r"\b(cada|todos|todas)\b", text):
-        return []
+    if matches:
+        custom_days = sorted({WEEKDAY_MAP[day] for day in matches})
+        repeat_fragment = " ".join(dict.fromkeys(matches))
+        return "custom", custom_days, repeat_fragment
 
-    custom_days = []
-    for dia, idx in WEEKDAY_MAP.items():
-        if re.search(rf"\b{dia}\b", text):
-            custom_days.append(idx)
-
-    return sorted(list(set(custom_days)))
+    return "once", [], None

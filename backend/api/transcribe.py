@@ -1,16 +1,24 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Endpoint para transcripción de audio y creación de tarea que se envía al frontend.
-# - Recibe archivos de audio y devuelve texto transcrito limpio
-# - Detecta fecha y hora mencionadas en el audio
-# - Determina si la tarea corresponde a hoy
-# - Clasifica el tipo de tarea mediante lógica centralizada
+# Endpoint para transcripción de audio y creación de tarea enviada al frontend.
+# - Recibe archivos de audio y devuelve un JSON con:
+#     • text_raw → texto transcrito original
+#     • text → texto limpio y normalizado
+#     • datetime, hour, minutes → fecha y hora detectadas
+#     • type → tipo de tarea (cita, médicos, deberes, etc.)
+#     • isToday → indica si la tarea es para hoy
+#     • repeat → patrón de repetición de la tarea
+#     • customDays → días personalizados para repetición
+#     • uuid → identificador único de la tarea
+# - Detecta fecha y hora mencionadas en el audio y combina los datos
+# - Clasifica la tarea según tipo y repetición
 #
-# @author: Ana Castro
+# @autor: Ana Castro
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 from fastapi import APIRouter, File, UploadFile
 from services.vosk_engine import transcribe_audio_file
-from services.date_parser import combine_date_and_time
+from services.prepare_task_data import prepare_task_data
 from utils.helpers.date_helpers import is_today
 
 router = APIRouter()
@@ -19,7 +27,7 @@ router = APIRouter()
 async def transcribe_audio(file: UploadFile = File(...)):
     text_raw = await transcribe_audio_file(file)
 
-    result = combine_date_and_time(text_raw)
+    result = prepare_task_data(text_raw)
 
     response = {
         "text_raw": text_raw,
@@ -34,13 +42,5 @@ async def transcribe_audio(file: UploadFile = File(...)):
         "repeat": result["repeat"],
         "customDays": result["customDays"],
     }
-
-    print(f"Transcribe raw: {text_raw}")
-    print(f"Texto limpio: {result['text']}")
-    print(f"Datetime: {result['datetime']}")
-    print(f"Hour: {result['time']}, Is today: {response['isToday']}")
-    print(f"Tipo: {result['type']}, UUID: {result['uuid']}")
-    print(f"repeat: {result['repeat']}")
-    print(f"customDays: {result['customDays']}")
 
     return response

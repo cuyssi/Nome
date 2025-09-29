@@ -23,6 +23,7 @@ export const useFilteredTasks = (tasks) => {
     const deberesTypes = ["deberes", "ejercicios", "estudiar"];
     const trabajoTypes = ["trabajo"];
     const examenesTypes = ["examen", "prueba", "evaluación"];
+
     const deberesTasks = useMemo(() => {
         return tasks.filter((t) => {
             const tipos = Array.isArray(t.type) ? t.type : [t.type];

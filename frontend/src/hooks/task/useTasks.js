@@ -1,103 +1,84 @@
-/**────────────────────────────────────────────────────────────────────────────────────────────────┐
- * useTasks: hook para manejar tareas filtradas y sincronización con backend.                      │
- *                                                                                                 │
- * Funcionalidad:                                                                                  │
- *   • Obtiene las tareas del store `useStorageStore` y las filtra según `type` y `exclude`.       │
- *   • Mantiene un estado local `tasks` y un método `reload()` para recargar los filtros.          │
- *   • Calcula `todayTasks` filtrando las tareas activas para la fecha actual.                     │
- *   • Envuelve `updateTask` y `addTask` del store para:                                           │
- *       - Notificar cambios al backend usando `notifyBackend`.                                    │
- *       - Construir la URL del recordatorio con `buildReminderUrl`.                               │
- *       - Formatear fechas con `formatDateForBackend`.                                            │
- *       - Usar `deviceId` almacenado en localStorage.                                             │
- *                                                                                                 │
- * Devuelve:                                                                                       │
- *   - tasks: lista de tareas filtradas según el tipo y exclusiones.                               │
- *   - todayTasks: lista de tareas activas para hoy.                                               │
- *   - deleteTask(id): elimina una tarea por ID usando el store.                                   │
- *   - updateTask(id, updatedFields): actualiza tarea y notifica backend si corresponde.           │
- *   - addTask(task): agrega una nueva tarea y notifica backend si corresponde.                    │
- *   - reload(): recarga las tareas aplicando los filtros actuales.                                │
- *                                                                                                 │
- * Parámetros:                                                                                     │
- *   - type (opcional): tipo de tarea para filtrar.                                                │
- *   - exclude (opcional, boolean): si se deben excluir las tareas del tipo especificado.          │
- *                                                                                                 │
- * Autor: Ana Castro                                                                               │
-└─────────────────────────────────────────────────────────────────────────────────────────────────*/
-
 import { useStorageStore } from "../../store/storageStore";
-import { useState, useEffect } from "react";
-import { notifyBackend } from "../../services/notifyBackend";
 import { formatDateForBackend } from "../../utils/dateUtils";
-import { isTaskActiveOnDate } from "../../store/storageStore";
-import { toLocalYMD } from "../../utils/dateUtils";
+import { notifyBackend, cancelTaskBackend } from "../../services/notifyBackend";
 import { buildReminderUrl } from "../../utils/buildReminderUrl";
-import { filterByType } from "../../utils/taskFilter";
+import { useEffect, useState } from "react";
+import { toLocalYMD } from "../../utils/dateUtils";
+import { isTaskActiveOnDate } from "../../store/storageStore";
 
 export const useTasks = (type, exclude = false) => {
-    const { tasks: rawTasks, deleteTask, updateTask: baseUpdateTask, addTask: baseAddTask } = useStorageStore();
+    const {
+        tasks: rawTasks,
+        addTask: storeAddTask,
+        updateTask: storeUpdateTask,
+        deleteTask: storeDeleteTask,        
+    } = useStorageStore();
+    
     const [tasks, setTasks] = useState([]);
     const todayYMD = toLocalYMD(new Date());
-    const todayTasks = tasks.filter((task) => isTaskActiveOnDate(task, todayYMD));
 
     useEffect(() => {
-        const filtered = type ? filterByType(rawTasks, type, exclude) : rawTasks;
+        const filtered = type ? rawTasks.filter((t) => t.type === type) : rawTasks;
         setTasks(filtered);
     }, [rawTasks, type, exclude]);
 
     const reload = () => {
-        const filtered = type ? filterByType(rawTasks, type, exclude) : rawTasks;
+        const filtered = type ? rawTasks.filter((t) => t.type === type) : rawTasks;
         setTasks(filtered);
     };
 
+    const todayTasks = tasks.filter((task) => isTaskActiveOnDate(task, todayYMD));
 
-    const wrappedUpdateTask = async (id, updatedFields) => {
-        baseUpdateTask(id, updatedFields);
-
-        if (updatedFields.dateTime && updatedFields.text) {
-            const isoDate = formatDateForBackend(updatedFields.dateTime);
-            console.log(`Tasks updated: ${updatedFields.text} at ${isoDate}`);
-            const url = buildReminderUrl("task", updatedFields.text);
-
-            const deviceId = localStorage.getItem("deviceId");
-            if (!deviceId) return;
-
-            await notifyBackend(
-                updatedFields.id || id,
-                updatedFields.text,
-                isoDate,
+    const addTask = (task) => {
+        storeAddTask(task);
+        const deviceId = localStorage.getItem("deviceId");
+        if (deviceId && task.dateTime && task.text) {
+            notifyBackend(
+                task.id,
+                task.text,
+                formatDateForBackend(task.dateTime),
                 deviceId,
                 "task",
-                Number(updatedFields.reminder) || 15,
-                url
+                Number(task.reminder) || 15,
+                buildReminderUrl("task", task.text),
+                task.notifyDayBefore,
+                task.repeat,
+                task.customDays
             );
         }
     };
 
-    const wrappedAddTask = async (task) => {
-        baseAddTask(task);
-
-        if (task.dateTime && task.text) {
-            try {
-                const isoDate = formatDateForBackend(task.dateTime);
-                const deviceId = localStorage.getItem("deviceId");
-                if (!deviceId) return;
-
-                const url = buildReminderUrl("task", task.text);
-                await notifyBackend(task.id, task.text, isoDate, deviceId, "task", Number(task.reminder) || 15, url);
-            } catch (err) {
-                console.error(err);
-            }
+    const updateTask = async (id, updatedFields) => {
+        const oldTask = rawTasks.find((t) => t.id === id);
+        storeUpdateTask(id, updatedFields);
+        const updatedTask = { ...oldTask, ...updatedFields };
+        const deviceId = localStorage.getItem("deviceId");
+        if (deviceId && updatedTask.dateTime && updatedTask.text) {
+            await cancelTaskBackend(id, deviceId);
+            await cancelTaskBackend(`${id}-daybefore`, deviceId);
+            notifyBackend(
+                updatedTask.id,
+                updatedTask.text,
+                formatDateForBackend(updatedTask.dateTime),
+                deviceId,
+                "task",
+                Number(updatedTask.reminder) || 15,
+                buildReminderUrl("task", updatedTask.text),
+                updatedTask.notifyDayBefore,
+                updatedTask.repeat,
+                updatedTask.customDays
+            );
         }
     };
 
-    return {
-        tasks,
-        todayTasks,
-        deleteTask,
-        updateTask: wrappedUpdateTask,
-        addTask: wrappedAddTask,
-        reload,
+    const deleteTask = async (id) => {
+        storeDeleteTask(id);
+        const deviceId = localStorage.getItem("deviceId");
+        if (deviceId) {
+            await cancelTaskBackend(id, deviceId);
+            await cancelTaskBackend(`${id}-daybefore`, deviceId);
+        }
     };
+
+    return { tasks, todayTasks, addTask, updateTask, deleteTask, reload };
 };

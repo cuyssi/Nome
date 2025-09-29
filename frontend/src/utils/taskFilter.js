@@ -40,6 +40,7 @@ export const filterByDate = (tasks, date) => {
         if (task.repeat === "once") return toLocalYMD(taskDate) === dateStr;
         if (task.repeat === "daily") return true;
         if (task.repeat === "weekdays") return day >= 1 && day <= 5;
+        if (task.repeat === "weekend") return day === 0 || day === 6;
         if (task.repeat === "custom") {
             const customIndex = day === 0 ? 6 : day - 1;
             return task.customDays?.includes(customIndex);
@@ -62,6 +63,3 @@ export const filterByQuery = (tasks, query) => {
     const nq = normalize(query);
     return tasks.filter((task) => normalize(task.text).includes(nq));
 };
-
-
-

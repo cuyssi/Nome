@@ -1,5 +1,5 @@
 # ──────────────────────────────────────────────────────────────────────────────
-# Lista de dias de la semana y su clave#
+# Listas que se usan en varias partes del código
 # ──────────────────────────────────────────────────────────────────────────────
 
 WEEKDAY_MAP = {
@@ -13,3 +13,18 @@ WEEKDAY_MAP = {
     "sabado": 5,
     "domingo": 6,
 }
+
+WEEKDAYS = [
+    "lunes", "martes", "miércoles", "miercoles",
+    "jueves", "viernes", "sábado", "sabado", "domingo"
+]
+
+WORKDAYS = [0, 1, 2, 3, 4]
+
+WEEKEND = [5, 6]
+
+MODIFIERS = [
+    "el", "la", "los", "las",
+    "este", "esta", "estos", "estas",
+    "próximo", "proximo", "pasado"
+]

@@ -1,48 +1,46 @@
-import os
-import time
-import threading
-from utils.download_vosk import ensure_vosk_model
+# ──────────────────────────────────────────────────────────────────────────────
+# Archivo principal de configuración del backend (FastAPI).
+#
+# Funcionalidad:
+#   • Carga variables de entorno desde `.env`.
+#   • Verifica y descarga el modelo de Vosk necesario para transcripción.
+#   • Configura FastAPI con middleware CORS.
+#   • Define el ciclo de vida (lifespan) de la app:
+#       - Reprograma todas las notificaciones pendientes en el arranque.
+#       - Inicia un hilo watchdog para monitorizar timers activos.
+#       - Cancela y limpia timers activos al cerrar el servidor.
+#
+# Routers registrados:
+#   • /transcribe → gestión de transcripciones de audio y creación de tareas.
+#   • /notifications → gestión de notificaciones push y subscripciones.
+#
+# Endpoints principales:
+#   • GET "/" → endpoint raíz, devuelve JSON {"message": "Backend funcionando"}.
+#
+# Variables clave:
+#   • active_timers → lista de timers activos gestionados por el módulo de notificaciones.
+#   • CORS_ORIGINS → orígenes permitidos para peticiones desde frontend (desde .env o por defecto "*").
+#
+# @autor: Ana Castro
+# ──────────────────────────────────────────────────────────────────────────────
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
+from utils.download_vosk import ensure_vosk_model
 from api.transcribe import router as transcribe_router
 from api.notifications.router import router as notifications_router
-from api.notifications.subscriptions import active_timers, scheduled_tasks, subscriptions
-from services.notifications.scheduler import schedule_notification
+from api.notifications.subscriptions import active_timers
+from services.notifications.scheduler import reprogram_all_tasks
+from services.notifications.watchdog import watchdog_thread
+
+import os
+import threading
 import asyncio
 
 load_dotenv()
 ensure_vosk_model()
-
-
-def reprogram_all_tasks():
-    """
-    Reprograma todas las notificaciones pendientes para todos los dispositivos.
-    """
-    for device_id, tasks in scheduled_tasks.items():
-        if device_id in subscriptions:
-            for task in tasks:
-                schedule_notification(task)
-    print("🔄 Reprogramadas todas las notificaciones tras suspensión")
-
-
-def watchdog_thread(interval=10, threshold=30):
-    """
-    Hilo que detecta suspensión del sistema midiendo saltos de tiempo anormales.
-    - interval: cada cuánto segundos revisar.
-    - threshold: si el salto es mayor a este valor → asumimos suspensión.
-    """
-    last_check = time.time()
-    while True:
-        time.sleep(interval)
-        now = time.time()
-        delta = now - last_check
-        last_check = now
-
-        if delta > (interval + threshold):
-            print(f"⚠️ Detectada suspensión del sistema (delta={delta:.1f}s)")
-            reprogram_all_tasks()
 
 
 @asynccontextmanager
@@ -52,7 +50,7 @@ async def lifespan(app: FastAPI):
         threading.Thread(target=watchdog_thread, daemon=True).start()
         yield
     except asyncio.CancelledError:
-        print("🛑 Servidor detenido por interrupción")
+        print("\033[95m🛑 Servidor detenido por interrupción\033[0m")
     finally:
         for timer in list(active_timers):
             if timer.is_alive():

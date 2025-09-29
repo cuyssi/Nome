@@ -11,11 +11,26 @@ PATTERNS = {
     "PAG": {
         "regex": r"\bpág\.?\s+([a-záéíóúñ\d\s]+?)(?=\s+ej:|$)",
         "placeholder": "__PAG__",
-        "formatter": lambda num: f"pág. {alpha2digit(num.strip(), 'es')}, "
+        "formatter": lambda num: f"Pág. {alpha2digit(num.strip(), 'es')}, "
     },
     "EJ": {
         "regex": r"\bej:?\s+([a-záéíóúñ\d\s,]+)",
         "placeholder": "__EJ__",
-        "formatter": lambda nums: f"ej: {alpha2digit(nums.strip(), 'es')}"
-    }
+        "formatter": lambda nums: f"Ej: {alpha2digit(nums.strip(), 'es')}"
+    },
+    "tema": {
+        "regex": r"\btema\s+([a-záéíóúñ\d]+)",
+        "placeholder": "__TEMA__",
+        "formatter": lambda nums: f"Tema: {alpha2digit(nums.strip(), 'es')}"
+    },
+    "unidad": {
+        "regex": r"\bunidad\s+([a-záéíóúñ\d]+)",
+        "placeholder": "__UNIDAD__",
+        "formatter": lambda nums: f"Unidad: {alpha2digit(nums.strip(), 'es')}"
+    },
+    "lección": {
+        "regex": r"\blección\s+([a-záéíóúñ\d]+)",
+        "placeholder": "__LECCIÓN__",
+        "formatter": lambda nums: f"Lección: {alpha2digit(nums.strip(), 'es')}"
+    },
 }

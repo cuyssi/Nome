@@ -8,74 +8,54 @@
 #
 # - format_lists_with_commas-> coloca comas correctas en listas de elementos
 #   o números, evitando errores como comas antes de artículos y duplicadas.
-# - clean_repeat_connectors-> elimina nombres de los dias de la semana cuando la 
+# - clean_repeat_connectors-> elimina nombres de los dias de la semana cuando la
 #   tarea se repite varios dias, elimina tambien los conectores que las acompañan
 #   como "los", "todos", etc..
 #
 # Devuelven el texto limpio y listo para procesar fechas o transcripciones.
 # ──────────────────────────────────────────────────────────────────────────────
 
+from constants.constants import WEEKDAYS, MODIFIERS
 import re
-
-def sanitize_fragment(fragment: str) -> str:
-    if not fragment:
-        return fragment
-
-    frag = fragment.strip()
-    if re.search(r"\b(en|con|de|a|al|del)$", frag, flags=re.IGNORECASE):
-        frag = " ".join(frag.split()[:-1])
-
-    return frag
 
 
 def clean_date_and_fragment(text, fragments=None):
-    print(f"[Clean date and fragmen] fragment antes: {fragments}")
     if not fragments:
         fragments = []
-
-    elif isinstance(fragments, str):
+    elif isinstance(fragments, (str, bytes)):
         fragments = [fragments]
 
-    fragments = [sanitize_fragment(f) for f in fragments if f]
-    for fragment in fragments:
-        fragment_esc = re.escape(fragment.strip())
-        text = re.sub(
-            rf'\b(?:a\s+)?(?:para\s+)?(?:el|la|los|las)?\s*{fragment_esc}\b',
-            '',
-            text,
-            flags=re.IGNORECASE
-        )
+    fragments = [str(f).strip() for f in fragments if f]
+    fragments = sorted(dict.fromkeys(fragments), key=lambda s: len(s), reverse=True)
 
-    text = re.sub(r"\b(a\s+)?(la|las)\s+\d{1,2}(:\d{2})?\b", "", text, flags=re.IGNORECASE)
-    text = re.sub(r"\b\d{1,2}(:\d{2})?\b", "", text)
-    text = re.sub(r"\b(por|de)\s+la\s+(mañana|tarde|noche|madrugada)\b", "", text, flags=re.IGNORECASE)
+    for frag in fragments:
+        if not frag:
+            continue
+        text = re.sub(re.escape(frag), "", text, flags=re.IGNORECASE)
+
+    patterns = [
+        r"\ba\s+las\s+\d{1,2}(:\d{2})?\b",
+        r"\ba\s+las\s+\d{1,2}(:\d{2})?\b",
+        r"\b\d{1,2}:\d{2}\b",
+        r"\b(de la|por la|para la)\s+(mañana|tarde|noche|madrugada)\b",
+        r"\b(mañana|hoy|pasado\s+mañana|esta\s+(noche|tarde|mañana))\b",
+    ]
+
+    for pat in patterns:
+        text = re.sub(pat, "", text, flags=re.IGNORECASE)
+
     text = re.sub(
-        r"\b(mañana(\s+por\s+la\s+(mañana|tarde|noche|madrugada))?|"
-        r"hoy|pasado\s+mañana|esta\s+(noche|tarde|mañana))\b",
-        "",
-        text,
-        flags=re.IGNORECASE
+        r"\b(?:a|de|en|por|para)\b(?=\s*[.,;:]|$)", "", text, flags=re.IGNORECASE
     )
-    text = re.sub(r"\s{2,}", " ", text).strip()
-    text = text[0].upper() + text[1:] if text else text
-    print(f"[Clean date and fragment] text despues: {text }")
+    text = re.sub(r"\s{2,}", " ", text)
+    text = text.strip(" ,.;:-")
+
     return text
 
 
 def remove_weekday_phrases(text):
-    weekdays = [
-        "lunes", "martes", "miércoles", "miercoles",
-        "jueves", "viernes", "sábado", "sabado", "domingo"
-    ]
-
-    modifiers = [
-        "el", "la", "los", "las",
-        "este", "esta", "estos", "estas",
-        "próximo", "proximo", "pasado"
-    ]
-
-    weekday_pattern = r"(?:{})".format("|".join(weekdays))
-    modifier_pattern = r"(?:{})".format("|".join(modifiers))
+    weekday_pattern = r"(?:{})".format("|".join(WEEKDAYS))
+    modifier_pattern = r"(?:{})".format("|".join(MODIFIERS))
     pattern = rf"\b{modifier_pattern}\s+{weekday_pattern}\b"
     cleaned = re.sub(pattern, "", text, flags=re.IGNORECASE)
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
@@ -84,30 +64,42 @@ def remove_weekday_phrases(text):
 
 
 def format_lists_with_commas(text):
-    text = re.sub(r'(\b(?:el|la|los|las)\b),\s+', r'\1 ', text)
-    text = re.sub(r'(?<!^)(\b(?:el|la|los|las)\b)\s+(\w+)\s+(?=\b(?:el|la|los|las)\b)', r'\1 \2, ', text)
-    text = re.sub(r'\b(\d+)\s+(?=\d+\s+y\b)', r'\1, ', text)
-    text = re.sub(r'\b(\d+)\s+(?=\d+\b)', r'\1, ', text)
-    text = re.sub(r'\by,\s*', 'y ', text)
-    text = re.sub(r'\s+([.,:])', r'\1', text)
-    text = re.sub(r'\s{2,}', ' ', text)
+    text = re.sub(r"(\b(?:el|la|los|las)\b),\s+", r"\1 ", text)
+    text = re.sub(
+        r"(?<!^)(\b(?:el|la|los|las)\b)\s+(\w+)\s+(?=\b(?:el|la|los|las)\b)",
+        r"\1 \2, ",
+        text,
+    )
+    text = re.sub(r"\b(\d+)\s+(?=\d+\s+y\b)", r"\1, ", text)
+    text = re.sub(r"\b(\d+)\s+(?=\d+\b)", r"\1, ", text)
+    text = re.sub(r"\by,\s*", "y ", text)
+    text = re.sub(r"\s+([.,:])", r"\1", text)
+    text = re.sub(r"\s{2,}", " ", text)
 
     return text.strip()
 
 
-def clean_repeat_connectors(text, custom_days):
-    import re
-    if not custom_days:
+def clean_repeat_connectors(text, custom_days=None, repeat=None):
+    if not text:
         return text
+    text = text.strip()
 
-    text = re.sub(r"\b(cada|todos|todas|los|las|y)\b", "", text, flags=re.IGNORECASE)
+    if repeat in ("daily", "weekend", "custom") or (
+        custom_days and len(custom_days) > 0
+    ):
+        text = re.sub(r"\b(cada|todos|todas|y)\b", " ", text, flags=re.IGNORECASE)
+        weekday_pattern = r"\b(?:{})\b".format("|".join(WEEKDAYS))
+        text = re.sub(
+            rf"\b(?:los|las|el)\s+{weekday_pattern}", "", text, flags=re.IGNORECASE
+        )
+        text = re.sub(weekday_pattern, "", text, flags=re.IGNORECASE)
 
-    weekdays = [
-        "lunes", "martes", "miércoles", "miercoles",
-        "jueves", "viernes", "sábado", "sabado", "domingo"
-    ]
-    weekday_pattern = r"\b(?:{})\b".format("|".join(weekdays))
-    text = re.sub(weekday_pattern, "", text, flags=re.IGNORECASE)
+    text = re.sub(
+        r"\b(a|las|los)\s+(?=\d{1,2}(:\d{2})?)", "", text, flags=re.IGNORECASE
+    )
     text = re.sub(r"\s{2,}", " ", text).strip()
+
+    if text:
+        text = text[0].upper() + text[1:]
 
     return text

@@ -35,6 +35,10 @@ export function getRepeatLabel(task) {
         return <span className="text-blue-400 font-bold">L-V</span>;
     }
 
+    if (task.repeat === "weekend") {
+        return <span className="text-blue-400 font-bold">S-D</span>;
+    }
+
     if (task.repeat === "custom" && task.customDays?.length) {
         const dayLabels = DAYS.filter((d, i) => task.customDays.includes(i)).map((d) => d.key);
         return <span className="text-purple-500 text-base text-center">{dayLabels.join(", ")}</span>;
