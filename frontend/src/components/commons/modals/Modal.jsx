@@ -7,7 +7,7 @@
  * @author: Ana Castro                                                          │
 └───────────────────────────────────────────────────────────────────────────────*/
 
-export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction = true, className = "" }) => {
+export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction = true, className = "z-50" }) => {
     if (!isOpen) return null;
 
     return (

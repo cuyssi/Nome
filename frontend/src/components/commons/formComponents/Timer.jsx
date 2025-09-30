@@ -14,7 +14,7 @@ export function Timer({ hour, minute, onChange }) {
     return (
         <div className="flex justify-center gap-6 px-4 items-center mt-2">
             <div className="flex flex-col">
-                <p className=" font-poppins  text-purple-600 font-semibold">Hora:</p>
+                <p className=" font-poppins text-purple-600 font-semibold text-sm">Hora:</p>
                 <div className="flex items-center border-2 border-gray-400 rounded">
                     <button
                         type="button"
@@ -44,7 +44,7 @@ export function Timer({ hour, minute, onChange }) {
             </div>
 
             <div className="flex flex-col">
-                <p className=" font-poppins text-purple-600 font-semibold">Minutos:</p>
+                <p className=" font-poppins text-purple-600 font-semibold text-sm">Minutos:</p>
                 <div className="flex items-center justify-center border border-2 border-gray-400 rounded">
                     <button
                         type="button"

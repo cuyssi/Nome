@@ -34,13 +34,13 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
     const [name, setName] = useState(bag?.name || "");
     const [items, setItems] = useState(Array.isArray(bag?.items) ? bag.items : []);
     const [selectedColor, setSelectedColor] = useState(bag?.color || AVAILABLE_COLORS[0].value);
-    const [notifyDays, setNotifyDays] = useState(bag?.notifyDays || ["L", "M", "X", "J", "V"]); 
+    const [notifyDays, setNotifyDays] = useState(bag?.notifyDays || ["L", "M", "X", "J", "V"]);
+    const [newItem, setNewItem] = useState("");
     const [reminderTime, setReminderTime] = useState(
         bag?.reminderTime
             ? { hour: bag.reminderTime.split(":")[0], minute: bag.reminderTime.split(":")[1] }
             : { hour: "20", minute: "00" }
     );
-
 
     useEffect(() => {
         if (!bag) return;
@@ -52,7 +52,7 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
                 ? { hour: bag.reminderTime.split(":")[0], minute: bag.reminderTime.split(":")[1] }
                 : { hour: "20", minute: "00" }
         );
-        setNotifyDays(bag.notifyDays || ["L", "M", "X", "J", "V"]);        
+        setNotifyDays(bag.notifyDays || ["L", "M", "X", "J", "V"]);
     }, [bag]);
 
     const handleSubmit = (e) => {
@@ -77,12 +77,20 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
         onUpdateBag?.(updatedBag);
     };
 
-    const handleAddItem = () => setItems([...items, ""]);
+    const handleAddTypedItem = () => {
+        if (newItem.trim()) {
+            setItems([...items, newItem.trim()]);
+            setNewItem("");
+        }
+    };
+
     const handleItemChange = (index, value) => {
         const newItems = [...items];
         newItems[index] = value;
         setItems(newItems);
     };
+
+    const handleAddItem = () => setItems([...items, ""]);
     const handleRemoveItem = (index) => setItems(items.filter((_, i) => i !== index));
 
     return {
@@ -100,5 +108,8 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
         handleAddItem,
         handleItemChange,
         handleRemoveItem,
+        newItem,
+        setNewItem,
+        handleAddTypedItem,
     };
 };

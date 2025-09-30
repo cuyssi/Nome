@@ -31,6 +31,7 @@ export const useCreateBag = ({ onClose }) => {
     const [customItems, setCustomItems] = useState([]);
     const [newItem, setNewItem] = useState("");
     const [notifyDays, setNotifyDays] = useState(["L", "M", "X", "J", "V"]);
+    const [reminderTime, setReminderTime] = useState({ hour: "20", minute: "00" });
 
     const handleAddPredefined = (bag) => {
         addBag({ id: crypto.randomUUID(), ...bag });
@@ -44,6 +45,12 @@ export const useCreateBag = ({ onClose }) => {
         }
     };
 
+    const handleRemoveItem = (index) => {
+        setCustomItems((prev) => prev.filter((_, i) => i !== index));
+    };
+
+    const reminderTimeString = `${reminderTime.hour}:${reminderTime.minute}`;
+
     const handleCreateCustomBag = () => {
         if (!customName.trim()) return;
 
@@ -53,11 +60,11 @@ export const useCreateBag = ({ onClose }) => {
             color: "gray-400",
             type: "personalizada",
             items: customItems,
-            reminderTime: "20:00",
+            reminderTime: reminderTimeString,
             notifyDays,
             notifyDayBefore: true,
             dateTime: calculateReminderDateTime({
-                reminderTime: "20:00",
+                reminderTime: reminderTimeString,
                 type: "personalizada",
                 notifyDays,
             }).toISOString(),
@@ -76,8 +83,11 @@ export const useCreateBag = ({ onClose }) => {
         setNewItem,
         handleAddPredefined,
         handleAddCustomItem,
+        handleRemoveItem,
         handleCreateCustomBag,
         notifyDays,
         setNotifyDays,
+        reminderTime,
+        setReminderTime,
     };
 };

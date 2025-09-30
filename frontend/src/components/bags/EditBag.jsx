@@ -1,26 +1,4 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Componente EditBag: permite editar una mochila existente.                   │
- *                                                                             │
- * Funcionalidad:                                                              │
- *   • Modifica el nombre de la mochila.                                       │
- *   • Selecciona color de entre opciones predefinidas.                        │
- *   • Gestiona la lista de ítems: añadir, editar y eliminar.                  │
- *   • Configura hora de recordatorio y opción de aviso un día antes.          │
- *   • Selecciona días de recordatorio mediante DaySelector.                   │
- *                                                                             │
- * Props:                                                                      │
- *   - bag: objeto de la mochila a editar.                                     │
- *   - isOpen: booleano que indica si el modal está abierto.                   │
- *   - onClose: función para cerrar el modal.                                  │
- *   - onUpdateBag: función que se ejecuta al guardar los cambios.             │
- *                                                                             │
- * Hooks internos:                                                             │
- *   - useBagEditor: gestiona estado de nombre, color, items, recordatorios y  │
- *     acciones de edición.                                                    │
- *                                                                             │
- * Autor: Ana Castro                                                           │
-└─────────────────────────────────────────────────────────────────────────────*/
-
+import { Plus } from "lucide-react";
 import { useBagEditor } from "../../hooks/bag/useBagEditor";
 import { Timer } from "../commons/formComponents/Timer";
 import { DaySelector } from "../commons/formComponents/DaySelector";
@@ -31,88 +9,106 @@ import { ColorPicker } from "../commons/formComponents/ColorPicker";
 import { InputField } from "../commons/formComponents/InputField";
 
 export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
-  const {
-    handleItemChange,
-    handleAddItem,
-    handleRemoveItem,
-    handleSubmit,
-    name,
-    setName,
-    items,
-    selectedColor,
-    setSelectedColor,
-    reminderTime,
-    setReminderTime,
-    notifyDays,
-    setNotifyDays,
-  } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
+    const {
+        handleItemChange,
+        handleAddItem,
+        handleRemoveItem,
+        handleSubmit,
+        name,
+        setName,
+        items,
+        selectedColor,
+        setSelectedColor,
+        reminderTime,
+        setReminderTime,
+        notifyDays,
+        setNotifyDays,
+        newItem,
+        setNewItem,
+        handleAddTypedItem,
+    } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
 
-  return (
-    <div className="bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] flex flex-col relative">
-      <ButtonClose onClick={onClose} />
+    return (
+        <div className="bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] flex flex-col relative">
+            <ButtonClose onClick={onClose} />
 
-      <h2 className="text-2xl text-center text-purple-600 font-bold mt-4 mb-4">
-        Editar Mochila
-      </h2>
+            <h2 className="text-2xl text-center text-purple-600 font-bold mt-4 mb-4">Editar Mochila</h2>
 
-      <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
-        <div className="overflow-y-auto flex-1 hide-scrollbar space-y-6">
-          <InputField
-            label="Nombre:"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          
-            <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />          
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+                <div className="overflow-y-auto flex-1 hide-scrollbar space-y-6 px-2">
+                    <InputField
+                        label="Nombre:"
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                    />
 
-          <div>
-            <label className="block font-semibold text-gray-500">Ítems:</label>
-            <div className="space-y-2">
-              {items.map((item, index) => (
-                <div key={index} className="flex gap-2 items-center">
-                  <InputField
-                    type="text"
-                    value={item}
-                    onChange={(e) => handleItemChange(index, e.target.value)}
-                  />
-                  <ButtonTrash onClick={() => handleRemoveItem(index)} className="pt-1"/>
+                    <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
+
+                    <div>
+                        <label className="block font-semibold text-gray-500 mb-2">Ítems:</label>
+
+                        <div className="grid grid-cols-[1fr_2rem] gap-2 w-full mb-4">
+                            <input
+                                type="text"
+                                placeholder="Contenido ej: agua"
+                                value={newItem}
+                                onChange={(e) => setNewItem(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleAddTypedItem();
+                                    }
+                                }}
+                                className="px-2 py-1 rounded bg-gray-200 text-gray-900 border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-0 w-full"
+                            />
+
+                            <ButtonDefault
+                                type="button"
+                                onClick={handleAddTypedItem}
+                                text={<Plus />}
+                                className="flex justify-center items-center w-8 h-8 rounded-lg bg-green-400"
+                            />
+                        </div>
+
+                        <ul className="text-sm text-purple-500 space-y-2">
+                            {items.map((item, index) => (
+                                <li
+                                    key={index}
+                                    className="flex justify-between items-center px-2 py-1 bg-gray-100 rounded border border-gray-300"
+                                >
+                                    <input
+                                        type="text"
+                                        value={item}
+                                        onChange={(e) => handleItemChange(index, e.target.value)}
+                                        className="bg-transparent border-none w-full focus:outline-none"
+                                    />
+                                    <ButtonTrash type="button" onClick={() => handleRemoveItem(index)} />
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block font-semibold text-gray-500">Recordatorio:</label>
+                        <Timer
+                            hour={reminderTime.hour}
+                            minute={reminderTime.minute}
+                            onChange={(name, value) => setReminderTime({ ...reminderTime, [name]: value })}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block font-semibold mb-1 text-gray-500">Días de recordatorio:</label>
+                        <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
+                    </div>
                 </div>
-              ))}
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="text-sm text-purple-600 hover:underline"
-              >
-                + Añadir ítem
-              </button>
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="block font-semibold text-gray-500">Recordatorio:</label>
-            <Timer
-              hour={reminderTime.hour}
-              minute={reminderTime.minute}
-              onChange={(name, value) =>
-                setReminderTime({ ...reminderTime, [name]: value })
-              }
-            />            
-          </div>
-
-          <div>
-            <label className="block font-semibold mb-1 text-gray-500">
-              Días de recordatorio:
-            </label>
-            <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
-          </div>
+                <div className="pt-6">
+                    <ButtonDefault type="submit" text="Guardar" className="w-full bg-purple-500" />
+                </div>
+            </form>
         </div>
-
-        <div className="pt-6">
-          <ButtonDefault type="submit" text="Guardar" className="w-full" />
-        </div>
-      </form>
-    </div>
-  );
+    );
 };

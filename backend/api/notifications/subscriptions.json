@@ -1,7 +1,41 @@
 {
   "subscriptions": {},
   "scheduled_tasks": {
-    "30985a71-e594-4cfd-bb40-7e059a8d4026": [],
+    "30985a71-e594-4cfd-bb40-7e059a8d4026": [
+      {
+        "id": "b22da7c7-0714-4c56-8207-528ffa8ffd14",
+        "title": "\ud83c\udf92 Prepara tu mochila de prueba!",
+        "dateTime": "2025-10-01T21:00:00+02:00",
+        "deviceId": "30985a71-e594-4cfd-bb40-7e059a8d4026",
+        "type": "bag",
+        "notifyMinutesBefore": 0,
+        "data": {
+          "url": "/bags?open=prueba"
+        },
+        "notifyDayBefore": true,
+        "repeat": "custom",
+        "customDays": [
+          0,
+          2,
+          4
+        ],
+        "_reprogram_later": false
+      },
+      {
+        "id": "b22da7c7-0714-4c56-8207-528ffa8ffd14-daybefore",
+        "title": "\ud83c\udf92 Prepara tu mochila de prueba!",
+        "dateTime": "2025-09-30T16:43:47.310571+02:00",
+        "deviceId": "30985a71-e594-4cfd-bb40-7e059a8d4026",
+        "type": "bag",
+        "notifyMinutesBefore": 0,
+        "data": {
+          "url": "/bags?open=prueba"
+        },
+        "isDayBefore": true,
+        "originalDateTime": "2025-10-01T21:00:00+02:00",
+        "repeat": "once"
+      }
+    ],
     "f08e4553-3559-4d04-8055-09c30041c9cd": []
   }
 }
