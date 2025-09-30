@@ -7,16 +7,17 @@
  * @author: Ana Castro                                                          │
 └───────────────────────────────────────────────────────────────────────────────*/
 
-export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction = true }) => {
+export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction = true, className = "" }) => {
     if (!isOpen) return null;
 
     return (
         <div
-            className={`absolute inset-0 z-50 p-4 flex justify-center items-center
+            className={`absolute inset-0 p-4 flex justify-center items-center
         ${backdropBlur ? "backdrop-blur-sm bg-black/30" : "bg-transparent"}
-        ${blockInteraction ? "" : "pointer-events-none"}`}
+        ${blockInteraction ? "" : "pointer-events-none"}
+        ${className}`}
         >
-            <div className="pointer-events-auto w-full max-w-md max-h-[90vh] overflow-auto rounded-xl">{children}</div>
+            <div className="pointer-events-auto">{children}</div>
         </div>
     );
 };

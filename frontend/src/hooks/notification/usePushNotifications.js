@@ -7,21 +7,15 @@
  *   • Permite cancelar la suscripción de notificaciones.                                          │
  *   • Genera mensajes temporales para indicar el estado de la suscripción (activado/desactivado). │
  *   • Gestiona un `deviceId` único en localStorage para identificar el dispositivo.               │
+ *   • Detecta si el permiso ha sido denegado y expone `permissionDenied`.                         │
+ *   • Realiza vibración si el dispositivo lo soporta.                                             │
  *                                                                                                 │
  * Devuelve:                                                                                       │
  *   - isSubscribed: booleano que indica si el usuario está suscrito.                              │
  *   - message: string con mensaje temporal de estado.                                             │
+ *   - permissionDenied: booleano que indica si el navegador ha bloqueado las notificaciones.      │
  *   - subscribeUser(): función que suscribe al usuario a las push notifications.                  │
  *   - unsubscribeUser(): función que cancela la suscripción a push notifications.                 │
- *                                                                                                 │
- * Internamente:                                                                                   │
- *   • urlBase64ToUint8Array(base64String): convierte la clave pública VAPID a Uint8Array.         │
- *   • requestPermission(): solicita permiso de notificaciones al usuario.                         │
- *   • navigator.serviceWorker y pushManager se usan para suscribir y desuscribir.                 │
- *   • axios realiza las llamadas al backend para registrar o eliminar la suscripción.             │
- *                                                                                                 │
- * Uso típico:                                                                                     │
- *   const { isSubscribed, message, subscribeUser, unsubscribeUser } = usePushNotifications();     │
  *                                                                                                 │
  * Autor: Ana Castro                                                                               │
 └─────────────────────────────────────────────────────────────────────────────────────────────────*/
@@ -39,37 +33,60 @@ function urlBase64ToUint8Array(base64String) {
 export const usePushNotifications = () => {
     const [isSubscribed, setIsSubscribed] = useState(false);
     const [message, setMessage] = useState("");
+    const [permissionDenied, setPermissionDenied] = useState(false);
+
+    const vibrate = () => {
+        if (navigator.vibrate) navigator.vibrate(150);
+    };
+
+    const showMessage = (msg, duration = 3000) => {
+        setMessage(msg);
+        setTimeout(() => setMessage(""), duration);
+    };
+
+    const checkSubscription = async () => {
+        try {
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.getSubscription();
+            return subscription !== null;
+        } catch {
+            return false;
+        }
+    };
 
     useEffect(() => {
         checkSubscription().then(setIsSubscribed);
     }, []);
 
-    const checkSubscription = async () => {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        return subscription !== null;
-    };
-
     const subscribeUser = async () => {
+        vibrate();
+
         try {
-            const baseURL = import.meta.env.VITE_API_URL;
-            console.log("VITE_API_URL:", baseURL);
+            if (Notification.permission === "denied") {
+                setPermissionDenied(true);
+                return "denied";
+            }
 
             const permission = await Notification.requestPermission();
-            console.log("Permiso de notificación:", permission);
-            if (permission !== "granted") return;
+            if (permission === "denied") {
+                setPermissionDenied(true);
+                return "denied";
+            }
 
+            if (permission !== "granted") return "pending";
+
+            setIsSubscribed(true);
+            showMessage("🔔 Notificaciones activadas");
+
+            const baseURL = import.meta.env.VITE_API_URL;
             const registration = await navigator.serviceWorker.ready;
-            const existingSubscription = await registration.pushManager.getSubscription();
+            let subscription = await registration.pushManager.getSubscription();
 
-            let subscription = existingSubscription;
             if (!subscription) {
                 const vapidKeyRes = await axios.get(`${baseURL}/vapid-public-key`);
-                const applicationServerKey = urlBase64ToUint8Array(vapidKeyRes.data);
-
                 subscription = await registration.pushManager.subscribe({
                     userVisibleOnly: true,
-                    applicationServerKey,
+                    applicationServerKey: urlBase64ToUint8Array(vapidKeyRes.data),
                 });
             }
 
@@ -79,42 +96,33 @@ export const usePushNotifications = () => {
                 localStorage.setItem("deviceId", deviceId);
             }
 
-            await axios.post(`${baseURL}/subscribe`, {
-                deviceId,
-                subscription,
-            });
-
-            setIsSubscribed(true);
-            showMessage("🔔 Notificaciones activadas");
+            await axios.post(`${baseURL}/subscribe`, { deviceId, subscription });
+            return "subscribed";
         } catch (err) {
-            console.error("❌ Error en subscribeUser:", err);
+            console.error(err);
+            showMessage("⚠️ Error al activar notificaciones");
+            return "error";
         }
     };
 
     const unsubscribeUser = async () => {
-        const baseURL = import.meta.env.VITE_API_URL;
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.getSubscription();
-        if (!subscription) return;
+        vibrate();
 
-        await axios.post(`${baseURL}/unsubscribe`, {
-            endpoint: subscription.endpoint,
-        });
-        await subscription.unsubscribe();
+        try {
+            setIsSubscribed(false);
+            showMessage("🔕 Notificaciones desactivadas");
 
-        setIsSubscribed(false);
-        showMessage("🔕 Notificaciones desactivadas");
+            const registration = await navigator.serviceWorker.ready;
+            const subscription = await registration.pushManager.getSubscription();
+            if (!subscription) return;
+
+            const baseURL = import.meta.env.VITE_API_URL;
+            await axios.post(`${baseURL}/unsubscribe`, { endpoint: subscription.endpoint });
+            await subscription.unsubscribe();
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-    const showMessage = (msg, duration = 2000) => {
-        setMessage(msg);
-        setTimeout(() => setMessage(""), duration);
-    };
-
-    return {
-        isSubscribed,
-        message,
-        subscribeUser,
-        unsubscribeUser,
-    };
+    return { isSubscribed, message, permissionDenied, subscribeUser, unsubscribeUser };
 };
