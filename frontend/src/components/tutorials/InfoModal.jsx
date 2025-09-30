@@ -59,11 +59,17 @@ export const InfoModal = ({
                 <div className="mb-7 mt-10 text-base font-poppins">{children}</div>
 
                 {!hideInternalFooter && (
-                    <ButtonDefault
-                        onClick={onNeverShowAgain}
-                        text="No mostrar más"
-                        className="bg-transparent text-red-400 fixed bottom-2 right-2"
-                    />
+                  <label
+  className="bg-transparent text-red-400 fixed bottom-4 right-4 text-base flex items-center gap-2 cursor-pointer"
+>
+  <input
+    type="checkbox"
+    onClick={onNeverShowAgain}
+    className="accent-red-400"
+  />
+  No mostrar más
+</label>
+
                 )}
             </div>
         </Modal>

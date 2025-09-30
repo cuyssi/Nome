@@ -70,7 +70,7 @@ export const TutorialModal = ({
                 )}
                 <div className="mt-6">{currentStep.content}</div>
 
-                <div className="flex justify-between items-center mt-8">
+                <div className="flex justify-between items-center mt-8 mb-10">
                     {currentStep.step > 0 ? (
                         <ButtonDefault
                             icon={<MoveLeft className="inline mr-1" />}
