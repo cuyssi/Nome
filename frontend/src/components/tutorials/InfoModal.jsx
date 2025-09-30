@@ -40,7 +40,7 @@ export const InfoModal = ({
     return (
         <Modal isOpen={isOpen} backdropBlur={backdropBlur} blockInteraction={blockInteraction}>
             <div
-                className="absolute bg-white rounded-lg px-4 py-4 w-[90%] max-w-[500px] min-w-[280px] mx-auto
+                className="absolute bg-white rounded-lg px-4 py-4 w-[93%] max-w-[500px] min-w-[280px] mx-auto
              text-sm text-gray-700 font-poppins border border-gray-300 shadow-xl"
                 onMouseDown={onDragStart}
                 onTouchStart={onDragStart}
@@ -56,20 +56,13 @@ export const InfoModal = ({
             >
                 <ButtonClose onClick={onClose} />
 
-                <div className="mb-7 mt-10 text-base font-poppins">{children}</div>
+                <div className="mt-8 text-base font-poppins mb-10">{children}</div>
 
                 {!hideInternalFooter && (
-                  <label
-  className="bg-transparent text-red-400 fixed bottom-4 right-4 text-base flex items-center gap-2 cursor-pointer"
->
-  <input
-    type="checkbox"
-    onClick={onNeverShowAgain}
-    className="accent-red-400"
-  />
-  No mostrar más
-</label>
-
+                    <label className="bg-transparent text-red-400 fixed bottom-4 right-4 text-base flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" onClick={onNeverShowAgain} className="accent-red-400" />
+                        No mostrar más
+                    </label>
                 )}
             </div>
         </Modal>

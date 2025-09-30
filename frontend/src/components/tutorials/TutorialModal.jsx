@@ -66,11 +66,11 @@ export const TutorialModal = ({
                 onDragStart={handleStart}
             >
                 {currentStep.title && (
-                    <h3 className="text-purple-600 text-xl font-bold text-center">{currentStep.title}</h3>
+                    <h3 className="text-purple-600 text-2xl font-bold text-center">{currentStep.title}</h3>
                 )}
-                <div className="mt-6">{currentStep.content}</div>
+                <div className="mt-4 text-justify text-gray-500 text-lg p-1">{currentStep.content}</div>
 
-                <div className="flex justify-between items-center mt-8 mb-10">
+                <div className="flex justify-between items-center mt-5">
                     {currentStep.step > 0 ? (
                         <ButtonDefault
                             icon={<MoveLeft className="inline mr-1" />}

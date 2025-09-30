@@ -17,15 +17,7 @@
  * Autor: Ana Castro                                                             │
 └───────────────────────────────────────────────────────────────────────────────*/
 
-import {
-    Backpack,
-    Plus,
-    Bell,
-    Mic,
-    SquarePen,
-    Notebook,
-    NotebookPen,
-} from "lucide-react";
+import { Backpack, Plus, Bell, Mic, SquarePen, Notebook, NotebookPen } from "lucide-react";
 
 export const stepsBags = {
     mochilas: [
@@ -176,41 +168,40 @@ export const stepsCalendar = [
     {
         title: "Repeticiones inteligentes",
         content: (
-            <div>
+            <div className="text-justify">
                 <p>
                     Las tareas pueden repetirse:
-                    <span className="italic text-purple-400 text-sm">
+                    <span className=" text-purple-400 text-sm">
                         {" "}
-                        <br></br>todos los días, entre semana, fines de semana o en días personalizados.
+                        <br></br>todos los días, fines de semana, entre semana o días personalizados
                     </span>
                 </p>
 
-                <p className="mt-4">Se mostrarán en el calendario automáticamente según tu configuración.</p>
+                <p className="mt-3">Se mostrarán en el calendario automáticamente tal como las hayas configurado.</p>
             </div>
         ),
         position: { top: "50%", left: "50%" },
     },
-      {
+    {
         title: "Sección de busqueda",
         content: (
             <div>
-                <p>
-                    En la parte inferior del calendario encontraras esta sección que te ayudara a buscar tareas.
-                    Escribe por ejemplo: trabajo de historia, si no borraste la tarea podrás comprobar para cuando tenías
-                    esa tarea, si la completaste o no...                 
+                <p>En la parte inferior del calendario encontraras esta sección que te ayudara a buscar tareas.</p>
+                <p className="text-gray-400 mt-1">
+                    Escribe por ejemplo: <span className="italic text-purple-400">"trabajo de historia"</span>
                 </p>
-                
+                <p className="mt-1">Si no borraste la tarea podrás comprobar para que día era y si la completaste o no...</p>
             </div>
         ),
         position: { top: "50%", left: "50%" },
         highlight: {
-                position: {
-                    top: "85%",
-                    left: "40%",
-                    transform: "translate(-20%, -90%) rotate(180deg)",
-                },
-                animationClass: "animate-bounceStrong",
+            position: {
+                top: "85%",
+                left: "40%",
+                transform: "translate(-20%, -90%) rotate(180deg)",
             },
+            animationClass: "animate-bounceStrong",
+        },
     },
 ];
 
@@ -284,23 +275,23 @@ export const stepsHome = [
     {
         title: "¡Bienvenido a Nome!",
         content: (
-            <div className="text-justify">
+            <div>
                 <p>
                     Esta es tu pantalla principal. Aquí verás tus tareas, podrás grabar nuevas y acceder a todo lo
                     importante.
                 </p>
 
-                <p className="mt-4 flex items-center gap-2 text-sm text-gray-600">
+                <p className="mt-4 ml-6 flex items-center gap-4 text-base text-gray-400 text-left">
                     <Bell className="w-8 h-8 text-green-600" />
-                    <span>Si no lo está ya (icono en verde), activa las notificaciones pulsando en el icono.</span>
+                    <span>Activa las notificaciones pulsando en el icono.</span>
                 </p>
-                <p className="text-green-600 text-sm mt-8">
+                <p className="text-purple-500 text-base mt-6">
                     * Si en algún momento te molesta esta ventana, puedes moverla con el dedo, arrástrala a donde
                     quieras 😉
                 </p>
             </div>
         ),
-        position: { top: "50%", left: "50%" },
+        position: { top: "53%", left: "50%" },
         highlight: {
             selector: "#bell-toggle",
             position: { top: "15%", left: "84%" },
@@ -316,9 +307,9 @@ export const stepsHome = [
                     presionarlo para detener la grabación.
                 </p>
 
-                <p className="w-full mt-4 text-sm text-green-600">
-                    También puedes añadir tareas a mano tocando el icono del lápiz{" "}
-                    <SquarePen className="inline w-4 h-4 text-blue-600" />
+                <p className="w-full mt-4 text-sm text-purple-500">
+                    * También puedes añadir tareas a mano tocando el icono del lápiz{" "}
+                    <SquarePen className="inline w-4 h-4 text-yellow-600" />
                 </p>
             </div>
         ),

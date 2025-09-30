@@ -43,7 +43,7 @@ function App() {
     }, []);
 
     return (
-        <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400">
+        <div className="flex flex-col sm:flex-row w-full h-[100dvh] sm:items-center sm:justify-center sm:bg-gray-400 border border-black">
             <div
                 className={clsx(
                     "relative",
@@ -51,7 +51,7 @@ function App() {
                     "sm:max-w-[360px] sm:h-[90%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
                 )}
             >
-                <main className="bg-black flex-1 overflow-y-auto border border-black">
+                <main className="bg-black flex-1 overflow-y-auto border border-none">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/tasks" element={<Tasks />} />
