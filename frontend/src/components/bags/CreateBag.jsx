@@ -46,72 +46,74 @@ export const CreateBag = ({ onClose, onSubmit }) => {
     });
 
     return (
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative">
-            <h2 className="text-2xl font-bold text-purple-600 mt-8 mb-6 text-center">Crear nueva mochila</h2>
+    <div className="flex flex-col bg-white rounded-xl shadow-xl w-full max-w-md p-6 relative max-h-[90vh] overflow-auto box-border">
+      <h2 className="text-2xl font-bold text-purple-600 mt-2 mb-6 text-center">
+        Crear nueva mochila
+      </h2>
 
-            <div className="mb-6">
-                <h3 className="text-lg text-gray-600 font-semibold mb-2">Mochilas sugeridas:</h3>
-
-                <div className="flex flex-col gap-3">
-                    {PREDEFINED_BAGS.map((bag, i) => (
-                        <ButtonDefault
-                            key={i}
-                            text={bag.name}
-                            onClick={() => handleAddPredefined(bag)}
-                            className={`bg-${bag.color} text-gray-600`}
-                        />
-                    ))}
-                </div>
-            </div>
-
-            <div>
-                <h3 className="text-lg text-gray-600 font-semibold mb-2">Personalizada:</h3>
-                
-                <input
-                    type="text"
-                    placeholder="Nombre de la mochila"
-                    value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
-                    className="w-full mb-2 px-3 py-2 rounded bg-gray-200 text-gray-900"
-                />
-                
-                <div className="flex gap-2 mb-2">
-                    <input
-                        type="text"
-                        placeholder="Añadir ítem"
-                        value={newItem}
-                        onChange={(e) => setNewItem(e.target.value)}
-                        className="flex-1 px-3 py-2 rounded bg-gray-200 text-gray-900"
-                    />
-
-                    <ButtonDefault
-                        type="button"
-                        onClick={handleAddCustomItem}
-                        text={<Plus className="inline mr-1" />}
-                        className="bg-purple-500"
-                    />
-                </div>
-
-                <ul className="list-disc list-inside text-sm text-gray-500 mb-4">
-                    {customItems.map((item, i) => (
-                        <li key={i}>{item}</li>
-                    ))}
-                </ul>
-
-                <ButtonDefault
-                    type="button"
-                    onClick={handleCreateCustomBag}
-                    text="Crear mochila personalizada"
-                    className="mx-auto block rounded-lg mb-6 bg-purple-500"
-                />
-            </div>
-            
-            <div className="mb-4">
-                <h4 className="text-sm font-semibold mb-2">Días de recordatorio</h4>
-                <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
-            </div>
-
-            <ButtonClose onClick={onClose} />
+      <div className="mb-6">
+        <h3 className="text-lg text-gray-600 font-semibold mb-2">Mochilas sugeridas:</h3>
+        <div className="flex flex-col gap-3">
+          {PREDEFINED_BAGS.map((bag, i) => (
+            <ButtonDefault
+              key={i}
+              text={bag.name}
+              onClick={() => handleAddPredefined(bag)}
+              className={`bg-${bag.color} text-gray-600`}
+            />
+          ))}
         </div>
-    );
+      </div>
+
+      <div>
+        <h3 className="text-lg text-gray-600 font-semibold mb-2">Personalizada:</h3>
+
+        <input
+          type="text"
+          placeholder="Nombre de la mochila"
+          value={customName}
+          onChange={(e) => setCustomName(e.target.value)}
+          className="w-full mb-2 px-3 py-2 rounded bg-gray-200 text-gray-900"
+        />
+
+        {/* Wrapper FLEX corregido */}
+        <div className="flex items-center gap-2 mb-2">
+          <input
+            type="text"
+            placeholder="Añadir"
+            value={newItem}
+            onChange={(e) => setNewItem(e.target.value)}
+            className="flex-1 min-w-0 px-3 py-2 rounded bg-gray-200 text-gray-900"
+          />
+
+          <ButtonDefault
+            type="button"
+            onClick={handleAddCustomItem}
+            text={<Plus className="mr-1" />}
+            className="flex-none w-10 h-10 p-0 rounded-lg bg-purple-500 flex items-center justify-center"
+          />
+        </div>
+
+        <ul className="list-disc list-inside text-sm text-gray-500 mb-4 max-h-36 overflow-auto">
+          {customItems.map((item, i) => (
+            <li key={i}>{item}</li>
+          ))}
+        </ul>
+
+        <ButtonDefault
+          type="button"
+          onClick={handleCreateCustomBag}
+          text="Crear mochila personalizada"
+          className="mx-auto block rounded-lg mb-6 bg-purple-500"
+        />
+      </div>
+
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold mb-2">Días de recordatorio</h4>
+        <DaySelector selectedDays={notifyDays} setSelectedDays={setNotifyDays} />
+      </div>
+
+      <ButtonClose onClick={onClose} />
+    </div>
+  );
 };

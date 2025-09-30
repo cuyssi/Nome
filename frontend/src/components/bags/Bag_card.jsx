@@ -1,15 +1,20 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * Bag_card: tarjeta visual de una mochila.                                     │
+ * Componente Bag_card: tarjeta visual de una mochila.                          │
  *                                                                              │
  * Funcionalidad:                                                               │
- *   • Muestra el nombre de la bolsa.                                           │
- *   • Permite acciones de editar o eliminar (si no es la mochila "Clase").     │
- *   • Usa useCard para manejar gestos de arrastre y animaciones.               │
- *   • Colores y animaciones cambian según dirección y fuerza del gesto.        │
+ *   • Muestra el nombre de la mochila.                                         │
+ *   • Permite acciones de eliminar o editar (swipe o iconos).                  │
+ *   • Bloquea la apertura del modal si la tarjeta se desliza (swipe).          │
  *                                                                              │
  * Props:                                                                       │
- *   - onDelete: función llamada al eliminar la bolsa.                          │
- *   - onOpenModal: abre un modal para editar la bolsa o ver su contenido.      │
+ *   • bag: objeto mochila con información (id, name, color, items, notifyDays).│
+ *   • onDelete: función llamada al eliminar la mochila.                        │
+ *   • onOpenModal: función para abrir modal de edición o visualización.        │
+ *                                                                              │
+ * Hooks internos:                                                              │
+ *   • useCard: gestiona gestos de swipe, long press y estado de la tarjeta.    │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
 import { Trash2, Pencil } from "lucide-react";
@@ -19,11 +24,17 @@ import { SwipeAction } from "../commons/SwipeAction";
 
 export const Bag_card = ({ bag, onDelete, onOpenModal }) => {
     const isSchoolBag = bag.name === "Clase";
+
     const {
         gestureHandlers,
-        state: { dragOffset, isRemoving, isDragging },
+        state: { dragOffset, isRemoving, isDragging, preventClickRef },
         color,
-    } = useCard(bag, onDelete, () => onOpenModal(bag, "edit"), isSchoolBag);
+    } = useCard(
+        bag,
+        () => onDelete(bag.id),
+        () => onOpenModal(bag, "edit"),
+        isSchoolBag
+    );
 
     return (
         <SwipeCard
@@ -31,7 +42,11 @@ export const Bag_card = ({ bag, onDelete, onOpenModal }) => {
             isRemoving={isRemoving}
             color={color}
             gestureHandlers={gestureHandlers}
-            onClick={() => !isDragging && onOpenModal(bag, isSchoolBag ? "school" : "items")}
+            onClick={() => {
+                if (!isDragging && !preventClickRef.current) {
+                    onOpenModal(bag, isSchoolBag ? "school" : "items");
+                }
+            }}
             leftAction={!isSchoolBag && <SwipeAction icon={Trash2} label="¿Eliminar?" />}
             rightAction={<SwipeAction icon={Pencil} label="¿Editar?" />}
         >

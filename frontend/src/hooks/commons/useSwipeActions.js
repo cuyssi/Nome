@@ -1,27 +1,28 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * useSwipeActions: hook para gestionar gestos de swipe, long press y estado de │
- * tareas individuales.                                                         │
- *                                                                              │
- * Parámetros:                                                                  │
- *   - task: objeto de la tarea.                                                │
- *   - onDelete: callback al deslizar hacia derecha (delete).                   │
- *   - onEdit: callback al deslizar hacia izquierda (edit).                     │
- *   - threshold: distancia mínima en px para disparar acción (default 160).    │
+ * Hook useSwipeActions: gestiona gestos de swipe, long press y estados.        │
  *                                                                              │
  * Funcionalidad:                                                               │
  *   • Detecta swipe horizontal y long press.                                   │
- *   • Maneja vibración en long press y acciones.                               │
- *   • Calcula offset de arrastre y aplica ralentización (slowdown zone).       │
- *   • Dispara onDelete o onEdit según dirección y distancia.                   │
- *   • Controla estados: isDragging, isRemoved, isEdited, isChecked.            │
+ *   • Calcula desplazamiento (dragOffset) y aplica slowdown zone.              │
+ *   • Dispara callbacks onDelete o onEdit según dirección y umbral (threshold).│
+ *   • Controla estados internos: isDragging, isRemoved, isEdited, isChecked.   │
+ *   • Previene click accidental al eliminar o editar (preventClickRef).        │
+ *                                                                              │
+ * Parámetros:                                                                  │
+ *   • task: objeto de la tarea o bag.                                          │
+ *   • onDelete: callback al deslizar hacia derecha (delete).                   │
+ *   • onEdit: callback al deslizar hacia izquierda (edit).                     │
+ *   • threshold: distancia mínima en px para disparar acción (default 160).    │
+ *   • isSchoolBag: indica si es mochila "Clase" (restricciones de swipe).      │
  *                                                                              │
  * Devuelve:                                                                    │
- *   - dragOffset: desplazamiento actual de la tarjeta.                         │
- *   - gestureHandlers: funciones para usar en eventos de touch/pointer.        │
- *   - handleLongPressStart / handleLongPressEnd: manejo de long press.         │
- *   - isChecked: si la tarea está marcada como completada (long press).        │
- *   - isRemoving: si la tarjeta está en proceso de eliminación.                │
- *   - isEdited: si la tarjeta está en proceso de edición.                      │
+ *   • dragOffset: desplazamiento horizontal actual.                            │
+ *   • gestureHandlers: funciones para eventos touch/pointer.                   │
+ *   • handleLongPressStart / handleLongPressEnd: manejo de long press.         │
+ *   • preventClickRef: referencia para bloquear click tras swipe.              │
+ *   • isDragging, isRemoving, isEdited, isChecked: estados internos.           │
+ *                                                                              │
+ * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -39,6 +40,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
     const pressTimer = useRef(null);
     const hasMoved = useRef(false);
     const toggleCompletedToday = useStorageStore((state) => state.toggleCompletedToday);
+    const preventClickRef = useRef(false);
 
     const handleStart = (clientX) => {
         setDragStartX(clientX);
@@ -47,8 +49,8 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
 
         clearTimeout(pressTimer.current);
         pressTimer.current = setTimeout(() => {
-            if (!hasMoved.current) {
-                navigator.vibrate(150);
+            if (!hasMoved.current && toggleCompletedToday && task?.id) {
+                navigator.vibrate?.(150);
                 setIsChecked((prev) => !prev);
                 toggleCompletedToday(task.id, new Date().toLocaleDateString("sv-SE"));
             }
@@ -59,10 +61,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         if (dragStartX === null) return;
 
         let deltaX = clientX - dragStartX;
-
-        if (isSchoolBag && deltaX > 0) {
-            deltaX = 0;
-        }
+        if (isSchoolBag && deltaX > 0) deltaX = 0;
 
         if (Math.abs(deltaX) > 10 && !hasMoved.current) {
             hasMoved.current = true;
@@ -84,15 +83,19 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
             clearTimeout(pressTimer.current);
 
             if (currentOffset >= threshold && !isSchoolBag && !isDeleted) {
-                navigator.vibrate(150);
+                navigator.vibrate?.(150);
                 setIsDeleted(true);
                 setIsRemoving(true);
-                setTimeout(() => onDelete(), 160);
+                preventClickRef.current = true;
+                setTimeout(() => (preventClickRef.current = false), 300);
+                setTimeout(() => onDelete?.(), 160);
             } else if (currentOffset <= -threshold && !isEdited) {
-                navigator.vibrate(150);
+                navigator.vibrate?.(150);
                 setIsEdited(true);
+                preventClickRef.current = true;
+                setTimeout(() => (preventClickRef.current = false), 300);
                 setTimeout(() => {
-                    onEdit();
+                    onEdit?.();
                     setIsEdited(false);
                 }, 160);
             }
@@ -104,33 +107,30 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         [dragOffset, isDeleted, isEdited, onDelete, onEdit, threshold, isSchoolBag]
     );
 
-    const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
-    const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
-    const handleTouchEnd = () => endGesture(dragOffset);
-
-    const handlePointerStart = (e) => handleStart(e.clientX);
+    const handlePointerDown = (e) => {
+        handleStart(e.clientX);
+        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
+    };
     const handlePointerMove = (e) => {
         setIsDragging(true);
         handleMove(e.clientX);
     };
-    const handlePointerEnd = () => endGesture(dragOffset);
+    const handlePointerUp = (e) => {
+        endGesture(dragOffset);
+        if (e.currentTarget.releasePointerCapture) e.currentTarget.releasePointerCapture(e.pointerId);
+    };
 
     useEffect(() => {
         const handlePointerUpGlobal = () => endGesture(dragOffset);
         document.addEventListener("pointerup", handlePointerUpGlobal);
-        return () => {
-            document.removeEventListener("pointerup", handlePointerUpGlobal);
-        };
+        return () => document.removeEventListener("pointerup", handlePointerUpGlobal);
     }, [dragOffset, endGesture]);
 
     return {
         dragOffset,
-        handleTouchStart,
-        handleTouchMove,
-        handleTouchEnd,
-        handlePointerStart,
+        handlePointerStart: handlePointerDown,
         handlePointerMove,
-        handlePointerEnd,
+        handlePointerEnd: handlePointerUp,
         handleLongPressStart: () => {},
         handleLongPressEnd: () => clearTimeout(pressTimer.current),
         isChecked,
@@ -138,5 +138,6 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         isEdited,
         isDragging,
         setIsDragging,
+        preventClickRef,
     };
 };

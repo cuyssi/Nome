@@ -1,11 +1,26 @@
 /**─────────────────────────────────────────────────────────────────────────────┐
- * Componente Task_card: representa visualmente una tarea dentro de la lista.   │
- *                                                                              │                                                                              
+ * Componente Task_card: tarjeta visual de una tarea.                             │
+ *                                                                              │
+ * Funcionalidad:                                                               │
+ *   • Muestra información de la tarea (texto, hora, repetición).               │
+ *   • Permite acciones de swipe para eliminar o editar la tarea.               │
+ *   • Bloquea click accidental al usar swipe (gestos de drag).                 │
+ *   • Muestra estado de completada mediante línea tachada y estilo de texto.   │
+ *                                                                              │
  * Props:                                                                       │
- *   • task (object): objeto tarea a mostrar.                                   │
- *   • onDelete (function): función para eliminar la tarea.                     │
- *   • onEdit (function): función para editar la tarea.                         │
- *                                                                              │ 
+ *   • task: objeto tarea a mostrar (id, text, date, hour, type, color, etc.). │
+ *   • onDelete: función llamada al eliminar la tarea.                          │
+ *   • onEdit: función llamada al editar la tarea.                               │
+ *                                                                              │
+ * Hooks internos:                                                              │
+ *   • useCard: gestiona gestos de swipe, long press, estado de arrastre y      │
+ *     colores dinámicos según tipo/color de la tarea.                          │
+ *   • useStorageStore: obtiene información sobre tareas completadas y toggle.  │
+ *                                                                              │
+ * Componentes internos:                                                        │
+ *   • SwipeCard: contenedor con animaciones y manejo de gestos.                │
+ *   • SwipeAction: iconos visuales de acción (eliminar, editar).               │
+ *                                                                              │
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
@@ -22,7 +37,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
     const { markAsCompleted } = useStorageStore();
     const {
         gestureHandlers,
-        state: { dragOffset, isRemoving },
+        state: { dragOffset, isRemoving, isDragging },
         color,
     } = useCard(task, onDelete, onEdit, markAsCompleted);
 
@@ -34,6 +49,7 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
             gestureHandlers={gestureHandlers}
             leftAction={<SwipeAction icon={Trash2} label="¿Eliminar?" />}
             rightAction={<SwipeAction icon={Pencil} label="¿Editar?" />}
+            onClick={() => {}}
         >
             {(task.date || task.hour) && (
                 <div className="flex flex-1 flex-col w-[30%] border border-black border-r-white rounded-l-xl gap-1 justify-center text-center break-words">

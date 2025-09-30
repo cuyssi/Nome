@@ -87,3 +87,6 @@ div::-webkit-scrollbar {
   font-size: 1.5rem; /* opcional: más grande */
 }
 
+.swipe-card {
+  touch-action: pan-y; /* permite scroll vertical, pero libera horizontal */
+}

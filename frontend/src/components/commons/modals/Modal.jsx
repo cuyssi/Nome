@@ -16,7 +16,7 @@ export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction 
         ${backdropBlur ? "backdrop-blur-sm bg-black/30" : "bg-transparent"}
         ${blockInteraction ? "" : "pointer-events-none"}`}
         >
-            <div className="pointer-events-auto">{children}</div>
+            <div className="pointer-events-auto w-full max-w-md max-h-[90vh] overflow-auto rounded-xl">{children}</div>
         </div>
     );
 };
