@@ -20,15 +20,11 @@
 import {
     Backpack,
     Plus,
-    Pencil,
-    Repeat,
     Bell,
     Mic,
     SquarePen,
     Notebook,
     NotebookPen,
-    Trash,
-    Check,
 } from "lucide-react";
 
 export const stepsBags = {
@@ -193,6 +189,28 @@ export const stepsCalendar = [
             </div>
         ),
         position: { top: "50%", left: "50%" },
+    },
+      {
+        title: "Sección de busqueda",
+        content: (
+            <div>
+                <p>
+                    En la parte inferior del calendario encontraras esta sección que te ayudara a buscar tareas.
+                    Escribe por ejemplo: trabajo de historia, si no borraste la tarea podrás comprobar para cuando tenías
+                    esa tarea, si la completaste o no...                 
+                </p>
+                
+            </div>
+        ),
+        position: { top: "50%", left: "50%" },
+        highlight: {
+                position: {
+                    top: "85%",
+                    left: "40%",
+                    transform: "translate(-20%, -90%) rotate(180deg)",
+                },
+                animationClass: "animate-bounceStrong",
+            },
     },
 ];
 

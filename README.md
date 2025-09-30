@@ -101,19 +101,18 @@ Cada tarea se guarda en el apartado correspondiente, y el sistema permite visual
 - ✅ Tutoriales guiados en la app  
 - ✅ Backend con FastAPI para gestión de tareas y audios  
 - ✅ Transcripción de voz mediante **Vosk**  
-
+- ✅ Apartado de ayuda para que el usuario pueda consultar manuales y guías dentro de la app. 
 ---
 
 ## 🔜 Próximamente / En desarrollo
 
+- Modo **claro/oscuro** para la interfaz.
 - Mejora en el reconocimiento de expresiones naturales, para que el usuario pueda hablar libremente.
-- Mejora en el tiempo de procesamiento.
-- Apartado de ayuda para que el usuario pueda consultar manuales y guías dentro de la app.  
+- Mejora en el tiempo de procesamiento. 
 - Asistencia mediante **Google Home**.  
-- Modo **claro/oscuro** para la interfaz. 
-- Automatizaciones de recordatorios avanzadas.  
 
 ---
+
 
 ## 🛠️ Tecnología usada
 
