@@ -6,8 +6,6 @@ COPY . .
 RUN echo "VITE_API_URL=$VITE_API_URL" > .env.production
 RUN npm install
 RUN VITE_API_URL=$VITE_API_URL npm run build
-COPY frontend/public/manifest.json /usr/share/nginx/html/manifest.json
-COPY frontend/public/icons /usr/share/nginx/html/icons
 
 # Etapa 2: producción con Nginx
 FROM nginx:stable-alpine
