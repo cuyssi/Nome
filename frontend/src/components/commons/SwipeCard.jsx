@@ -20,6 +20,7 @@
 └──────────────────────────────────────────────────────────────────────────────*/
 
 import { Container_Card } from "./Container_Card";
+import { getDragColor } from "../../utils/constants"
 
 export const SwipeCard = ({
     dragOffset,
@@ -29,12 +30,14 @@ export const SwipeCard = ({
     onClick,
     leftAction,
     rightAction,
-    children,
+    children,    
 }) => {
     return (
         <div className="relative flex-shrink-0 w-full min-h-[6rem] overflow-hidden rounded-xl">
             <div
-                className={`absolute inset-0 w-full z-0 flex items-center justify-between rounded-xl transition-colors duration-150 ease-in`}
+                className={`absolute inset-0 w-full z-0 flex items-center justify-between rounded-xl transition-colors duration-150 ease-in ${getDragColor(
+                    dragOffset
+                )}`}
             >
                 <div className="flex flex-col ml-4 justify-center items-center">{leftAction}</div>
                 <div className="flex flex-col mr-4 justify-center items-center">{rightAction}</div>
