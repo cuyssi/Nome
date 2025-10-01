@@ -28,36 +28,39 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
 
     return (
         <Modal isOpen={isOpen}>
-            <div className="relative bg-black border border-purple-600 rounded-xl p-6 w-full max-w-md text-white shadow-lg">
+            <div className="relative bg-black border border-purple-400 rounded-xl p-6 w-full max-w-md text-white shadow-lg">
                 <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold mt-10">
                     Asignaturas {FULL_DAYS[dayKey]}
                 </h2>
 
-                {isTomorrowBagComplete && (
-                    <p className="flex items-center gap-2 text-green-700 justify-center mt-4 font-bold">
-                        <Check className="mr-2" /> Cambios guardados con éxito
-                    </p>
-                )}
+        <div className="h-5 flex items-center justify-center mt-4">
+        {isTomorrowBagComplete ? (
+            <p className="flex items-center gap-1 text-green-700 font-bold">
+            <Check />Mochila completa!
+            </p>
+        ) : (
+            <span className="text-transparent select-none">placeholder</span>
+        )}
+        </div>
+
 
                 {subjects.length === 0 ? (
-                    <p className="font-poppins text-red-400 text-center text-sm mt-8">
+                    <p className="font-poppins text-red-400 text-center text-sm mt-4">
                         No hay asignaturas para mañana.
                     </p>
                 ) : (
-                    <ul className="space-y-5 mt-10 ml-5">
+                    <ul className="space-y-5 mt-5 ml-6">
                         {subjects.map((subject, i) => (
                             <li key={i} className="flex items-center gap-3">
                                 <input
                                     type="checkbox"
                                     checked={!!bag.items?.[dayKey]?.includes(subject.name)}
                                     onChange={() => toggleSubject(subject.name)}
-                                    className="accent-blue-500 w-5 h-5"
+                                    className="w-5 h-5 rounded accent-purple-500"
                                 />
                                 
                                 <span
-                                    className={`text-lg ${
-                                        bag.items?.[dayKey]?.includes(subject.name) ? "line-through" : ""
-                                    }`}
+                                    className="text-lg"
                                 >
                                     {subject.name}
                                 </span>

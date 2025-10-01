@@ -45,7 +45,22 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-const sortTasks = (tasks) => [...tasks].sort((a, b) => new Date(a.dateTime) - new Date(b.dateTime));
+const sortTasks = (tasks) => {
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
+
+    const getEffectiveDate = (task) => {
+        if (task.repeat === "once") return new Date(task.dateTime);
+        const [hour, minute] = task.time?.split(":").map(Number) ?? [
+            new Date(task.dateTime).getHours(),
+            new Date(task.dateTime).getMinutes(),
+        ];
+        return new Date(`${todayStr}T${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}:00`);
+    };
+
+    return [...tasks].sort((a, b) => getEffectiveDate(a) - getEffectiveDate(b));
+};
+
 
 export const useStorageStore = create(
     persist(

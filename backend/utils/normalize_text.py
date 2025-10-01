@@ -12,6 +12,7 @@
 from utils.alpha_to_num import alpha_to_num
 from constants.corrections import CORRECTIONS
 from constants.patterns import PATTERNS
+from utils.helpers.time_helpers import correct_minus_expressions
 import json
 import re
 import spacy
@@ -143,5 +144,5 @@ def normalize_text(text):
     text, extracted = extract_patterns(text)
     text = alpha_to_num(text, "es")
     text = normalize_time(text)
-
+    text = correct_minus_expressions(text)
     return text, extracted

@@ -34,7 +34,7 @@ export const Schedule = () => {
     } = useSchedule();
 
     return (
-        <div className="w-full max-w-5xl mx-auto mt-4 overflow-x-auto px-4">
+        <div className="w-full max-w-5xl mx-auto overflow-x-auto px-4">
             <table className="table-auto border-collapse w-full">
                 <thead>
                     <tr>
@@ -51,7 +51,7 @@ export const Schedule = () => {
                     {(hours || []).map((hour) => (
                         <tr key={hour} className="border border-black">
                             <td
-                                className="bg-black pr-2 text-purple-400 font-bold text-center cursor-pointer"
+                                className="text-purple-400 font-bold text-center cursor-pointer"
                                 onClick={() => {
                                     const newHour = prompt("Edit hour:", hour);
                                     if (newHour && newHour !== hour) updateHour(hour, newHour);

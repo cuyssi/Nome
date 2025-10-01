@@ -61,7 +61,7 @@ export const Bags = () => {
     return (
         <div className="flex flex-col items-center h-full bg-black p-4">
             <NotifyBag onOpenBag={(name) => openBagFromURL(name, bags)} />
-            <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-10 mb-10">Mochilas</h2>
+            <h2 className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10">Mochilas</h2>
 
             <Item_List
                 items={bags}
@@ -75,7 +75,7 @@ export const Bags = () => {
                 )}
             />
 
-            <ButtonDefault onClick={() => openModalWithBag(null, "create")} icon={<Plus className="inline-block mr-2" />} text="Crear Mochila" className="bg-purple-400 rounded-lg py-2 px-4" />
+            <ButtonDefault onClick={() => openModalWithBag(null, "create")} icon={<Plus className="inline-block mr-2" />} text="Crear Mochila" className="bg-purple-400 rounded-lg py-2 px-4 mb-5" />
 
             <BagModalManager
                 isOpen={isOpen}

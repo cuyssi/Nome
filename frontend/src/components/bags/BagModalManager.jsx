@@ -26,8 +26,12 @@ import { EditBag } from "./EditBag";
 import { BagItems } from "./BagItems";
 import { TomorrowSubjects } from "./TomorrowSubjects";
 import { Check } from "lucide-react";
+import { useBagsStore } from "../../store/useBagsStore";
 
 export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, onClose, mode }) => {
+    const bags = useBagsStore((state) => state.bags);
+    const selectedBag = selected?.id ? bags.find((b) => b.id === selected.id) : null;
+
     if (!isOpen) return null;
 
     return (
@@ -53,7 +57,7 @@ export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, on
                 />
             ) : mode === "school" ? (
                 <TomorrowSubjects
-                    bag={selected}
+                    bag={selectedBag}
                     isOpen={true}
                     onClose={onClose}
                     onUpdateBag={(updatedBag) => onEdit(updatedBag, { skipConfirmation: true })}

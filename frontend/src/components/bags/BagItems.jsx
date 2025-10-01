@@ -22,7 +22,7 @@ export const BagItems = ({ bag, onClose, onUpdateBag }) => {
 
     return (
         <div className="relative min-w-[20rem] max-w-[32rem] w-full max-h-[70vh] bg-black border border-purple-600 rounded-xl p-6 text-white">
-            <h2 className="text-2xl text-center text-purple-400 font-bold mt-6">Items de {bag.name}</h2>
+            <h2 className="text-2xl text-center text-purple-400 font-bold mt-6">Contenido de {bag.name}</h2>
             <div className="h-8 flex items-center justify-center ">
                 {isComplete ? (
                     <p className="flex items-center gap-2 text-green-700 font-bold">

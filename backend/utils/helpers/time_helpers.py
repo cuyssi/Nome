@@ -26,6 +26,7 @@
 from datetime import timedelta
 import re
 
+
 def extract_time_fragment(text):
     text_lower = text.lower()
 
