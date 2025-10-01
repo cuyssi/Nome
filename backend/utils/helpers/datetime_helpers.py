@@ -128,6 +128,22 @@ def combine_fragments_to_datetime(text, base=None):
             else:
                 dt = time_dt
 
+    if time_frag:
+        original_match = re.search(
+            r"\b(?:a\s+)?la?s?\s*\d{1,2}(?::\d{1,2})?\s+(?:de la|por la)\s+(mañana|tarde|noche|madrugada)\b",
+            text_corrected.lower()
+        )
+        if original_match:
+            fragments["time_fragment"] = original_match.group(0).strip()
+
+    if dt is None and time_frag:
+        match = re.match(r"^(\d{1,2})(?:\s+de la tarde)$", time_frag)
+        if match:
+            hour = int(match.group(1))
+            if hour < 12:
+                hour += 12
+            dt = now.replace(hour=hour, minute=0)
+
     if dt is not None:
         dt, context_frag = adjust_time_context(dt, text_corrected)
         if context_frag is not None and fragments["time_fragment"] is None:

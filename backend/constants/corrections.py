@@ -16,6 +16,7 @@ CORRECTIONS = {
     "Débiles": "Deberes",
     "ede": "quedé",
     "eddy": "quedé",
+    "Edipo ": "quedé",
     "ejercicio": "Ej:",
     "ejercicios": "Ej:",
     "el mario": "el Atrio",

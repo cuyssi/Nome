@@ -118,8 +118,14 @@ def extract_custom_days(text):
         return "daily", [], "todos los días"
     if "entre semana" in text_lower:
         return "weekdays", [0, 1, 2, 3, 4], "entre semana"
+    if "de lunes a viernes" in text_lower:
+        return "weekdays", [0, 1, 2, 3, 4], "de lunes a viernes"
     if "los fines de semana" in text_lower or "el fin de semana" in text_lower:
         return "weekend", [5, 6], "los fines de semana"
+    if "los sábados y domingos" in text_lower or "el fin de semana" in text_lower:
+        return "weekend", [5, 6], "los sábados y domingos"
+    if "los sábados y los domingos" in text_lower or "el fin de semana" in text_lower:
+        return "weekend", [5, 6], "los sábados y los domingos"
 
     pattern = r"\b(" + "|".join(WEEKDAYS) + r")\b"
     matches = re.findall(pattern, text_lower)

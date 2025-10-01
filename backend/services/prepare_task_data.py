@@ -75,13 +75,16 @@ def prepare_task_data(text):
     repeat_fragment = frag_dict["repeat_fragment"]
     task_type_override = frag_dict["task_type_override"]
 
-    repeat_type, custom_days, _ = extract_custom_days(text_dt)
+    repeat_type, custom_days, repeat_frag = extract_custom_days(text_dt)
+    if repeat_frag and not day_fragment:
+        day_fragment = repeat_frag
+
     steps["extract_custom_days"] = {
         "repeat_type": repeat_type,
         "custom_days": custom_days,
     }
 
-    safe_fragments = [time_fragment, repeat_fragment]
+    safe_fragments = [time_fragment]
     if day_fragment and len(day_fragment) > 2:
         safe_fragments.append(day_fragment)
 

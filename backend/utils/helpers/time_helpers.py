@@ -30,6 +30,13 @@ def extract_time_fragment(text):
     text_lower = text.lower()
 
     match = re.search(
+        r"\b\d{1,2}(?::\d{2})?\s+(de la|por la)\s+(mañana|tarde|noche|madrugada)\b",
+        text_lower,
+    )
+    if match:
+        return match.group(0).strip()
+
+    match = re.search(
         r"\b(?:a\s+)?la?s?\s*\d{1,2}(?::\d{1,2})?(?:\s*(?:de la|por la)\s+(mañana|tarde|noche|madrugada))",
         text_lower,
     )
