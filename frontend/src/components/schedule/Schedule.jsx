@@ -34,11 +34,11 @@ export const Schedule = () => {
     } = useSchedule();
 
     return (
-        <div className="w-full max-w-5xl mx-auto mt-4 overflow-x-auto pr-4">
+        <div className="w-full max-w-5xl mx-auto mt-4 overflow-x-auto px-4">
             <table className="table-auto border-collapse w-full">
                 <thead>
                     <tr>
-                        <th className="bg-black text-red-400 font-bold p-2 text-center"></th>
+                        <th className="bg-black text-red-400 font-bold text-center"></th>
                         {(days || []).map((day) => (
                             <th key={day} className="bg-black text-purple-600 font-bold p-2 text-center">
                                 {day}
@@ -51,7 +51,7 @@ export const Schedule = () => {
                     {(hours || []).map((hour) => (
                         <tr key={hour} className="border border-black">
                             <td
-                                className="bg-black text-purple-400 font-bold p-2 text-center cursor-pointer"
+                                className="bg-black pr-2 text-purple-400 font-bold text-center cursor-pointer"
                                 onClick={() => {
                                     const newHour = prompt("Edit hour:", hour);
                                     if (newHour && newHour !== hour) updateHour(hour, newHour);
@@ -89,8 +89,7 @@ export const Schedule = () => {
                 </tbody>
             </table>
 
-            <div className="w-full flex justify-center">
-                <div className="mt-28 flex gap-4 ml-4">
+                <div className="flex w-full mt-16 justify-between ">
                     <button
                         onClick={() => {
                             const newHour = prompt("Add new hour (e.g., 12:30)");
@@ -98,7 +97,7 @@ export const Schedule = () => {
                         }}
                         className="px-3 py-1 bg-purple-400 text-white rounded"
                     >
-                        ➕ Add hour
+                        ➕ Añadir hora
                     </button>
                     <button
                         onClick={() => {
@@ -108,7 +107,7 @@ export const Schedule = () => {
                         }}
                         className="px-3 py-1 bg-red-400 text-white rounded"
                     >
-                        ➖ Remove hour
+                        ➖ Eliminar hora
                     </button>
                 </div>
 
@@ -120,6 +119,5 @@ export const Schedule = () => {
                     onClose={() => setIsModalOpen(false)}
                 />
             </div>
-        </div>
     );
 };
