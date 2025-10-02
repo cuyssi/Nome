@@ -49,6 +49,7 @@ export function useTaskEditor() {
     };
 
     const handleEdit = (finalTask) => {
+        console.log("Guardando tarea:", finalTask);
         if (!finalTask || !deviceId) return;
 
         if (selectedTask?.id) {

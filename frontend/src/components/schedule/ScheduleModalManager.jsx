@@ -22,22 +22,40 @@
 
 import { Modal } from "../commons/modals/Modal";
 import { Form_Schedule } from "./Form_Schedule";
+import { Form_HourSchedule } from "./Form_HourSchedule";
 import { Check } from "lucide-react";
 
-export const ScheduleModalManager = ({ isOpen, selectedSubject, showConfirmation, onEdit, onClose }) => {
+export const ScheduleModalManager = ({
+    isOpen,
+    selectedSubject,
+    selectedHour,
+    mode = "subject",
+    showConfirmation,
+    onEditSubject,
+    onEditHour,
+    removeHour,
+    onClose,
+}) => {
     return (
         <Modal isOpen={isOpen}>
             {showConfirmation ? (
                 <p className="flex text-green-500 justify-center font-semibold animate-fadeIn">
                     <Check className="mr-2" /> Cambios guardados con éxito
                 </p>
-            ) : (
+            ) : mode === "subject" ? (
                 <Form_Schedule
                     subject={selectedSubject}
                     day={selectedSubject?.day}
                     hour={selectedSubject?.hour}
-                    onSubmit={onEdit}
+                    onSubmit={onEditSubject}
                     onClose={onClose}
+                />
+            ) : (
+                <Form_HourSchedule
+                    initialHour={selectedHour}
+                    onSubmit={onEditHour}
+                    onClose={onClose}
+                    onDelete={() => removeHour(selectedHour)}
                 />
             )}
         </Modal>

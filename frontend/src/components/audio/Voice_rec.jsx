@@ -22,63 +22,60 @@
 import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/audio/useVoiceRecorder";
 import { useTranscription } from "../../hooks/commons/useTranscription";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const Voice_rec = ({ openModalWithTask, showConfirmationForTask }) => {
+export const Voice_rec = ({ openModalWithTask, showConfirmationForTask }) => {
     const { recording, toggleRecording, audioFile } = useVoiceRecorder();
-    const { sendFile, isProcessing } = useTranscription(openModalWithTask);
+    const { sendFile } = useTranscription();
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         if (audioFile) {
+            setIsProcessing(true);
+            openModalWithTask();
             sendFile(audioFile, {
                 repeat: "once",
                 customDays: [],
-                onTaskSaved: showConfirmationForTask,                
+                onTaskSaved: () => {
+                    setIsProcessing(false);
+                    showConfirmationForTask();
+                },
             });
         }
     }, [audioFile]);
-    
 
     return (
-        <div className="flex w-full h-full justify-center items-center">
-            <div className="relative flex flex-col w-full bg-black items-center mt-10 sm:mt-8">
-                <div className="flex justify-center bg-gradient-to-br from-yellow-400 to-purple-600 rounded-full p-[1.8px]">
+        <div className="relative flex w-full h-full justify-center items-center">
+            <div className="flex justify-center border-dynamic rounded-full p-[3px] mb-4">
+                <button
+                    type="button"
+                    className="flex bg-bg_button border-none rounded-full w-[10rem] aspect-square items-center justify-center"
+                    onClick={toggleRecording}
+                >
+                    <Mic
+                        className={`stroke-[2] w-14 h-14 ${
+                            recording ? "text-green-400" : "text-purple-400"
+                        } drop-shadow-[0_0px_0.5px_white]`}
+                    />
+                </button>
+
+                <div className="absolute top-4 right-4 flex justify-center items-center w-10 h-10 p-[1.8px] border-dynamic rounded-xl">
                     <button
-                        type="button"
-                        className="flex bg-black border border-black rounded-full w-[10rem] sm:max-w-[10rem] aspect-square items-center justify-center"
-                        onClick={toggleRecording}
+                        onClick={() => openModalWithTask(null)}
+                        className="flex justify-center items-center w-full h-full border-none rounded-xl bg-bg_button"
                     >
-                        <Mic
-                            className={`stroke-[2] w-14 h-14 sm:w-14 sm:h-14 ${
-                                recording ? "text-green-400" : "text-purple-400"
-                            } drop-shadow-[0_0px_0.5px_white]`}
-                        />
+                        <SquarePen className="w-5 h-5 text-dynamic" />
                     </button>
                 </div>
-                <div className="relative w-full flex justify-end items-center px-4 mt-4">
-                    <p
-                        className={`text-sm transition-opacity duration-500 ${
-                            isProcessing ? "opacity-100 text-yellow-300 animate-pulse" : "opacity-0"
-                        }`}
-                        aria-live="polite"
-                    >
-                        Espera por favor, procesando audio...
-                    </p>
-
-                    <div className="ml-4">
-                        <div className="flex justify-center items-center w-10 h-10 sm:w-8 sm:h-8 p-[1.8px] bg-gradient-to-br from-yellow-400 to-purple-600 rounded-xl  mb-2">
-                            <button
-                                onClick={() => openModalWithTask({})}
-                                className="flex justify-center items-center w-full h-full border border-none rounded-xl bg-black"
-                            >
-                                <SquarePen className="w-5 h-5 text-white drop-shadow-[0_1px_1px_black]" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
+
+            {isProcessing && (
+                <div className="absolute top-24 flex flex-col items-center justify-center p-4 bg-black/50 rounded-xl">
+                    <p className="text-yellow-400 animate-pulse text-lg font-semibold">
+                        Procesando audio, espera por favor...
+                    </p>
+                </div>
+            )}
         </div>
     );
 };
-
-export default Voice_rec;

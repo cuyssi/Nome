@@ -14,8 +14,8 @@ export const Footer = () => {
     const { getIconClass } = useActivePath();
 
     return (
-        <div className="h-[56px] w-full bg-black flex justify-between items-center px-4 border border-black">
-            <Link to="./dates">                
+        <div className="h-[56px] w-full bg-bg border border-none flex justify-between items-center px-4">
+            <Link to="./dates">
                 <Notebook className={getIconClass("/dates")} />
             </Link>
             <Link to="./calendar">

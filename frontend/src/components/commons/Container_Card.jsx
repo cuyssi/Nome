@@ -9,11 +9,9 @@
 
 export const Container_Card = ({ children, outerClass = "", innerClass = "" }) => {
     return (
-        <div
-            className={`w-full border border-black p-[1px] rounded-xl pl-2 ${outerClass} `}
-        >
+        <div className={`w-full border border-none p-[2px] rounded-xl pl-2 ${outerClass} `}>
             <div
-                className={`flex flex-row justify-between ${innerClass} items-center w-full p-2 font-bold bg-black rounded-xl min-h-[5.8rem]`}
+                className={`flex bg-bg_button flex-row justify-between ${innerClass} items-center w-full p-2 font-bold bg-bg rounded-xl min-h-[5.8rem]`}
             >
                 {children}
             </div>

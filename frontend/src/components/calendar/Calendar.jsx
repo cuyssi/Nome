@@ -47,11 +47,11 @@ export const Calendar = ({ openModalWithTask }) => {
     } = useCalendarTasks();
 
     return (
-        <div className="w-full max-w-md mx-auto bg-black text-purple-400">
+        <div className="w-full max-w-md mx-auto bg-bg text-purple-400">
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
-                firstDay={1}                
+                firstDay={1}
                 locale={esLocale}
                 headerToolbar={{ right: "prev,next" }}
                 titleFormat={{ year: "numeric", month: "long" }}
@@ -75,7 +75,6 @@ export const Calendar = ({ openModalWithTask }) => {
                         </>
                     );
                 }}
-                
                 dateClick={handleDateClick}
             />
 

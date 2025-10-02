@@ -35,7 +35,7 @@ export const Calendar_page = () => {
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("calendar"));
 
     return (
-        <div className="relative flex flex-col items-center bg-black p-4 h-full hide-scrollbar overflow-y-auto">
+        <div className="relative flex flex-col items-center bg-bg p-4 h-full hide-scrollbar overflow-y-auto">
             <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-10 mb-10">Calendario</h2>
             <Calendar openModalWithTask={openModalWithTask} />
             <TaskSearch openModalWithTask={openModalWithTask} />

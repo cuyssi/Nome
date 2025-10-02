@@ -22,10 +22,10 @@ export const HelpToggle = () => {
         <>
             <button
                 onClick={() => setHelpOpen(true)}
-                className="absolute top-1 right-2 z-50 text-purple-400 p-2 rounded-full shadow-md hover:bg-purple-700 transition"
+                className="absolute top-1 right-2 z-50 text-purple-400 p-2 border border-none hover:bg-purple-700 transition"
                 title="Centro de ayuda"
             >
-                <CircleQuestionMark className="w-5.5 h-5.5" />
+                <CircleQuestionMark className="w-7 h-7" />
             </button>
 
             <Help isOpen={helpOpen} onClose={() => setHelpOpen(false)} />

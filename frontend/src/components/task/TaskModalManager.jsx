@@ -28,9 +28,15 @@ import { useStorageStore } from "../../store/storageStore";
 import { Modal } from "../commons/modals/Modal";
 import { Form_Task } from "./Form_Task";
 import { TaskSavedModal } from "../commons/modals/TaskSavedModal";
-import { GetTaskLocationMessage } from "../commons/modals/GetTaskLocationMessage";
 
-export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdit, onClose }) => {
+export const TaskModalManager = ({
+    isOpen,
+    selectedTask,
+    showConfirmation,
+    onEdit,
+    onClose,
+    isProcessing, // ✨ nuevo prop
+}) => {
     const lastSavedTask = useStorageStore((state) => state.lastSavedTask);
     const clearLastSavedTask = useStorageStore((state) => state.clearLastSavedTask);
     const taskToShow = showConfirmation ? lastSavedTask : selectedTask;
@@ -41,21 +47,21 @@ export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdi
                 <TaskSavedModal
                     task={taskToShow}
                     onClose={() => {
-                        onClose(); 
+                        onClose();
                         clearLastSavedTask();
                     }}
-                    locationMessage={GetTaskLocationMessage(taskToShow)}
                 />
-            ) : isOpen && !showConfirmation ? (
+            ) : isOpen ? (
                 <Modal isOpen={true}>
-                    <Form_Task
-                        task={selectedTask}
-                        onSubmit={(finalTask) => {
-                            onEdit(finalTask);
-                            
-                        }}
-                        onClose={onClose}
-                    />
+                    {isProcessing ? (
+                        <div className="flex flex-col items-center justify-center p-10">
+                            <p className="text-yellow-400 animate-pulse text-lg font-semibold">
+                                Procesando audio, espera por favor...
+                            </p>
+                        </div>
+                    ) : (
+                        <Form_Task task={selectedTask} onSubmit={(finalTask) => onEdit(finalTask)} onClose={onClose} />
+                    )}
                 </Modal>
             ) : null}
         </>

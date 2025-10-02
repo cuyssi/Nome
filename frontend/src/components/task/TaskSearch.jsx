@@ -14,17 +14,15 @@
 import { useState } from "react";
 import { useTasks } from "../../hooks/task/useTasks";
 import { useStorageStore } from "../../store/storageStore";
-import { toLocalYMD } from "../../utils/dateUtils";
 import { filterByQuery } from "../../utils/taskFilter";
 
 export const TaskSearch = () => {
     const { tasks } = useTasks();
     const [query, setQuery] = useState("");
     const filteredTasks = filterByQuery(tasks, query);
-    const todayYMD = toLocalYMD(new Date());
 
     return (
-        <div className="w-full max-w-md mx-auto bg-black text-white p-4 rounded-md mt-4">
+        <div className="w-full max-w-md mx-auto bg-bg text-text p-4 rounded-md mt-4">
             <input
                 type="text"
                 placeholder="Buscar tarea..."
@@ -40,7 +38,7 @@ export const TaskSearch = () => {
             ) : (
                 <ul className="flex flex-col gap-2">
                     {filteredTasks.map((task) => {
-                        const taskYMD = task.dateTime.slice(0, 10); // extrae "2025-09-29"
+                        const taskYMD = task.dateTime.slice(0, 10);
                         const isCompleted = useStorageStore.getState().isTaskCompletedForDate(task.id, taskYMD);
 
 

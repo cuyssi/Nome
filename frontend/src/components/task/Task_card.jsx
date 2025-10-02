@@ -52,14 +52,16 @@ export const Task_card = ({ task, onDelete, onEdit }) => {
             onClick={() => {}}
         >
             {(task.date || task.hour) && (
-                <div className="flex flex-1 flex-col w-[30%] border border-black border-r-white rounded-l-xl gap-1 justify-center text-center break-words">
+                <div className="flex flex-1 flex-col w-[30%] border border-r-gray-300 border-bg_button rounded-l-xl gap-1 justify-center text-center break-words">
                     <p className="text-gray-400 font-semibold text-2xl flex justify-center">{getRepeatLabel(task)}</p>
                     <p className="text-gray-400 font-bold text-xl">{task.hour}</p>
                 </div>
             )}
             <div
-                className={`flex flex-2 pl-6 w-[70%] text-base text-white break-words transition-all duration-300 ${
-                    isCompleted ? "line-through text-white decoration-2 decoration-red-400 scale-[0.97]" : "text-white"
+                className={`flex flex-2 pl-6 w-[70%] text-base text-dynamic break-words transition-all duration-300 ${
+                    isCompleted
+                        ? "line-through text-dynamic decoration-2 decoration-red-400 scale-[0.97]"
+                        : "text-white"
                 }`}
             >
                 {task.text}

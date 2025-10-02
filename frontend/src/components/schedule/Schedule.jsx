@@ -16,6 +16,7 @@
 import { useRef, useState } from "react";
 import { useSchedule } from "../../hooks/schedule/useSchedule";
 import { ScheduleModalManager } from "./ScheduleModalManager";
+import { Plus } from "lucide-react";
 
 export const Schedule = () => {
     const {
@@ -24,13 +25,15 @@ export const Schedule = () => {
         subjects,
         isModalOpen,
         selectedSubject,
+        selectedHour,
+        mode,
         showConfirmation,
         setIsModalOpen,
-        setSelectedSubject,
-        handleEdit,
+        openSubjectModal,
+        openHourModal,
+        handleEditSubject,
+        handleEditHour,
         getTextClass,
-        updateHour,
-        addHour,
         removeHour,
     } = useSchedule();
 
@@ -59,7 +62,7 @@ export const Schedule = () => {
     };
 
     return (
-        <div className="w-[92%] max-w-5xl border border-black hide-scrollbar">
+        <div className="w-[92%] max-w-5xl border border-bg hide-scrollbar">
             <div
                 ref={scrollRef}
                 className="overflow-x-auto overflow-y-hidden touch-pan-x hide-scrollbar"
@@ -71,9 +74,9 @@ export const Schedule = () => {
                 <table className="table-auto border-collapse min-w-max">
                     <thead>
                         <tr>
-                            <th className="bg-black font-bold text-center sticky left-0 z-50"></th>
+                            <th className="bg-bg font-bold text-center sticky left-0 z-50"></th>
                             {days.map((day) => (
-                                <th key={day} className="bg-black text-purple-600 font-bold text-center ">
+                                <th key={day} className="bg-bg text-purple-600 font-bold text-center ">
                                     {day}
                                 </th>
                             ))}
@@ -83,11 +86,8 @@ export const Schedule = () => {
                         {hours.map((hour) => (
                             <tr key={hour} className="border border-none">
                                 <td
-                                    className="text-purple-400 font-bold text-center cursor-pointer sticky left-0 bg-black pr-2 z-10"
-                                    onClick={() => {
-                                        const newHour = prompt("Edit hour:", hour);
-                                        if (newHour && newHour !== hour) updateHour(hour, newHour);
-                                    }}
+                                    className="text-purple-400 font-bold text-center cursor-pointer sticky left-0 bg-bg pr-2 z-10"
+                                    onClick={() => openHourModal(hour)}
                                 >
                                     {hour}
                                 </td>
@@ -103,13 +103,12 @@ export const Schedule = () => {
                                             className={`border min-w-14 px-1 border-gray-600 h-14 sm:h-12 text-center text-sm cursor-pointer bg-${bgColor} ${textClass}`}
                                             onClick={() => {
                                                 if (dragDetected) return;
-                                                setSelectedSubject({
+                                                openSubjectModal({
                                                     day,
                                                     hour,
                                                     name: subject?.name || "",
                                                     color: subject?.color || "yellow-400",
                                                 });
-                                                setIsModalOpen(true);
                                             }}
                                         >
                                             {subject?.name || ""}
@@ -122,33 +121,24 @@ export const Schedule = () => {
                 </table>
             </div>
 
-            <div className="flex w-full mt-16 justify-between">
+            <div className="flex w-full mt-14 justify-center items-center">
                 <button
-                    onClick={() => {
-                        const newHour = prompt("Add new hour (e.g., 12:30)");
-                        if (newHour) addHour(newHour);
-                    }}
-                    className="px-3 py-1 bg-purple-400 text-white rounded"
+                    onClick={() => openHourModal(null)}
+                    className="w-[50%] px-3 py-1 bg-green-400 text-white rounded"
                 >
-                    ➕ Añadir hora
-                </button>
-                <button
-                    onClick={() => {
-                        if (!hours.length) return alert("No hours to remove.");
-                        const hourToRemove = prompt(`Enter the hour to remove:\n${hours.join(", ")}`);
-                        if (hourToRemove && hours.includes(hourToRemove)) removeHour(hourToRemove);
-                    }}
-                    className="px-3 py-1 bg-red-400 text-white rounded"
-                >
-                    ➖ Eliminar hora
+                    <Plus className="inline" /> Añadir hora
                 </button>
             </div>
 
             <ScheduleModalManager
                 isOpen={isModalOpen}
+                mode={mode}
                 selectedSubject={selectedSubject}
+                selectedHour={selectedHour}
                 showConfirmation={showConfirmation}
-                onEdit={handleEdit}
+                onEditSubject={handleEditSubject}
+                onEditHour={handleEditHour}
+                removeHour={removeHour}
                 onClose={() => setIsModalOpen(false)}
             />
         </div>

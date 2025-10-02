@@ -35,6 +35,15 @@ module.exports = {
             "2xl": "1536px",
         },
         extend: {
+            colors: {
+                bg: 'var(--color-bg)',
+                text: 'var(--color-text)',
+                bg_button: 'var(--color-bg_button)',
+                toogle: 'var(--color-toogle)',
+                border_toogle: 'var(--color-border_toogle)',
+                tabs: 'var(--color-tabs)',
+                text_tabs: 'var(--color-text_tabs)',                
+            },
             fontFamily: {
                 neon: ["Neon Tubes", "sans-serif"],
                 poppins: ["Poppins", "sans-serif"],

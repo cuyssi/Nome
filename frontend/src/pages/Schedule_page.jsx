@@ -27,7 +27,7 @@ export const Schedule_page = () => {
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("schedule"));
 
     return (
-        <div className="flex flex-col h-full items-center bg-black">
+        <div className="flex flex-col h-full items-center bg-bg">
             <h2 className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10">Horario</h2>
             <Schedule />
             {shouldShowTutorial && (

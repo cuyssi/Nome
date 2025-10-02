@@ -34,6 +34,7 @@ import { Schedule_page } from "./pages/Schedule_page";
 import { Calendar_page } from "./pages/Calendar_page";
 import { Bags } from "./pages/Bags";
 import { HelpToggle } from "./components/tutorials/HelpToggle";
+import { ButtonTheme } from "./components/commons/buttons/ButtonTheme";
 
 import clsx from "clsx";
 
@@ -51,7 +52,7 @@ function App() {
                     "sm:max-w-[360px] sm:h-[90%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
                 )}
             >
-                <main className="bg-black flex-1 overflow-y-auto border border-none">
+                <main className="bg-bg flex-1 overflow-y-auto border border-none">
                     <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/tasks" element={<Tasks />} />
@@ -64,6 +65,7 @@ function App() {
                         <Route path="/bags" element={<Bags />} />
                     </Routes>
                     <HelpToggle />
+                    <ButtonTheme />
                 </main>
                 <Footer />
             </div>

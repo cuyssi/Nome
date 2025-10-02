@@ -34,11 +34,11 @@ export function NotificationToggle() {
 
     return (
         <div>
-            <button onClick={handleToggle} className="absolute top-3.5 right-12 z-50">
+            <button onClick={handleToggle} className="absolute top-3.5 right-14 z-50">
                 {isSubscribed ? (
-                    <Bell className="text-green-500 w-5 h-5" />
+                    <Bell className="text-green-500 w-6 h-6" />
                 ) : (
-                    <BellOff className="text-red-500 w-5 h-5" />
+                    <BellOff className="text-red-500 w-6 h-6" />
                 )}
             </button>
 

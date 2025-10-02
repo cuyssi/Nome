@@ -15,7 +15,7 @@
  ─────────────────────────────────────────────────────────────────────────────*/
 
 import Welcome from "../components/commons/Wellcome";
-import Voice_rec from "../components/audio/Voice_rec";
+import { Voice_rec } from "../components/audio/Voice_rec";
 import Task_count from "../components/task/Task_count";
 import { useTaskEditor } from "../hooks/task/useTaskEditor";
 import { TaskModalManager } from "../components/task/TaskModalManager";
@@ -24,17 +24,32 @@ import { stepsHome } from "../components/tutorials/tutorials";
 import { TutorialModal } from "../components/tutorials/TutorialModal";
 
 export const Home = () => {
-    const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation, showTaskConfirmation } = useTaskEditor();
+    const {
+        isOpen,
+        selectedTask,
+        handleClose,
+        handleEdit,
+        openModalWithTask,
+        showConfirmation,
+        showTaskConfirmation,
+    } = useTaskEditor();
+
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("home"));
 
     return (
-        <div className="flex flex-col w-full h-full items-center bg-black overflow-hidden">
-            <div className="flex flex-col w-full h-full items-center bg-black">
+        <div className="flex flex-col w-full h-full items-center bg-[var(--color-bg)] overflow-hidden">
+            <div className="flex flex-col w-full h-full items-center bg-bg">
                 <Welcome />
                 <Task_count />
-                <Voice_rec openModalWithTask={openModalWithTask} showConfirmationForTask={showTaskConfirmation} />
 
+                {/* Voice recorder */}
+                <Voice_rec
+                    openModalWithTask={openModalWithTask}
+                    showConfirmationForTask={showTaskConfirmation}
+                />
+
+                {/* Modal de tarea */}
                 <TaskModalManager
                     isOpen={isOpen}
                     selectedTask={selectedTask}

@@ -53,7 +53,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                         label="Texto:"
                         name="text"
                         value={formData.text}
-                        placeholder="Ej: Quede con Marcos a las 6 en la plaza"
+                        placeholder="Ej: Quede con Marcos en la plaza"
                         onChange={handleChange}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {

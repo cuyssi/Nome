@@ -1,21 +1,4 @@
 {
   "subscriptions": {},
-  "scheduled_tasks": {
-    "f08e4553-3559-4d04-8055-09c30041c9cd": [
-      {
-        "id": "52a4226f-850c-4196-94cb-f3440f71f704",
-        "title": "Qued\u00e9 con Marta en canciones",
-        "dateTime": "2025-10-02T16:30:00+02:00",
-        "deviceId": "f08e4553-3559-4d04-8055-09c30041c9cd",
-        "type": "task",
-        "notifyMinutesBefore": 15,
-        "data": {
-          "url": "/today"
-        },
-        "notifyDayBefore": false,
-        "repeat": "once",
-        "customDays": []
-      }
-    ]
-  }
+  "scheduled_tasks": {}
 }

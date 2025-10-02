@@ -14,7 +14,7 @@ const Welcome = () => {
         <div className="flex w-full h-full justify-center items-center">
             <div className="flex flex-col w-full justify-center items-center px-4">
                 <NotificationToggle />
-                <img src={logo_nome} className="w-[90%] mt-2"/>
+                <img src={logo_nome} className="w-[90%] mt-10" />
             </div>
         </div>
     );

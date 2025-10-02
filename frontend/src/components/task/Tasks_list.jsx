@@ -16,7 +16,7 @@ export const Tasks_list = ({ tasks = [], openModalWithTask, className = "" }) =>
     
     return (
         <div
-            className={`flex flex-col gap-8 w-full hide-scrollbar overflow-y-auto px-2 pb-[15rem] cursor-grab touch-pan-x touch-pan-y select-none ${className}`}
+            className={`flex flex-col gap-8 w-full hide-scrollbar overflow-y-auto px-2 pb-[20rem] cursor-grab touch-pan-x touch-pan-y select-none ${className}`}
             style={{
                 WebkitOverflowScrolling: "touch",
                 touchAction: "pan-x pan-y",

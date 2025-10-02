@@ -190,7 +190,7 @@ def schedule_notification(task):
     if task.get("notifyDayBefore"):
         fecha_original = isoparse(task["dateTime"])
         fecha_anticipada = (fecha_original - timedelta(days=1)).replace(
-            hour=6, minute=44, second=0, microsecond=0
+            hour=11, minute=17, second=0, microsecond=0
         )
 
         if fecha_anticipada < datetime.now(fecha_anticipada.tzinfo):
@@ -205,7 +205,7 @@ def schedule_notification(task):
             "deviceId": task["deviceId"],
             "type": task.get("type", "task"),
             "notifyMinutesBefore": 0,
-            "data": task.get("data", {}),
+            "data": {**task.get("data", {}), "url": "/dates"},
             "isDayBefore": True,
             "originalDateTime": task["dateTime"],
             "repeat": "once",

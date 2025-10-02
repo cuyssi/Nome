@@ -35,9 +35,26 @@ export const useSchedule = () => {
     const { days, hours, subjects, setSubject, updateHour, addHour, removeHour } = useScheduleStore();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedHour, setSelectedHour] = useState(null);
+    const [mode, setMode] = useState("subject");
     const [showConfirmation, setShowConfirmation] = useState(false);
-    const handleEdit = ({ day, hour, name, color }) => {
+
+    const handleEditSubject = ({ day, hour, name, color }) => {
         setSubject(day, hour, name, color);
+        setShowConfirmation(true);
+        setTimeout(() => {
+            setShowConfirmation(false);
+            setIsModalOpen(false);
+        }, 1000);
+    };
+
+    const handleEditHour = (oldHour, newHour) => {
+        if (!newHour) return;
+        if (oldHour) {
+            updateHour(oldHour, newHour);
+        } else {
+            addHour(newHour);
+        }
         setShowConfirmation(true);
         setTimeout(() => {
             setShowConfirmation(false);
@@ -47,19 +64,33 @@ export const useSchedule = () => {
 
     const getTextClass = (bgColor) => (lightColors.includes(bgColor) ? "text-black" : "text-white");
 
+    const openSubjectModal = (subject) => {
+        setSelectedSubject(subject);
+        setMode("subject");
+        setIsModalOpen(true);
+    };
+
+    const openHourModal = (hour) => {
+        setSelectedHour(hour);
+        setMode("hour");
+        setIsModalOpen(true);
+    };
+
     return {
         days,
         hours,
         subjects,
         isModalOpen,
         selectedSubject,
+        selectedHour,
+        mode,
         showConfirmation,
         setIsModalOpen,
-        setSelectedSubject,
-        handleEdit,
+        openSubjectModal,
+        openHourModal,
+        handleEditSubject,
+        handleEditHour,
         getTextClass,
-        updateHour,
-        addHour,
         removeHour,
     };
 };

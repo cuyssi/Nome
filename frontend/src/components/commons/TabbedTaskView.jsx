@@ -45,8 +45,8 @@ export const TabbedTaskView = ({ title, tabLabels, tabTasks, tutorialSteps, tuto
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`relative w-full p-2 border border-purple-400 rounded-t-xl font-semibold transition
-              ${activeTab === tab ? "bg-black border-b-black px-5 z-30 text-white" : "bg-gray-600"}
-              ${index === 0 ? " border-l-black rounded-tl-none " : ""}
+              ${activeTab === tab ? "bg-bg border-b-bg px-5 z-30 text-text_tabs" : "bg-tabs text-bg"}
+              ${index === 0 ? " border-l-bg rounded-tl-none " : ""}
             `}
                     >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -54,7 +54,7 @@ export const TabbedTaskView = ({ title, tabLabels, tabTasks, tutorialSteps, tuto
                 ))}
             </div>
 
-            <div className="flex flex-col pt-14 items-center relative border border-black border-t-purple-400 w-full h-[100vh] px-2 py-6 transition-colors duration-300 bg-black mt-[-2px]">
+            <div className="flex flex-col pt-14 items-center relative border border-bg border-t-purple-400 w-full h-[100vh] px-2 py-6 transition-colors duration-300 bg-bg mt-[-2px]">
                 <Tasks_list key={renderKey} tasks={tabTasks[activeTab]} openModalWithTask={openModalWithTask} />
             </div>
 

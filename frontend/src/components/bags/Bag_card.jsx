@@ -51,7 +51,7 @@ export const Bag_card = ({ bag, onDelete, onOpenModal }) => {
             rightAction={<SwipeAction icon={Pencil} label="¿Editar?" />}
         >
             <div className="flex flex-col justify-center items-center px-4 w-full">
-                <h3 className="text-xl font-bold text-white">{bag.name}</h3>
+                <h3 className="text-xl font-bold text-text">{bag.name}</h3>
             </div>
         </SwipeCard>
     );
