@@ -42,7 +42,7 @@ body,
 }
 
 .light {
-    --color-bg: rgb(245, 245, 243);
+    --color-bg: rgb(250, 250, 250);
     --color-text: rgb(116, 112, 112);
     --color-bg_button: rgb(255, 255, 250);
     --color-toogle: rgb(212, 212, 212);
@@ -64,7 +64,7 @@ body,
 }
 
 .light .border-dynamic {
-    @apply bg-gradient-to-br from-orange-400 to-purple-500;
+    @apply bg-gradient-to-br from-orange-400 to-purple-500 shadow-xl;
 }
 
 .hide-scrollbar {
