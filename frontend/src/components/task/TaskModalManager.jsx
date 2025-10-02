@@ -29,41 +29,28 @@ import { Modal } from "../commons/modals/Modal";
 import { Form_Task } from "./Form_Task";
 import { TaskSavedModal } from "../commons/modals/TaskSavedModal";
 
-export const TaskModalManager = ({
-    isOpen,
-    selectedTask,
-    showConfirmation,
-    onEdit,
-    onClose,
-    isProcessing, // ✨ nuevo prop
-}) => {
+export const TaskModalManager = ({ isOpen, selectedTask, showConfirmation, onEdit, onClose }) => {
     const lastSavedTask = useStorageStore((state) => state.lastSavedTask);
     const clearLastSavedTask = useStorageStore((state) => state.clearLastSavedTask);
     const taskToShow = showConfirmation ? lastSavedTask : selectedTask;
 
-    return (
-        <>
-            {showConfirmation && taskToShow ? (
-                <TaskSavedModal
-                    task={taskToShow}
-                    onClose={() => {
-                        onClose();
-                        clearLastSavedTask();
-                    }}
-                />
-            ) : isOpen ? (
-                <Modal isOpen={true}>
-                    {isProcessing ? (
-                        <div className="flex flex-col items-center justify-center p-10">
-                            <p className="text-yellow-400 animate-pulse text-lg font-semibold">
-                                Procesando audio, espera por favor...
-                            </p>
-                        </div>
-                    ) : (
-                        <Form_Task task={selectedTask} onSubmit={(finalTask) => onEdit(finalTask)} onClose={onClose} />
-                    )}
-                </Modal>
-            ) : null}
-        </>
+    if (!isOpen && !showConfirmation) return null;
+
+    return showConfirmation && taskToShow ? (
+        <TaskSavedModal
+            task={taskToShow}
+            onClose={() => {
+                onClose();
+                clearLastSavedTask();
+            }}
+        />
+    ) : (
+        <Modal isOpen={true}>
+            <Form_Task
+                task={selectedTask}
+                onSubmit={onEdit}
+                onClose={onClose}
+            />
+        </Modal>
     );
 };

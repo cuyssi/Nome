@@ -9,7 +9,7 @@
 
 const Container = ({ children, outerClass = "", innerClass = "" }) => {
     return (
-        <div className={`flex justify-center items-center p-[2px] border-dynamic rounded-2xl ${outerClass}`}>
+        <div className={`flex justify-center items-center border-dynamic rounded-2xl ${outerClass}`}>
             <div
                 className={`flex bg-bg_button p-2 justify-center items-center w-full border border-none rounded-2xl ${innerClass}`}
             >

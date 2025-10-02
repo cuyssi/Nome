@@ -46,7 +46,7 @@ const Task_count = () => {
                             <Container className="w-[100%] py-3">
                                 <Link to="./schedule" className="flex justify-center items-center gap-1 py-2">
                                     <CalendarDays className="w-7 text-dynamic" />
-                                    <p className="text-dynamic font-poppins text-lg">Horario</p>
+                                    <p className="text-dynamic text-lg">Horario</p>
                                 </Link>
                             </Container>
                         </div>
