@@ -41,7 +41,9 @@ export const Voice_rec = ({ openModalWithTask, showConfirmationForTask }) => {
             <div className="flex justify-center border-dynamic rounded-full">
                 <button
                     type="button"
-                    className="flex bg-bg_button rounded-full w-[10rem] sm:max-w-[10rem] aspect-square items-center justify-center"
+                    className={`flex bg-bg_button rounded-full w-[10rem] sm:max-w-[10rem] aspect-square items-center justify-center
+    transition-transform duration-150 ease-in-out
+    ${recording ? "scale-95 bg-gray-900" : "bg-bg_button"}`}
                     onClick={toggleRecording}
                 >
                     <Mic
