@@ -29,7 +29,7 @@ const Task_count = () => {
     const totalTodayCount = todayTasks.length;
 
     return (
-        <div className="flex w-full h-auto justify-center items-center mt-8 mb-4">
+        <div className="flex w-full h-auto justify-center items-center mt-8 mb-6">
             <div className="w-full">
                 <div className="flex flex-col w-full">
                     <div className="flex w-full justify-between">
