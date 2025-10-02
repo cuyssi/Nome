@@ -22,15 +22,15 @@
  * Autor: Ana Castro                                                               │
 └─────────────────────────────────────────────────────────────────────────────────*/
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const useItems = (bag, onUpdateBag) => {
-    const allItems = Array.isArray(bag.items) ? bag.items : [];
-    const packedItems = Array.isArray(bag.packed) ? bag.packed : [];
-    const [localPacked, setLocalPacked] = useState(packedItems);
+    const allItems = Array.isArray(bag?.items) ? bag.items : [];
+    const initialPacked = Array.isArray(bag?.packed) ? bag.packed : [];
+    const [localPacked, setLocalPacked] = useState(initialPacked);
 
     useEffect(() => {
-        setLocalPacked(packedItems);
+        setLocalPacked(initialPacked);
     }, [bag]);
 
     const toggleItem = (nombre) => {
@@ -40,16 +40,14 @@ export const useItems = (bag, onUpdateBag) => {
 
         setLocalPacked(updatedPacked);
 
-        const updatedBag = {
-            ...bag,
-            packed: updatedPacked,
-        };
-
-        onUpdateBag(updatedBag);
-
-        if (navigator.vibrate) {
-            navigator.vibrate(100);
+        if (bag) {
+            onUpdateBag({
+                ...bag,
+                packed: updatedPacked,
+            });
         }
+
+        if (navigator.vibrate) navigator.vibrate(100);
     };
 
     const isComplete = allItems.length > 0 && allItems.every((item) => localPacked.includes(item));
@@ -59,6 +57,5 @@ export const useItems = (bag, onUpdateBag) => {
         localPacked,
         toggleItem,
         isComplete,
-        packedItems,
     };
 };
