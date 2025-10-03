@@ -18,6 +18,7 @@
  * 
  * Autor: Ana Castro
 └──────────────────────────────────────────────────────────────────────────────*/
+
 import { useTaskModalInfo } from "../../../hooks/modals/useTaskModalInfo";
 import { Modal } from "./Modal";
 import { Check } from "lucide-react";
@@ -32,7 +33,7 @@ export const TaskSavedModal = ({ task, isProcessing, onClose }) => {
 
     return (
         <Modal isOpen={!!task || isProcessing}>
-            <div className="relative bg-white rounded-2xl shadow-lg p-10 max-w-md w-full">
+            <div className="relative bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">
                 <div className="flex items-center justify-center text-lg text-gray-800 mt-6">
                     {!isProcessing && <Check className="w-8 h-8 text-green-500 mr-1" />}
                     <span className="text-purple-600 text-2xl">
@@ -40,12 +41,12 @@ export const TaskSavedModal = ({ task, isProcessing, onClose }) => {
                     </span>
                 </div>
 
-                <div className="flex items-center justify-center">
-                    <div className="mt-4 text-gray-600 w-full text-center">
+                <div className="flex items-center justify-start text-lg">
+                    <div className="mt-4 text-gray-600 w-full ">
                         {isProcessing ? (
                             <div className="flex flex-col items-center">
                                 <div className="w-12 h-12 border-4 border-purple-300 border-t-purple-600 rounded-full animate-spin"></div>
-                                <p className="text-gray-600 mt-4">Espere por favor, cargando tarea...</p>
+                                <p className="text-gray-600 mt-4">Espera por favor...</p>
                             </div>
                         ) : (
                             <>

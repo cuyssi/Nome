@@ -22,34 +22,37 @@ import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTutorialStore } from "../store/useTutorialStore";
 import { stepsHome } from "../components/tutorials/tutorials";
 import { TutorialModal } from "../components/tutorials/TutorialModal";
+import { useState } from "react";
+import { TaskSavedModal } from "../components/commons/modals/TaskSavedModal";
 
 export const Home = () => {
-    const {
-        isOpen,
-        selectedTask,
-        handleClose,
-        handleEdit,
-        openModalWithTask,
-        showConfirmation,
-        showTaskConfirmation,
-    } = useTaskEditor();
+    const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation, showTaskConfirmation } =
+        useTaskEditor();
 
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("home"));
+
+    const [modalInfo, setModalInfo] = useState({
+        isOpen: false,
+        isProcessing: false,
+        task: null,
+    });
+
+    const closeModal = () => setModalInfo({ isOpen: false, isProcessing: false, task: null });
 
     return (
         <div className="flex flex-col w-full h-full items-center bg-[var(--color-bg)] overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-bg">
                 <Welcome />
+                
                 <Task_count />
 
-                {/* Voice recorder */}
                 <Voice_rec
                     openModalWithTask={openModalWithTask}
                     showConfirmationForTask={showTaskConfirmation}
+                    setModalInfo={setModalInfo}
                 />
 
-                {/* Modal de tarea */}
                 <TaskModalManager
                     isOpen={isOpen}
                     selectedTask={selectedTask}
@@ -65,6 +68,10 @@ export const Home = () => {
                         isOpen={shouldShowTutorial}
                         onNeverShowAgain={() => hideTutorial("home")}
                     />
+                )}
+
+                {modalInfo.isOpen && (
+                    <TaskSavedModal task={modalInfo.task} isProcessing={modalInfo.isProcessing} onClose={closeModal} />
                 )}
             </div>
         </div>

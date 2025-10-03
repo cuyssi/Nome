@@ -38,7 +38,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
 
     return (
         <form
-            className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[70vh] flex flex-col"
+            className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[80vh] flex flex-col text-lg"
             onSubmit={handleSubmit}
         >
             <ButtonClose onClick={onClose} />

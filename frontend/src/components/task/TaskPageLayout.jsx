@@ -16,9 +16,9 @@
 
 export const TaskPageLayout = ({ title, children }) => {
     return (
-        <div className="flex flex-col h-[100%] items-center overflow-hidden">
-            <h2 className="text-purple-400 font-bold font-poppins text-3xl mt-16 mb-12 text-center">{title}</h2>
-            <div className="w-[90%] h-[90%]">{children}</div>
+        <div className="flex flex-col h-full justify-start overflow-hidden">
+             <h2 className="text-purple-400 font-bold font-poppins text-3xl text-center mt-24 mb-10">{title}</h2>
+            <div className="flex flex-col items-center relative border-bg w-full h-[100vh] px-2 py-4 transition-colors duration-300 bg-bg mt-[-2px]">{children}</div>
         </div>
     );
 };

@@ -20,28 +20,37 @@
 import { Mic, SquarePen } from "lucide-react";
 import { useVoiceRecorder } from "../../hooks/audio/useVoiceRecorder";
 import { useTranscription } from "../../hooks/commons/useTranscription";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { TaskSavedModal } from "../commons/modals/TaskSavedModal";
 
-export const Voice_rec = ({ openModalWithTask, showConfirmationForTask }) => {
+export const Voice_rec = ({ openModalWithTask, showConfirmationForTask, setModalInfo }) => {
     const { recording, toggleRecording, audioFile } = useVoiceRecorder();
     const { sendFile } = useTranscription();
 
     useEffect(() => {
         if (audioFile) {
+            setModalInfo({ isOpen: true, isProcessing: true, task: null });
+
             sendFile(audioFile, {
                 repeat: "once",
                 customDays: [],
-                onTaskSaved: showConfirmationForTask,
+                onTaskSaved: (savedTask) => {
+                    setModalInfo({ isOpen: true, isProcessing: false, task: savedTask });
+                },
             });
         }
     }, [audioFile]);
+
+    const closeModal = () => setModalInfo({ isOpen: false, isProcessing: false, task: null });
 
     return (
         <div className="relative flex flex-col w-full bg-bg items-center mt-8">
             <div className="flex justify-center border-dynamic rounded-full">
                 <button
                     type="button"
-                    className={`flex bg-bg_button rounded-full w-[12rem] sm:max-w-[10rem] aspect-square items-center justify-center transition-transform duration-150 ease-in-out ${recording ? "scale-95 bg-gray-900" : "bg-bg_button"}`}
+                    className={`flex bg-bg_button rounded-full w-[12rem] sm:max-w-[10rem] aspect-square items-center justify-center transition-transform duration-150 ease-in-out ${
+                        recording ? "scale-95 bg-gray-900" : "bg-bg_button"
+                    }`}
                     onClick={toggleRecording}
                 >
                     <Mic
