@@ -20,21 +20,18 @@ services:
       - traefik.enable=true
 
   frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: ${VITE_API_URL}
-    ports:
-      - "3002:80"
-    environment:
-      - TZ=Europe/Madrid
-    restart: always
-    container_name: frontend
-    labels:
-      - coolify.version=4.0.0-beta.420.1
-      - coolify.applicationId=2
-      - coolify.type=application
-      - coolify.name=frontend
-      - traefik.enable=true
+  build:
+    context: ./frontend
+    args:
+      VITE_API_URL: ${VITE_API_URL}
+  ports:
+    - "3002:80"
+  environment:
+    - TZ=Europe/Madrid
+  restart: always
+  container_name: frontend
+  labels:
+    - traefik.enable=false
+
 
 
