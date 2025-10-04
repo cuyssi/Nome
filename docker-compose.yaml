@@ -19,7 +19,7 @@ services:
       - coolify.name=backend
       - traefik.enable=true
 
-  frontend:
+frontend:
   build:
     context: ./frontend
     args:
@@ -31,7 +31,7 @@ services:
   restart: always
   container_name: frontend
   labels:
-    - traefik.enable=false
+    - traefik.enable=false   
 
 
 
