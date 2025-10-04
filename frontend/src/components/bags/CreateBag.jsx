@@ -26,7 +26,7 @@ import { PREDEFINED_BAGS } from "../../utils/constants";
 import { ButtonClose } from "../commons/buttons/ButtonClose";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
 import { ButtonTrash } from "../commons/buttons/ButtonTrash";
-import { InputField } from "../commons/formComponents/InputField"
+import { InputField } from "../commons/formComponents/InputField";
 import { Timer } from "../commons/formComponents/Timer";
 import { useState } from "react";
 
@@ -54,109 +54,110 @@ export const CreateBag = ({ onClose, onSubmit }) => {
         <div className="bg-white rounded-xl p-6 max-w-md w-full max-h-[80vh] flex flex-col relative text-lg">
             <ButtonClose onClick={onClose} />
 
-            <h2
-                className="text-3xl font-bold text-purple-600 mt-10 mb-10 text-center"
-                style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
+            <div className="flex-shrink-0">
+                <h2
+                    className="text-3xl font-bold text-purple-600 text-center mt-6 mb-8"
+                    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
+                >
+                    Nueva mochila
+                </h2>
+            </div>
+
+            <form
+                onSubmit={handleCreateCustomBag}
+                className="flex-1 overflow-y-auto flex flex-col justify-start items-center hide-scrollbar"
             >
-                Nueva mochila
-            </h2>
+                <button
+                    type="button"
+                    onClick={() => setShowSuggested(!showSuggested)}
+                    className="w-[95%] border-2 justify-center border-orange-400 p-2 rounded-xl font-semibold text-gray-500 flex gap-2 items-center mb-4"
+                >
+                    Sugeridas
+                    <span>{showSuggested ? <Minus /> : <Plus />}</span>
+                </button>
 
-            <form onSubmit={handleCreateCustomBag} className="flex flex-col flex-1 overflow-hidden">
-                <div className="overflow-y-auto flex flex-col justify-center items-center hide-scrollbar">
-                    <button
-                        type="button"
-                        onClick={() => setShowSuggested(!showSuggested)}
-                        className="w-[95%] border-2 justify-center border-orange-400 p-2 rounded-xl font-semibold text-gray-500 flex gap-2 items-center"
-                    >
-                        Sugeridas
-                        <span>{showSuggested ? <Minus /> : <Plus />}</span>
-                    </button>
+                {showSuggested && (
+                    <div className="flex flex-col px-4 gap-2 mb-8 w-full">
+                        {PREDEFINED_BAGS.map((bag, i) => (
+                            <ButtonDefault
+                                key={i}
+                                text={bag.name}
+                                onClick={() => handleAddPredefined(bag)}
+                                className={`bg-${bag.color} text-gray-600 p-2 rounded w-full`}
+                            />
+                        ))}
+                    </div>
+                )}
 
-                    {showSuggested && (
-                        <div className="mt-6 flex flex-col px-2 gap-2">
-                            {PREDEFINED_BAGS.map((bag, i) => (
-                                <ButtonDefault
+                <button
+                    type="button"
+                    onClick={() => setShowCustom(!showCustom)}
+                    className="w-[95%] justify-center border-2 border-green-400 p-2 rounded-xl font-semibold text-gray-500 mb-2 flex gap-2 items-center"
+                >
+                    Personalizada
+                    <span>{showCustom ? <Minus /> : <Plus />}</span>
+                </button>
+
+                {showCustom && (
+                    <div className="px-4 w-full flex flex-col">
+                        <InputField
+                            type="text"
+                            placeholder="Nombre de la mochila"
+                            value={customName}
+                            onChange={(e) => setCustomName(e.target.value)}
+                        />
+
+                        <div className="mt-2 flex gap-2 w-full">
+                            <input
+                                type="text"
+                                placeholder="Contenido ej: agua"
+                                value={newItem}
+                                onChange={(e) => setNewItem(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        e.preventDefault();
+                                        handleAddCustomItem();
+                                    }
+                                }}
+                                className="px-2 py-1 rounded-lg bg-gray-100 text-gray-500 border border-purple-400 focus:border-purple-800 focus:outline-none focus:ring-0 w-full"
+                            />
+                            <ButtonDefault
+                                type="button"
+                                onClick={handleAddCustomItem}
+                                text={<Plus />}
+                                className="flex justify-center items-center w-9 h-9 rounded-lg bg-green-400"
+                            />
+                        </div>
+
+                        <ul className="text-sm text-purple-500">
+                            {customItems.map((item, i) => (
+                                <li
                                     key={i}
-                                    text={bag.name}
-                                    onClick={() => handleAddPredefined(bag)}
-                                    className={`bg-${bag.color} text-gray-600 p-2 rounded`}
-                                />
+                                    className="flex justify-between items-center px-2 py-1 bg-gray-100 rounded mt-2 mb-1 border border-gray-300"
+                                >
+                                    <span>{item}</span>
+                                    <ButtonTrash onClick={() => handleRemoveItem(i)} />
+                                </li>
                             ))}
-                        </div>
-                    )}
+                        </ul>
 
-                    <button
-                        type="button"
-                        onClick={() => setShowCustom(!showCustom)}
-                        className="mt-6 w-[95%] justify-center border-2 border-green-400 p-2 rounded-xl font-semibold text-gray-500 mb-2 flex gap-2 items-center"
-                    >
-                        Personalizada
-                        <span>{showCustom ? <Minus /> : <Plus />}</span>
-                    </button>
+                        <h3 className="mt-6 text-gray-500 font-semibold text-sm mb-1">Recordatorio:</h3>
+                        <Timer
+                            hour={reminderTime.hour}
+                            minute={reminderTime.minute}
+                            onChange={(name, value) => setReminderTime({ ...reminderTime, [name]: value })}
+                        />
 
-                    {showCustom && (
-                        <div className="p-2">
-                            <div className="p-2">
-                                <InputField
-                                    type="text"
-                                    placeholder="Nombre de la mochila"
-                                    value={customName}
-                                    onChange={(e) => setCustomName(e.target.value)}                                    
-                                />
+                        <DaySelector
+                            selectedDays={notifyDays}
+                            setSelectedDays={setNotifyDays}
+                            size="7"
+                            className="mt-4"
+                        />
 
-                                <div className="mt-2 flex gap-2 w-full">
-                                    <input
-                                        type="text"
-                                        placeholder="Contenido ej: agua"
-                                        value={newItem}
-                                        onChange={(e) => setNewItem(e.target.value)}
-                                        onKeyDown={(e) => {
-                                            if (e.key === "Enter") {
-                                                e.preventDefault();
-                                                handleAddCustomItem();
-                                            }
-                                        }}
-                                        className="px-2 py-1 rounded-lg bg-gray-100 text-gray-500 border border-purple-400 focus:border-purple-800 focus:outline-none focus:ring-0 w-full"
-                                    />
-
-                                    <ButtonDefault
-                                        type="button"
-                                        onClick={handleAddCustomItem}
-                                        text={<Plus />}
-                                        className="flex justify-center items-center w-9 h-9 rounded-lg bg-green-400"
-                                    />
-                                </div>
-                                <ul className="text-sm text-purple-500 mb-4 w-[60%] ">
-                                    {customItems.map((item, i) => (
-                                        <li
-                                            key={i}
-                                            className="flex justify-between items-center px-2 py-1 bg-gray-100 rounded mt-2 mb-1 border border-gray-300"
-                                        >
-                                            <span>{item}</span>
-                                            <ButtonTrash onClick={() => handleRemoveItem(i)} />
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <h3 className="text-purple-600 font-semibold text-sm">Reecordatorio:</h3>
-                                <Timer
-                                    hour={reminderTime.hour}
-                                    minute={reminderTime.minute}
-                                    onChange={(name, value) => setReminderTime({ ...reminderTime, [name]: value })}
-                                />
-
-                                <DaySelector
-                                    selectedDays={notifyDays}
-                                    setSelectedDays={setNotifyDays}
-                                    size="7"
-                                    className="mt-4"
-                                />
-
-                                <ButtonDefault type="submit" text="Añadir" className="mt-8 w-full bg-purple-500" />
-                            </div>
-                        </div>
-                    )}
-                </div>
+                        <ButtonDefault type="submit" text="Añadir" className="mt-8 w-full bg-purple-500" />
+                    </div>
+                )}
             </form>
         </div>
     );

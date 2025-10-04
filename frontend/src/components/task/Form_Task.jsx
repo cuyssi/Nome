@@ -56,7 +56,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                         label="Texto:"
                         name="text"
                         value={formData.text}
-                        placeholder="Ej: Quede con Marcos en la plaza"
+                        placeholder="Ej: Quede con Ana en la plaza"
                         onChange={handleChange}
                         onKeyDown={(e) => {
                             if (e.key === "Enter") {
@@ -66,7 +66,14 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                         }}
                     />
 
-                    <InputField label="Fecha:" type="date" name="date" value={formData.date} onChange={handleChange} />
+                    <InputField
+                        label="Fecha:"
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        className="pl-5"
+                    />
 
                     <label className="text-gray-500">
                         Hora:
@@ -130,7 +137,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
 
                     <CheckboxField
                         name="notifyDayBefore"
-                        label="Avisarme también el día antes"
+                        label="Avisar también el día antes"
                         checked={formData.notifyDayBefore || false}
                         onChange={(e) => handleChange({ target: { name: "notifyDayBefore", value: e.target.checked } })}
                     />
