@@ -36,8 +36,5 @@ services:
       - coolify.type=application
       - coolify.name=frontend
       - traefik.enable=true
-      - traefik.http.middlewares.cors.headers.accessControlAllowOrigin=*
-      - traefik.http.middlewares.cors.headers.accessControlAllowMethods=GET,OPTIONS
-      - traefik.http.middlewares.cors.headers.accessControlAllowHeaders=*
-      - traefik.http.routers.https-0-xo840w8kwcg4g4gokcwoo84g-frontend.middlewares=cors
+
 
