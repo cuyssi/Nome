@@ -94,6 +94,6 @@ export const DAYS_TO_NUMBER = {
 
 export const FULL_WEEKDAYS_NUM = [0, 1, 2, 3, 4];
 
-export const DAYS_INDEX_TO_KEY = [ "L", "M", "X", "J", "V", "S", "D" ];
+export const DAYS_INDEX_TO_KEY = ["L", "M", "X", "J", "V", "S", "D"];
 
 export const DEFAULT_HOURS = ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"];

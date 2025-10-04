@@ -40,11 +40,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
     return (
         <Modal isOpen={isOpen}>
             <div className="relative bg-black border border-purple-400 rounded-xl p-6 w-full max-w-md text-white shadow-lg">
-                <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold mt-10">
-                    Asignaturas {FULL_DAYS[dayKey]}
-                </h2>
-
-                <div className="h-5 flex items-center justify-center mt-4">
+                <div className="h-5 flex items-center justify-center mt-10">
                     {isTomorrowBagComplete ? (
                         <p className="flex items-center gap-1 text-green-700 font-bold">
                             <Check />
@@ -54,6 +50,9 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                         <span className="text-transparent select-none">placeholder</span>
                     )}
                 </div>
+                <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold mt-4">
+                    Asignaturas {FULL_DAYS[dayKey]}
+                </h2>
 
                 {subjects.length === 0 ? (
                     <p className="font-poppins text-red-400 text-center text-sm mt-4">

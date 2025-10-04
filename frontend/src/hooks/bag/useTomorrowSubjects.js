@@ -28,12 +28,12 @@
 
 import { useEffect } from "react";
 import { useScheduleStore } from "../../store/useScheduleStore";
-import { DAYS_INDEX_TO_KEY, FULL_WEEKDAYS_NUM } from "../../utils/constants";
+import { FULL_WEEKDAYS_NUM } from "../../utils/constants";
 
 const getTomorrowDayKey = () => {
     const today = new Date();
     const todayIndex = today.getDay();
-    const days = ["L", "M", "X", "J", "V"];
+    const days = FULL_WEEKDAYS_NUM;
     return todayIndex >= 1 && todayIndex <= 4 ? days[todayIndex] : "L";
 };
 
