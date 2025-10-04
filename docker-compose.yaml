@@ -13,11 +13,13 @@ services:
     restart: always
     container_name: backend
     labels:
-      - coolify.version=4.0.0-beta.420.1
-      - coolify.applicationId=2
-      - coolify.type=application
-      - coolify.name=backend
       - traefik.enable=true
+      - traefik.http.routers.nome-backend.entryPoints=http
+      - traefik.http.routers.nome-backend.rule=Host(`api.nome.anacas.dev`)
+      - traefik.http.routers.nome-backend.middlewares=redirect-to-https
+      - traefik.http.routers.nome-backend.entryPoints=https
+      - traefik.http.routers.nome-backend.tls.certresolver=letsencrypt
+      - traefik.http.routers.nome-backend.tls=true
 
   frontend:
     build:
@@ -26,14 +28,13 @@ services:
         VITE_API_URL: ${VITE_API_URL}
     ports:
       - "3002:80"
-    environment:
-      - TZ=Europe/Madrid
     restart: always
     container_name: frontend
     labels:
-      - coolify.version=4.0.0-beta.420.1
-      - coolify.applicationId=2
-      - coolify.type=application
-      - coolify.name=frontend
-      - traefik.enable=false
-
+      - traefik.enable=true
+      - traefik.http.routers.nome-frontend.entryPoints=http
+      - traefik.http.routers.nome-frontend.rule=Host(`nome.anacas.dev`)
+      - traefik.http.routers.nome-frontend.middlewares=redirect-to-https
+      - traefik.http.routers.nome-frontend.entryPoints=https
+      - traefik.http.routers.nome-frontend.tls.certresolver=letsencrypt
+      - traefik.http.routers.nome-frontend.tls=true
