@@ -28,7 +28,12 @@ export const Schedule_page = () => {
 
     return (
         <div className="flex flex-col h-full items-center bg-bg">
-            <h2 className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10">Horario</h2>
+            <h2
+                className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10"
+                style={{ textShadow: "1px 2px 2px rgba(0, 0, 0, 0.5)" }}
+            >
+                Horario
+            </h2>
             <Schedule />
             {shouldShowTutorial && (
                 <TutorialModal

@@ -36,8 +36,10 @@ export const Today_tasks = () => {
         useTaskEditor(reload, updateTask);
 
     return (
-        <TaskPageLayout title="Tareas para Hoy">
-            <Tasks_list key={renderKey} tasks={todayTasks} openModalWithTask={openModalWithTask} />
+        <div className="w-full h-full">
+            <TaskPageLayout title="Tareas para Hoy">
+                <Tasks_list key={renderKey} tasks={todayTasks} openModalWithTask={openModalWithTask} />
+            </TaskPageLayout>{" "}
             <TaskModalManager
                 isOpen={isOpen}
                 selectedTask={selectedTask}
@@ -45,6 +47,6 @@ export const Today_tasks = () => {
                 onEdit={handleEdit}
                 onClose={handleClose}
             />
-        </TaskPageLayout>
+        </div>
     );
 };

@@ -39,8 +39,10 @@ export const Pending_tasks = () => {
         useTaskEditor(reload, updateTask);
 
     return (
-        <TaskPageLayout title="Tareas Pendientes">
-            <Tasks_list key={renderKey} tasks={pendingTasks} openModalWithTask={openModalWithTask} />
+        <div className="w-full h-full">
+            <TaskPageLayout title="Tareas Pendientes">
+                <Tasks_list key={renderKey} tasks={pendingTasks} openModalWithTask={openModalWithTask} />
+            </TaskPageLayout>{" "}
             <TaskModalManager
                 isOpen={isOpen}
                 selectedTask={selectedTask}
@@ -48,6 +50,6 @@ export const Pending_tasks = () => {
                 onEdit={handleEdit}
                 onClose={handleClose}
             />
-        </TaskPageLayout>
+        </div>
     );
 };

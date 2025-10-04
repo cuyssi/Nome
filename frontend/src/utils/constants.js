@@ -38,25 +38,25 @@ export const getDragColor = (dragOffset) => {
 export const PREDEFINED_BAGS = [
     {
         name: "Gimnasio",
-        color: "green-400",
+        color: "orange-400",
         type: "personalizada",
-        items: ["Toalla", "Proteína", "Zapatillas", "Botella"],
+        items: ["Toalla", "Ropa cambio", "Neceser", "Zapatillas", "Botella agua"],
         notifyDays: ["L", "M", "X", "J", "V"],
         notifyTime: "20:00",
     },
     {
         name: "Playa",
-        color: "blue-400",
+        color: "yellow-400",
         type: "personalizada",
-        items: ["Crema solar", "Gafas", "Toalla", "Chanclas"],
+        items: ["Crema solar", "Bañador", "Toalla", "Chanclas"],
         notifyDays: ["L", "M", "X", "J", "V"],
         notifyTime: "20:00",
     },
     {
         name: "Piscina",
-        color: "orange-400",
+        color: "blue-400",
         type: "personalizada",
-        items: ["Gorro", "Bañador", "Toalla", "Sandalias"],
+        items: ["Gorro", "Bañador", "Gafas", "Toalla", "Chanclas"],
         notifyDays: ["L", "M", "X", "J", "V"],
         notifyTime: "20:00",
     },
@@ -94,6 +94,6 @@ export const DAYS_TO_NUMBER = {
 
 export const FULL_WEEKDAYS_NUM = [0, 1, 2, 3, 4];
 
-const DAYS_INDEX_TO_KEY = ["D", "L", "M", "X", "J", "V", "S"];
+export const DAYS_INDEX_TO_KEY = [ "L", "M", "X", "J", "V", "S", "D" ];
 
 export const DEFAULT_HOURS = ["08:15", "09:10", "10:05", "11:00", "11:30", "12:25", "13:20"];

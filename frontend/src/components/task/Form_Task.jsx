@@ -38,13 +38,16 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
 
     return (
         <form
-            className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[80vh] flex flex-col text-lg"
+            className="relative bg-white rounded-xl p-6 max-w-md w-full max-h-[75vh] flex flex-col text-lg"
             onSubmit={handleSubmit}
         >
             <ButtonClose onClick={onClose} />
 
-            <h2 className="text-2xl font-extrabold text-purple-500 text-center font-poppins mt-6">
-                {task ? "Editar tarea" : "Nueva tarea"}
+            <h2
+                className="text-3xl font-extrabold text-purple-500 text-center font-poppins mt-6"
+                style={{ textShadow: "0px 2px 5px rgba(0, 0, 0, 0.5)" }}
+            >
+                {task && Object.keys(task).length > 0 ? "Editar tarea" : "Nueva tarea"}
             </h2>
 
             <div className="overflow-y-auto flex-1 pr-1 hide-scrollbar mt-3">

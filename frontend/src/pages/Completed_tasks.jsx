@@ -35,8 +35,10 @@ export const Completed_tasks = () => {
         useTaskEditor();
 
     return (
-        <TaskPageLayout title="Tareas Completadas">
-            <Tasks_list key={renderKey} tasks={completedTasks} openModalWithTask={openModalWithTask} />
+        <div className="w-full h-full">
+            <TaskPageLayout title="Tareas Completadas">
+                <Tasks_list key={renderKey} tasks={completedTasks} openModalWithTask={openModalWithTask} />
+            </TaskPageLayout>{" "}
             <TaskModalManager
                 isOpen={isOpen}
                 selectedTask={selectedTask}
@@ -44,7 +46,6 @@ export const Completed_tasks = () => {
                 onEdit={handleEdit}
                 onClose={handleClose}
             />
-        </TaskPageLayout>
+        </div>
     );
 };
-

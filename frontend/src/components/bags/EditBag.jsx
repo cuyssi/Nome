@@ -11,10 +11,8 @@ import { InputField } from "../commons/formComponents/InputField";
 export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
     const {
         handleItemChange,
-        handleAddItem,
         handleRemoveItem,
         handleSubmit,
-        name,
         setName,
         items,
         selectedColor,
@@ -29,30 +27,36 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
     } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
 
     return (
-        <div className="bg-white rounded-xl p-5 max-w-md w-full max-h-[70vh] flex flex-col relative">
+        <div className="bg-white rounded-xl p-5 max-w-md w-full max-h-[75vh] flex flex-col relative">
             <ButtonClose onClick={onClose} />
 
-            <h2 className="text-2xl text-center text-purple-600 font-bold mt-4 mb-4">Editar Mochila</h2>
+            <h2
+                className="text-2xl text-center text-purple-600 font-bold mt-4 mb-4"
+                style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
+            >
+                Editar Mochila
+            </h2>
 
             <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
                 <div className="overflow-y-auto flex-1 hide-scrollbar space-y-6 px-2">
                     <InputField
                         label="Nombre:"
                         type="text"
-                        value={name}
+                        value={bag.name === "Clase" ? "Clase (* No se puede cambiar)" : bag.name}
                         onChange={(e) => setName(e.target.value)}
                         required
+                        disabled={bag.name === "Clase"}
                     />
 
                     <ColorPicker selectedColor={selectedColor} setSelectedColor={setSelectedColor} />
 
                     <div>
-                        <label className="block font-semibold text-gray-500 mb-2">Ítems:</label>
+                        <label className="block font-semibold text-gray-500 mb-2">Contenido:</label>
 
-                        <div className="grid grid-cols-[1fr_2rem] gap-2 w-full mb-4">
+                        <div className="grid grid-cols-[1fr_2rem] gap-1 w-full mb-4">
                             <input
                                 type="text"
-                                placeholder="Contenido ej: agua"
+                                placeholder="Botella de agua"
                                 value={newItem}
                                 onChange={(e) => setNewItem(e.target.value)}
                                 onKeyDown={(e) => {
@@ -61,7 +65,7 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
                                         handleAddTypedItem();
                                     }
                                 }}
-                                className="px-2 py-1 rounded bg-gray-200 text-gray-900 border border-gray-300 focus:border-purple-500 focus:outline-none focus:ring-0 w-full"
+                                className="px-2 py-1 rounded-lg bg-gray-200 text-gray-900 border border-purple-300 focus:border-purple-500 focus:outline-none focus:ring-0 w-full"
                             />
 
                             <ButtonDefault

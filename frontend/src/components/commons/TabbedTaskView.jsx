@@ -37,7 +37,12 @@ export const TabbedTaskView = ({ title, tabLabels, tabTasks, tutorialSteps, tuto
 
     return (
         <div className="flex flex-col h-full justify-start overflow-hidden">
-            <h2 className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10">{title}</h2>
+            <h2
+                className="text-purple-400 font-bold font-poppins text-4xl text-center mt-14 mb-10"
+                style={{ textShadow: "1px 2px 2px rgba(0, 0, 0, 0.5)" }}
+            >
+                {title}
+            </h2>
 
             <div className="flex w-[80%]">
                 {tabLabels.map((tab, index) => (

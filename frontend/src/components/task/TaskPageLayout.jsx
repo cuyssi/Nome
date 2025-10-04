@@ -13,12 +13,18 @@
  * Autor: Ana Castro                                                            │
 └──────────────────────────────────────────────────────────────────────────────*/
 
-
 export const TaskPageLayout = ({ title, children }) => {
     return (
         <div className="flex flex-col h-full justify-start overflow-hidden">
-             <h2 className="text-purple-400 font-bold font-poppins text-3xl text-center mt-24 mb-10">{title}</h2>
-            <div className="flex flex-col items-center relative border-bg w-full h-[100vh] px-2 py-4 transition-colors duration-300 bg-bg mt-[-2px]">{children}</div>
+            <h2
+                className="text-purple-400 font-bold font-poppins text-3xl text-center mt-20 mb-6"
+                style={{ textShadow: "1px 2px 2px rgba(0, 0, 0, 0.5)" }}
+            >
+                {title}
+            </h2>
+            <div className="flex flex-col items-center relative border-bg w-full h-[100vh] px-2 py-4 transition-colors duration-300 bg-bg">
+                {children}
+            </div>
         </div>
     );
 };

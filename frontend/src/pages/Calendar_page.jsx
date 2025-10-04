@@ -36,7 +36,12 @@ export const Calendar_page = () => {
 
     return (
         <div className="relative flex flex-col items-center bg-bg p-4 h-full hide-scrollbar overflow-y-auto">
-            <h2 className="text-purple-400 font-bold font-poppins text-4xl mt-10 mb-10">Calendario</h2>
+            <h2
+                className="text-purple-400 font-bold font-poppins text-4xl mt-10 mb-10"
+                style={{ textShadow: "1px 2px 2px rgba(0, 0, 0, 0.5)" }}
+            >
+                Calendario
+            </h2>
             <Calendar openModalWithTask={openModalWithTask} />
             <TaskSearch openModalWithTask={openModalWithTask} />
             <TaskModalManager

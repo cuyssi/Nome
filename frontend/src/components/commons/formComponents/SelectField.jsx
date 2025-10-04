@@ -19,7 +19,7 @@ export const SelectField = ({ label, name, value, options, onChange }) => {
                 name={name}
                 value={value}
                 onChange={onChange}
-                className="border w-full border-purple-400 rounded-lg p-1 font-normal mt-1.5"
+                className="border w-full bg-gray-100 border-purple-400  focus:border-purple-700 focus:outline-none focus:ring-0 rounded-lg p-1 font-normal mt-1.5"
             >
                 {options.map((opt) =>
                     typeof opt === "string" ? (

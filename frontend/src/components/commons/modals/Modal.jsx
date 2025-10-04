@@ -13,7 +13,7 @@ export const Modal = ({ isOpen, children, backdropBlur = true, blockInteraction 
     return (
         <div
             className={`absolute inset-0 p-4 flex justify-center items-center
-        ${backdropBlur ? "backdrop-blur-sm bg-black/30" : "bg-transparent"}
+        ${backdropBlur ? "backdrop-blur-sm bg-black/80" : "bg-transparent"}
         ${blockInteraction ? "" : "pointer-events-none"}
         ${className}`}
         >

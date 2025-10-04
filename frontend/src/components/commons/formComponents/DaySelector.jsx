@@ -15,7 +15,7 @@
 import { DAYS } from "../../../utils/constants";
 import { ButtonDefault } from "../buttons/ButtonDefault";
 
-export const DaySelector = ({ selectedDays, setSelectedDays, size = 8 }) => {
+export const DaySelector = ({ selectedDays, setSelectedDays, size = 8, className }) => {
     const toggleDay = (day) => {
         if (selectedDays.includes(day)) {
             setSelectedDays(selectedDays.filter((d) => d !== day));
@@ -32,10 +32,10 @@ export const DaySelector = ({ selectedDays, setSelectedDays, size = 8 }) => {
                     type="button"
                     onClick={() => toggleDay(day.key)}
                     text={day.label}
-                    className={`w-${size} h-${size} rounded-full border-2 flex items-center justify-center 
+                    className={`w-${size} h-${size} ${className} rounded-full border-2 flex items-center justify-center 
             ${
                 selectedDays.includes(day.key)
-                    ? "bg-purple-500 text-white border-purple-700"
+                    ? "bg-purple-400 text-white border-purple-700"
                     : "bg-gray-200 text-gray-700 border-gray-300"
             }`}
                 />

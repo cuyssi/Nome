@@ -22,7 +22,7 @@ export const BagItems = ({ bag, onClose, onUpdateBag }) => {
 
     return (
         <div className="relative min-w-[20rem] max-w-[32rem] w-full max-h-[70vh] bg-black border border-purple-600 rounded-xl p-6 text-white">
-            <h2 className="text-2xl text-center text-purple-400 font-bold mt-6">Contenido de {bag.name}</h2>
+            <h2 className="text-2xl text-center text-purple-400 font-bold mt-8">Contenido de {bag.name}</h2>
             <div className="h-8 flex items-center justify-center ">
                 {isComplete ? (
                     <p className="flex items-center gap-2 text-green-700 font-bold">
@@ -32,7 +32,7 @@ export const BagItems = ({ bag, onClose, onUpdateBag }) => {
             </div>
 
             {allItems.map((item, i) => (
-                <li key={i} className="flex items-center gap-3">
+                <li key={i} className="flex items-center gap-3 ml-10 mb-5">
                     <input
                         type="checkbox"
                         checked={localPacked?.includes(item)}
