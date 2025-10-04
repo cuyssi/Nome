@@ -3,7 +3,12 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   base: "/",
-  plugins: [
-    react(),    
-  ],
+  plugins: [react()],
+  build: {
+    assetsInlineLimit: 0,
+    brotliSize: false,
+  },
+  server: {
+    compress: true,
+  },
 });
