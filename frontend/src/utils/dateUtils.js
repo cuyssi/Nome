@@ -29,7 +29,7 @@ export const buildDateTimeFromManual = (date, hour) => {
 export const isToday = (dateString) => {
     const date = new Date(dateString);
     const today = new Date();
-    console.log("🔍 dateUtil:", dateString, "→", date, "vs", today);
+
     return (
         date.getFullYear() === today.getFullYear() &&
         date.getMonth() === today.getMonth() &&
@@ -39,8 +39,6 @@ export const isToday = (dateString) => {
 
 export const formatDateForBackend = (date, anticipada = false) => {
     const dateObj = typeof date === "string" ? new Date(date) : date;
-    console.log("hola desde formatDateForBackend", dateObj);
-
     let finalDate = dateObj;
 
     if (anticipada) {
@@ -54,15 +52,12 @@ export const formatDateForBackend = (date, anticipada = false) => {
     const year = finalDate.getFullYear();
     const hours = String(finalDate.getHours()).padStart(2, "0");
     const minutes = String(finalDate.getMinutes()).padStart(2, "0");
-
     const offset = -finalDate.getTimezoneOffset();
     const sign = offset >= 0 ? "+" : "-";
     const absOffset = Math.abs(offset);
     const offsetHours = String(Math.floor(absOffset / 60)).padStart(2, "0");
     const offsetMinutes = String(absOffset % 60).padStart(2, "0");
-
     const formatted = `${year}-${month}-${day}T${hours}:${minutes}:00${sign}${offsetHours}:${offsetMinutes}`;
-    console.log("lo que manda el format:", formatted);
 
     return formatted;
 };

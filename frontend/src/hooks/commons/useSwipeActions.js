@@ -1,34 +1,7 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * Hook useSwipeActions: gestiona gestos de swipe, long press y estados.        │
- *                                                                              │
- * Funcionalidad:                                                               │
- *   • Detecta swipe horizontal y long press.                                   │
- *   • Calcula desplazamiento (dragOffset) y aplica slowdown zone.              │
- *   • Dispara callbacks onDelete o onEdit según dirección y umbral (threshold).│
- *   • Controla estados internos: isDragging, isRemoved, isEdited, isChecked.   │
- *   • Previene click accidental al eliminar o editar (preventClickRef).        │
- *                                                                              │
- * Parámetros:                                                                  │
- *   • task: objeto de la tarea o bag.                                          │
- *   • onDelete: callback al deslizar hacia derecha (delete).                   │
- *   • onEdit: callback al deslizar hacia izquierda (edit).                     │
- *   • threshold: distancia mínima en px para disparar acción (default 160).    │
- *   • isSchoolBag: indica si es mochila "Clase" (restricciones de swipe).      │
- *                                                                              │
- * Devuelve:                                                                    │
- *   • dragOffset: desplazamiento horizontal actual.                            │
- *   • gestureHandlers: funciones para eventos touch/pointer.                   │
- *   • handleLongPressStart / handleLongPressEnd: manejo de long press.         │
- *   • preventClickRef: referencia para bloquear click tras swipe.              │
- *   • isDragging, isRemoving, isEdited, isChecked: estados internos.           │
- *                                                                              │
- * Autor: Ana Castro                                                            │
-└──────────────────────────────────────────────────────────────────────────────*/
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useStorageStore } from "../../store/storageStore";
 
-export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSchoolBag }) => {
+export const useSwipeActions = ({ onDelete, onEdit, threshold = 160, task, isSchoolBag }) => {
     const [dragStartX, setDragStartX] = useState(null);
     const [dragOffset, setDragOffset] = useState(0);
     const [isDeleted, setIsDeleted] = useState(false);
@@ -36,7 +9,6 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
     const [isEdited, setIsEdited] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-
     const pressTimer = useRef(null);
     const hasMoved = useRef(false);
     const toggleCompletedToday = useStorageStore((state) => state.toggleCompletedToday);
@@ -49,7 +21,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
 
         clearTimeout(pressTimer.current);
         pressTimer.current = setTimeout(() => {
-            if (!hasMoved.current && toggleCompletedToday && task?.id) {
+            if (!hasMoved.current && task?.id) {
                 navigator.vibrate?.(150);
                 setIsChecked((prev) => !prev);
                 toggleCompletedToday(task.id, new Date().toLocaleDateString("sv-SE"));
@@ -61,6 +33,7 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         if (dragStartX === null) return;
 
         let deltaX = clientX - dragStartX;
+
         if (isSchoolBag && deltaX > 0) deltaX = 0;
 
         if (Math.abs(deltaX) > 10 && !hasMoved.current) {
@@ -71,7 +44,6 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         const slowdownZone = 100;
         const maxOffset = 180;
         let adjustedOffset = deltaX;
-
         if (deltaX > slowdownZone) adjustedOffset = slowdownZone + (deltaX - slowdownZone) * 0.5;
         if (deltaX < -slowdownZone) adjustedOffset = -slowdownZone + (deltaX + slowdownZone) * 0.5;
 
@@ -107,30 +79,32 @@ export const useSwipeActions = ({ onDelete, threshold = 160, onEdit, task, isSch
         [dragOffset, isDeleted, isEdited, onDelete, onEdit, threshold, isSchoolBag]
     );
 
-    const handlePointerDown = (e) => {
-        handleStart(e.clientX);
-        if (e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId);
-    };
+    const handleTouchStart = (e) => handleStart(e.touches[0].clientX);
+    const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
+    const handleTouchEnd = () => endGesture(dragOffset);
+    const handlePointerStart = (e) => handleStart(e.clientX);
     const handlePointerMove = (e) => {
         setIsDragging(true);
         handleMove(e.clientX);
     };
-    const handlePointerUp = (e) => {
-        endGesture(dragOffset);
-        if (e.currentTarget.releasePointerCapture) e.currentTarget.releasePointerCapture(e.pointerId);
-    };
+    const handlePointerEnd = () => endGesture(dragOffset);
 
     useEffect(() => {
         const handlePointerUpGlobal = () => endGesture(dragOffset);
         document.addEventListener("pointerup", handlePointerUpGlobal);
-        return () => document.removeEventListener("pointerup", handlePointerUpGlobal);
+        return () => {
+            document.removeEventListener("pointerup", handlePointerUpGlobal);
+        };
     }, [dragOffset, endGesture]);
 
     return {
         dragOffset,
-        handlePointerStart: handlePointerDown,
+        handleTouchStart,
+        handleTouchMove,
+        handleTouchEnd,
+        handlePointerStart,
         handlePointerMove,
-        handlePointerEnd: handlePointerUp,
+        handlePointerEnd,
         handleLongPressStart: () => {},
         handleLongPressEnd: () => clearTimeout(pressTimer.current),
         isChecked,

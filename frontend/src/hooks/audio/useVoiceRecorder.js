@@ -1,26 +1,23 @@
-/**─────────────────────────────────────────────────────────────────────────────┐
- * useVoiceRecorder: hook para grabar audio desde el micrófono.                 │
- *                                                                              │
- * Funcionalidad:                                                               │
- *   • Gestiona el estado de grabación de audio en el navegador.                │
- *   • Convierte las grabaciones en formato WAV a 16kHz para mayor compatibilidad│
- *     con servicios de reconocimiento de voz.                                  │
- *   • Reproduce sonidos de inicio/fin de grabación para dar feedback al usuario.│
- *   • Expone el audio grabado como Blob y como File listo para enviar a APIs.  │
- *                                                                              │
- * Devuelve:                                                                    │
- *   - recording: booleano que indica si se está grabando.                      │
- *   - audioBlob: Blob en formato WAV listo para procesar o enviar.             │
- *   - audioFile: objeto File con nombre "recording.wav".                       │
- *   - toggleRecording(): inicia/detiene la grabación con feedback sonoro.      │
- *   - startRecording(): inicia la grabación manualmente.                       │
- *   - stopRecording(): detiene la grabación manualmente.                       │
- *                                                                              │
- *                                                                              │
- * Autor: Ana Castro                                                            │
-└──────────────────────────────────────────────────────────────────────────────*/
+/**─────────────────────────────────────────────────────────────────────────────
+ * useVoiceRecorder: hook para grabar audio desde el micrófono.
+ *
+ * Funcionalidad:
+ *   • Gestiona grabación de audio en navegador.
+ *   • Convierte a WAV 16kHz compatible con APIs de reconocimiento.
+ *   • Reproduce sonidos de inicio/fin de grabación al hacer click.
+ *   • AudioContext se desbloquea solo al primer gesto del usuario.
+ *
+ * Devuelve:
+ *   - recording: booleano de grabación activa.
+ *   - audioBlob: Blob WAV listo para enviar.
+ *   - audioFile: File WAV listo para enviar.
+ *   - toggleRecording(): inicia/detiene grabación con beep.
+ *   - startRecording(), stopRecording(): control manual.
+ *
+ * Autor: Ana Castro
+└─────────────────────────────────────────────────────────────────────────────*/
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import beep_start from "../../assets/beep_start.mp3";
 import beep_end from "../../assets/beep_end.mp3";
 
@@ -28,18 +25,9 @@ export const useVoiceRecorder = () => {
     const [recording, setRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState(null);
     const [audioFile, setAudioFile] = useState(null);
-
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const audioCtx = useRef(new (window.AudioContext || window.webkitAudioContext)());
-
-    useEffect(() => {
-        const buffer = audioCtx.current.createBuffer(1, 1, 22050);
-        const source = audioCtx.current.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioCtx.current.destination);
-        source.start(0);
-    }, []);
 
     const playBeep = async (url) => {
         try {
@@ -145,6 +133,8 @@ export const useVoiceRecorder = () => {
     };
 
     const toggleRecording = async () => {
+        if (audioCtx.current.state === "suspended") await audioCtx.current.resume();
+
         if (!recording) {
             await playBeep(beep_start);
             startRecording();
