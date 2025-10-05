@@ -1,18 +1,21 @@
 /**─────────────────────────────────────────────────────────────────────────────
- * useVoiceRecorder: hook para grabar audio desde el micrófono.
+ * useVoiceRecorder: hook para grabar audio con el micrófono del usuario.
  *
  * Funcionalidad:
- *   • Gestiona grabación de audio en navegador.
- *   • Convierte a WAV mono 16kHz compatible con APIs de reconocimiento.
- *   • Reproduce sonidos de inicio/fin de grabación al hacer click.
- *   • AudioContext se desbloquea solo al primer gesto del usuario.
+ *   • Permite iniciar, detener y alternar la grabación de audio.
+ *   • Reproduce un beep al iniciar y al finalizar la grabación.
+ *   • Devuelve el audio como Blob y como File listo para enviar o guardar.
+ *   • Gestiona internamente el MediaRecorder y AudioContext.
  *
- * Devuelve:
- *   - recording: booleano de grabación activa.
- *   - audioBlob: Blob WAV listo para enviar.
- *   - audioFile: File WAV listo para enviar.
- *   - toggleRecording(): inicia/detiene grabación con beep.
- *   - startRecording(), stopRecording(): control manual.
+ * Estado devuelto:
+ *   - recording: boolean indicando si se está grabando.
+ *   - audioBlob: Blob con la grabación final.
+ *   - audioFile: File generado a partir del Blob.
+ *
+ * Funciones devueltas:
+ *   - startRecording(): inicia la grabación.
+ *   - stopRecording(): detiene la grabación.
+ *   - toggleRecording(): alterna entre iniciar y detener la grabación con beep.
  *
  * Autor: Ana Castro
 └─────────────────────────────────────────────────────────────────────────────*/
@@ -25,6 +28,7 @@ export const useVoiceRecorder = () => {
     const [recording, setRecording] = useState(false);
     const [audioBlob, setAudioBlob] = useState(null);
     const [audioFile, setAudioFile] = useState(null);
+
     const mediaRecorderRef = useRef(null);
     const audioChunksRef = useRef([]);
     const audioCtx = useRef(new (window.AudioContext || window.webkitAudioContext)());
@@ -92,18 +96,7 @@ export const useVoiceRecorder = () => {
     const webmToWav16k = async (blob) => {
         const arrayBuffer = await blob.arrayBuffer();
         const audioBuffer = await audioCtx.current.decodeAudioData(arrayBuffer);
-
-        // Forzar mono (promedia canales si es stereo)
-        const channelData = audioBuffer.numberOfChannels > 1
-            ? audioBuffer.getChannelData(0).map((v, i) => {
-                let sum = v;
-                for (let c = 1; c < audioBuffer.numberOfChannels; c++) {
-                    sum += audioBuffer.getChannelData(c)[i];
-                }
-                return sum / audioBuffer.numberOfChannels;
-            })
-            : audioBuffer.getChannelData(0);
-
+        const channelData = audioBuffer.getChannelData(0); // mono
         const wavBuffer = floatTo16BitPCM(resample(channelData, audioBuffer.sampleRate, 16000));
         return new Blob([encodeWAV(wavBuffer)], { type: "audio/wav" });
     };
@@ -127,7 +120,7 @@ export const useVoiceRecorder = () => {
                 const wavBlob = await webmToWav16k(webmBlob);
                 setAudioBlob(wavBlob);
                 setAudioFile(new File([wavBlob], "recording.wav", { type: "audio/wav" }));
-                console.log("✅ Audio listo para enviar, tamaño:", wavBlob.size);
+                console.log("✅ Audio WAV 16k listo:", wavBlob.size);
             };
 
             mediaRecorder.start();
@@ -144,8 +137,6 @@ export const useVoiceRecorder = () => {
     };
 
     const toggleRecording = async () => {
-        if (audioCtx.current.state === "suspended") await audioCtx.current.resume();
-
         if (!recording) {
             await playBeep(beep_start);
             startRecording();
