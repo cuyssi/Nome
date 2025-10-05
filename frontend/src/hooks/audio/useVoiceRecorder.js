@@ -3,7 +3,7 @@
  *
  * Funcionalidad:
  *   • Gestiona grabación de audio en navegador.
- *   • Convierte a WAV 16kHz compatible con APIs de reconocimiento.
+ *   • Convierte a WAV mono 16kHz compatible con APIs de reconocimiento.
  *   • Reproduce sonidos de inicio/fin de grabación al hacer click.
  *   • AudioContext se desbloquea solo al primer gesto del usuario.
  *
@@ -92,7 +92,18 @@ export const useVoiceRecorder = () => {
     const webmToWav16k = async (blob) => {
         const arrayBuffer = await blob.arrayBuffer();
         const audioBuffer = await audioCtx.current.decodeAudioData(arrayBuffer);
-        const channelData = audioBuffer.getChannelData(0);
+
+        // Forzar mono (promedia canales si es stereo)
+        const channelData = audioBuffer.numberOfChannels > 1
+            ? audioBuffer.getChannelData(0).map((v, i) => {
+                let sum = v;
+                for (let c = 1; c < audioBuffer.numberOfChannels; c++) {
+                    sum += audioBuffer.getChannelData(c)[i];
+                }
+                return sum / audioBuffer.numberOfChannels;
+            })
+            : audioBuffer.getChannelData(0);
+
         const wavBuffer = floatTo16BitPCM(resample(channelData, audioBuffer.sampleRate, 16000));
         return new Blob([encodeWAV(wavBuffer)], { type: "audio/wav" });
     };
