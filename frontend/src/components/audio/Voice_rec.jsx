@@ -22,7 +22,7 @@ import { useVoiceRecorder } from "../../hooks/audio/useVoiceRecorder";
 import { useTranscription } from "../../hooks/commons/useTranscription";
 import { useEffect, useState } from "react";
 
-export const Voice_rec = ({ openModalWithTask, setSavedTask }) => {
+export const Voice_rec = ({ openModalWithTask, setSavedTask, setShowSavedModal, setModalLoading }) => {
     const { recording, toggleRecording, audioFile } = useVoiceRecorder();
     const { sendFile } = useTranscription();
     const [isProcessing, setIsProcessing] = useState(false);
@@ -30,11 +30,15 @@ export const Voice_rec = ({ openModalWithTask, setSavedTask }) => {
     useEffect(() => {
         if (audioFile) {
             setIsProcessing(true);
+            setModalLoading(true);
+            setShowSavedModal(true);
+
             sendFile(audioFile, {
                 repeat: "once",
                 customDays: [],
-                onTaskSaved: (savedTask) => {
-                    setSavedTask(savedTask);
+                onTaskSaved: (task) => {
+                    setSavedTask(task);
+                    setModalLoading(false);
                     setIsProcessing(false);
                 },
             });

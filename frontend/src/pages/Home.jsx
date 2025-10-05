@@ -27,27 +27,40 @@ import { TaskModalManager } from "../components/task/TaskModalManager";
 import { useTutorialStore } from "../store/useTutorialStore";
 import { stepsHome } from "../components/tutorials/tutorials";
 import { TutorialModal } from "../components/tutorials/TutorialModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TaskSavedModal } from "../components/commons/modals/TaskSavedModal";
 
 export const Home = () => {
-    const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation, showTaskConfirmation } =
-        useTaskEditor();
+    const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation } = useTaskEditor();
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("home"));
     const [savedTask, setSavedTask] = useState(null);
-    const closeModal = () => setSavedTask(null);
-    
+    const [showSavedModal, setShowSavedModal] = useState(false);
+    const [modalLoading, setModalLoading] = useState(false);
+
+    useEffect(() => {
+        if (savedTask) {
+            const timer = setTimeout(() => {
+                setShowSavedModal(false);
+                setSavedTask(null);
+                setModalLoading(false);
+            }, 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [savedTask]);
+
     return (
         <div className="flex flex-col w-full h-full items-center bg-[var(--color-bg)] overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-bg">
                 <Welcome />
-                
+
                 <Task_count />
 
                 <Voice_rec
-                    openModalWithTask={openModalWithTask}                    
+                    openModalWithTask={openModalWithTask}
                     setSavedTask={setSavedTask}
+                    setShowSavedModal={setShowSavedModal}
+                    setModalLoading={setModalLoading}
                 />
 
                 <TaskModalManager
@@ -58,6 +71,18 @@ export const Home = () => {
                     onClose={handleClose}
                 />
 
+                {showSavedModal && (
+                    <TaskSavedModal
+                        task={savedTask}
+                        loading={modalLoading}
+                        onClose={() => {
+                            setShowSavedModal(false);
+                            setSavedTask(null);
+                            setModalLoading(false);
+                        }}
+                    />
+                )}
+
                 {shouldShowTutorial && (
                     <TutorialModal
                         activeTab="home"
@@ -65,10 +90,6 @@ export const Home = () => {
                         isOpen={shouldShowTutorial}
                         onNeverShowAgain={() => hideTutorial("home")}
                     />
-                )}
-
-                {savedTask && (
-                    <TaskSavedModal task={savedTask} onClose={closeModal} />
                 )}
             </div>
         </div>
