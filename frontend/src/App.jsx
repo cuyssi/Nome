@@ -49,7 +49,7 @@ function App() {
                 className={clsx(
                     "relative",
                     "w-full h-full bg-white flex flex-col",
-                    "sm:max-w-[360px] sm:h-[85%] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
+                    "sm:max-w-[360px] sm:max-h-[720px] sm:rounded-xl sm:shadow-md sm:overflow-hidden"
                 )}
             >
                 <main className="bg-bg flex-1 overflow-y-auto border border-none">
