@@ -6,13 +6,18 @@
  *   • Incluye el grabador de voz (`Voice_rec`) con transcripción automática de tareas.
  *   • Gestiona el modal de tareas (`TaskModalManager`) para crear o editar tareas.
  *   • Muestra un tutorial inicial (`TutorialModal`) si el usuario no lo ha ocultado.
+ *   • Muestra un modal de confirmación (`TaskSavedModal`) cuando una tarea se ha guardado.
  *
  * Hooks internos:
- *   • useTaskEditor: maneja estado del modal, tarea seleccionada y confirmación de guardado.
- *   • useTutorialStore: controla visibilidad del tutorial y opción "no mostrar más".
+ *   - useTaskEditor: gestiona el estado del modal de tareas, tarea seleccionada y confirmación de guardado.
+ *   - useTutorialStore: controla la visibilidad del tutorial y la opción "no mostrar más".
+ *   - useState: mantiene el estado local de la tarea guardada para el modal de confirmación.
+ *
+ * Props:
+ *   Este componente no recibe props externas.
  *
  * Autor: Ana Castro
- ─────────────────────────────────────────────────────────────────────────────*/
+└─────────────────────────────────────────────────────────────────────────────*/
 
 import Welcome from "../components/commons/Wellcome";
 import { Voice_rec } from "../components/audio/Voice_rec";
@@ -28,18 +33,11 @@ import { TaskSavedModal } from "../components/commons/modals/TaskSavedModal";
 export const Home = () => {
     const { isOpen, selectedTask, handleClose, handleEdit, openModalWithTask, showConfirmation, showTaskConfirmation } =
         useTaskEditor();
-
     const hideTutorial = useTutorialStore((state) => state.hideTutorial);
     const shouldShowTutorial = !useTutorialStore((state) => state.isHidden("home"));
-
-    const [modalInfo, setModalInfo] = useState({
-        isOpen: false,
-        isProcessing: false,
-        task: null,
-    });
-
-    const closeModal = () => setModalInfo({ isOpen: false, isProcessing: false, task: null });
-
+    const [savedTask, setSavedTask] = useState(null);
+    const closeModal = () => setSavedTask(null);
+    
     return (
         <div className="flex flex-col w-full h-full items-center bg-[var(--color-bg)] overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-bg">
@@ -48,9 +46,8 @@ export const Home = () => {
                 <Task_count />
 
                 <Voice_rec
-                    openModalWithTask={openModalWithTask}
-                    showConfirmationForTask={showTaskConfirmation}
-                    setModalInfo={setModalInfo}
+                    openModalWithTask={openModalWithTask}                    
+                    setSavedTask={setSavedTask}
                 />
 
                 <TaskModalManager
@@ -70,8 +67,8 @@ export const Home = () => {
                     />
                 )}
 
-                {modalInfo.isOpen && (
-                    <TaskSavedModal task={modalInfo.task} isProcessing={modalInfo.isProcessing} onClose={closeModal} />
+                {savedTask && (
+                    <TaskSavedModal task={savedTask} onClose={closeModal} />
                 )}
             </div>
         </div>

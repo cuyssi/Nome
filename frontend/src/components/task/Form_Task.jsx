@@ -73,6 +73,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                         value={formData.date}
                         onChange={handleChange}
                         className="pl-5"
+                        required
                     />
 
                     <label className="text-gray-500">
@@ -94,7 +95,7 @@ export const Form_Task = ({ task, onClose, onSubmit }) => {
                         name="type"
                         value={formData.type}
                         options={AVAILABLE_TYPES}
-                        onChange={handleChange}
+                        onChange={handleChange}                                            
                     />
 
                     <SelectField
