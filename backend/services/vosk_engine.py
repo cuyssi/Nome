@@ -94,7 +94,6 @@ def fix_transcription_fuzzy(text, custom_words_list):
 
 async def transcribe_audio_file(file):
     t0 = time.time()
-
     audio_bytes = await file.read()
     t1 = time.time()
 
