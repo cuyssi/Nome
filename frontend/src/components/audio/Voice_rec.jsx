@@ -44,7 +44,7 @@ export const Voice_rec = ({ openModalWithTask, showConfirmationForTask, setModal
     const closeModal = () => setModalInfo({ isOpen: false, isProcessing: false, task: null });
 
     return (
-        <div className="relative flex flex-col w-full bg-bg items-center mt-8">
+        <div className="relative flex flex-col w-full items-center mt-14 sm:mt-12">
             <div className="flex justify-center border-dynamic rounded-full">
                 <button
                     type="button"

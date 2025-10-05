@@ -36,9 +36,10 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { uuid } from "../utils/uuid";
 
 const createBaseBag = (data = {}) => ({
-    id: crypto.randomUUID(),
+    id: uuid(),
     name: "Nueva mochila",
     color: "purple-400",
     capacity: 20,
