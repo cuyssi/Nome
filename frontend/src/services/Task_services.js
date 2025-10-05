@@ -19,11 +19,7 @@ export const sendAudioFile = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await axios.post(API_URL, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+    const response = await axios.post(API_URL, formData);
 
     return response.data;
 };
