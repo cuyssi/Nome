@@ -30,7 +30,6 @@ export const Voice_rec = ({ openModalWithTask, setSavedTask }) => {
     useEffect(() => {
         if (audioFile) {
             setIsProcessing(true);
-
             sendFile(audioFile, {
                 repeat: "once",
                 customDays: [],
@@ -48,11 +47,11 @@ export const Voice_rec = ({ openModalWithTask, setSavedTask }) => {
                 <div className="relative flex justify-center">
                     <button
                         type="button"
+                        onClick={toggleRecording}
+                        disabled={isProcessing}
                         className={`flex bg-bg_button rounded-full w-[12rem] sm:max-w-[10rem] aspect-square items-center justify-center transition-transform duration-150 ease-in-out ${
                             recording ? "scale-95 bg-gray-900" : "bg-bg_button"
                         }`}
-                        onClick={toggleRecording}
-                        disabled={isProcessing}
                     >
                         <Mic
                             className={`stroke-[2] w-14 h-14 sm:w-14 sm:h-14 ${
@@ -74,11 +73,9 @@ export const Voice_rec = ({ openModalWithTask, setSavedTask }) => {
                     onClick={() => openModalWithTask({})}
                     className="flex justify-center items-center w-full h-full border-none rounded-xl bg-bg"
                 >
-                    <SquarePen className="w-5 h-5 text-text " />
+                    <SquarePen className="w-5 h-5 text-text" />
                 </button>
             </div>
         </div>
     );
 };
-
-export default Voice_rec;

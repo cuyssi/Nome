@@ -1,8 +1,59 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Módulo de transcripción de audio con Vosk y Pydub.
+#
+# Funcionalidad principal:
+#   • Convierte cualquier archivo de audio (WebM, MP3, WAV, etc.) a WAV mono 16kHz.
+#   • Transcribe el audio usando el modelo Vosk en español.
+#   • Aplica corrección difusa (fuzzy matching) con palabras personalizadas
+#     para mejorar la precisión del reconocimiento.
+#
+# Componentes principales:
+#   - MODEL_PATH → Ruta del modelo Vosk ("vosk-model-es-0.42").
+#   - CUSTOM_WORDS_PATH → Archivo JSON con palabras personalizadas ("custom_words.json").
+#
+# Funciones:
+#   • get_model():
+#       - Carga el modelo Vosk en memoria (solo una vez por instancia del servidor).
+#       - Devuelve la instancia global del modelo.
+#
+#   • fix_transcription_fuzzy(text, custom_words_list):
+#       - Usa coincidencia difusa (difflib.get_close_matches)
+#         para corregir palabras mal transcritas según la lista personalizada.
+#       - Recorre cada palabra del texto y sustituye por su coincidencia más cercana
+#         si la similitud es ≥ 0.75.
+#
+#   • transcribe_audio_file(file):
+#       - Recibe un archivo de audio en formato cualquiera (WebM, MP3, etc.).
+#       - Convierte el audio a WAV mono con una tasa de muestreo de 16 kHz usando pydub.
+#       - Inicializa un reconocedor KaldiRecognizer con el modelo Vosk y las palabras personalizadas.
+#       - Procesa el audio completo con rec.AcceptWaveform() para obtener la transcripción final.
+#       - Aplica fix_transcription_fuzzy() para refinar los resultados.
+#       - Devuelve el texto transcrito limpio y corregido.
+#
+# Flujo general:
+#   1. Se valida la existencia del modelo Vosk y del archivo custom_words.json.
+#   2. Se convierte el audio recibido a formato WAV estándar.
+#   3. Se pasa al reconocedor de Vosk junto con las palabras personalizadas.
+#   4. Se obtiene la transcripción final y se corrige mediante coincidencia difusa.
+#
+# Dependencias:
+#   • vosk.Model, KaldiRecognizer  → Reconocimiento de voz offline.
+#   • pydub.AudioSegment           → Conversión de audio entre formatos.
+#   • difflib                      → Corrección de palabras por similitud.
+#   • json, wave, io, os           → Lectura, escritura y manipulación de archivos.
+#
+# Retorna:
+#   → Texto transcrito (string) limpio y corregido.
+#
+# Autor: Ana Castro
+# ──────────────────────────────────────────────────────────────────────────────
+
 import os
 import json
 import wave
-from vosk import Model, KaldiRecognizer
 import io
+from vosk import Model, KaldiRecognizer
+from pydub import AudioSegment  # Necesario para convertir WebM/MP3 a WAV
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
@@ -26,7 +77,6 @@ def get_model():
 
 def fix_transcription_fuzzy(text, custom_words_list):
     import difflib
-    import re
     words = text.split()
     fixed_words = []
     for w in words:
@@ -35,14 +85,21 @@ def fix_transcription_fuzzy(text, custom_words_list):
     return " ".join(fixed_words)
 
 async def transcribe_audio_file(file):
+    # Leer bytes del archivo enviado
     audio_bytes = await file.read()
-    with wave.open(io.BytesIO(audio_bytes), "rb") as wf:
-        if wf.getframerate() != 16000 or wf.getnchannels() != 1:
-            raise ValueError("El audio debe ser WAV mono a 16kHz")
 
+    # Convertir cualquier formato (webm, mp3, etc.) a WAV mono 16kHz
+    audio = AudioSegment.from_file(io.BytesIO(audio_bytes))
+    audio = audio.set_channels(1).set_frame_rate(16000)
+
+    wav_io = io.BytesIO()
+    audio.export(wav_io, format="wav")
+    wav_io.seek(0)
+
+    # Abrir WAV con wave
+    with wave.open(wav_io, "rb") as wf:
         rec = KaldiRecognizer(get_model(), wf.getframerate(), json.dumps(custom_words))
         rec.SetWords(True)
-
         data = wf.readframes(wf.getnframes())
         rec.AcceptWaveform(data)
         final_text = json.loads(rec.FinalResult()).get("text", "")
