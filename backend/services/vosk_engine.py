@@ -100,6 +100,8 @@ async def transcribe_audio_file(file):
 
     audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="wav")
     audio = audio.set_channels(1).set_frame_rate(16000)
+    audio = audio.normalize()
+    audio = audio.strip_silence(silence_len=500, silence_thresh=-40)
     t2 = time.time()
 
     wav_io = io.BytesIO()
@@ -110,16 +112,25 @@ async def transcribe_audio_file(file):
     with wave.open(wav_io, "rb") as wf:
         rec = KaldiRecognizer(get_model(), wf.getframerate(), json.dumps(custom_words))
         rec.SetWords(True)
-        data = wf.readframes(wf.getnframes())
-        rec.AcceptWaveform(data)
-        final_text = json.loads(rec.FinalResult()).get("text", "")
+
+        final_result = ""
+        chunk_size = 4000
+        while True:
+            data = wf.readframes(chunk_size)
+            if len(data) == 0:
+                break
+            if rec.AcceptWaveform(data):
+                result = json.loads(rec.Result()).get("text", "")
+                final_result += result + " "
+
+        final_result += json.loads(rec.FinalResult()).get("text", "")
     t4 = time.time()
 
     print("⏱️ Tiempos:")
     print("Lectura:", t1 - t0)
-    print("Conversión:", t2 - t1)
+    print("Conversión + limpieza:", t2 - t1)
     print("Export WAV:", t3 - t2)
-    print("Transcripción:", t4 - t3)
+    print("Transcripción (chunks):", t4 - t3)
 
-    final_text = fix_transcription_fuzzy(final_text, custom_words["words"])
+    final_text = fix_transcription_fuzzy(final_result.strip(), custom_words["words"])
     return final_text.strip()

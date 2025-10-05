@@ -29,7 +29,7 @@ import { Check, Loader2 } from "lucide-react";
 import { ButtonClose } from "../buttons/ButtonClose";
 
 const TaskDetails = ({ task, location, formatReminder, formatRepeat }) => (
-    <div className="mt-4 text-gray-600 w-full">
+    <div className="mt-4 text-gray-600 w-full text-lg">
         <p className="text-gray-600 font-semibold mt-2">Tu tarea:</p>
         <p className="italic font-medium text-gray-400">“{task.text}”</p>
 

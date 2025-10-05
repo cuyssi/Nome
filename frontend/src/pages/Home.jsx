@@ -38,17 +38,6 @@ export const Home = () => {
     const [showSavedModal, setShowSavedModal] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
 
-    useEffect(() => {
-        if (savedTask) {
-            const timer = setTimeout(() => {
-                setShowSavedModal(false);
-                setSavedTask(null);
-                setModalLoading(false);
-            }, 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [savedTask]);
-
     return (
         <div className="flex flex-col w-full h-full items-center bg-[var(--color-bg)] overflow-hidden">
             <div className="flex flex-col w-full h-full items-center bg-bg">
