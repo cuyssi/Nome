@@ -26,7 +26,6 @@
  * Autor: Ana Castro
  ─────────────────────────────────────────────────────────────────────────────*/
 
-
 import { useState } from "react";
 import { sendAudioFile } from "../../services/Task_services";
 import { getFormattedTasks, dateAndTime } from "../../utils/transcriptionUtils";
@@ -37,6 +36,7 @@ export const useTranscription = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const { addTask } = useTasks();
     const { assignColor } = getTaskColor();
+
     const normalizeDateTime = (dt) => {
         try {
             if (!dt || isNaN(new Date(dt).getTime())) {
@@ -49,9 +49,14 @@ export const useTranscription = () => {
     };
 
     const sendFile = async (file, options = {}) => {
+        setIsProcessing(true);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
         try {
-            setIsProcessing(true);
-            const response = await sendAudioFile(file);
+            const response = await sendAudioFile(file, { signal: controller.signal });
+
             const {
                 text_raw,
                 text,
@@ -61,14 +66,13 @@ export const useTranscription = () => {
                 repeat,
                 customDays,
             } = getFormattedTasks(response);
+
             const dateTime = normalizeDateTime(rawDateTime);
             const { date, hour, dateWithYear } = dateAndTime(dateTime);
             const color = assignColor();
             const deviceId = options.deviceId || localStorage.getItem("deviceId");
 
-            if (!deviceId) {
-                console.warn("⚠️ No se encontró deviceId en localStorage");
-            }
+            if (!deviceId) console.warn("⚠️ No se encontró deviceId en localStorage");
 
             const newTask = {
                 id: crypto.randomUUID(),
@@ -90,12 +94,15 @@ export const useTranscription = () => {
 
             await addTask(newTask);
 
-            if (options.onTaskSaved) {
-                options.onTaskSaved(newTask);
-            }
+            if (options.onTaskSaved) options.onTaskSaved(newTask);
         } catch (err) {
-            console.error("❌ Error al enviar archivo de audio:", err);
+            if (err.name === "AbortError") {
+                console.warn("⏱️ Timeout: la transcripción tardó demasiado");
+            } else {
+                console.error("❌ Error al enviar archivo de audio:", err);
+            }
         } finally {
+            clearTimeout(timeoutId);
             setIsProcessing(false);
         }
     };
