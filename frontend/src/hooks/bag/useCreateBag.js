@@ -62,7 +62,6 @@ export const useCreateBag = ({ onClose }) => {
             items: customItems,
             reminderTime: reminderTimeString,
             notifyDays,
-            notifyDayBefore: true,
             dateTime: calculateReminderDateTime({
                 reminderTime: reminderTimeString,
                 type: "personalizada",

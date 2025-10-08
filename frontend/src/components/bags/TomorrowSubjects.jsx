@@ -40,7 +40,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
     return (
         <Modal isOpen={isOpen}>
             <div className="relative bg-black border border-purple-400 rounded-xl p-6 w-full max-w-md text-white shadow-lg">
-                <div className="h-5 flex items-center justify-center mt-10">
+                <div className="h-5 flex items-center justify-center mt-8 mb-2">
                     {isTomorrowBagComplete ? (
                         <p className="flex items-center gap-1 text-green-700 font-bold">
                             <Check />
@@ -50,7 +50,7 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                         <span className="text-transparent select-none">placeholder</span>
                     )}
                 </div>
-                <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold mt-4">
+                <h2 className="text-2xl text-center font-poppins text-purple-400 font-bold">
                     Asignaturas {FULL_DAYS[dayKey]}
                 </h2>
 
@@ -76,8 +76,8 @@ export const TomorrowSubjects = ({ bag, isOpen, onClose, onUpdateBag }) => {
                 )}
 
                 {extras.length > 0 && (
-                    <div className="mt-6">
-                        <h3 className="text-xl text-purple-400 font-bold mb-3 text-left">Añade también:</h3>
+                    <div className="mt-8">
+                        <h3 className="text-xl text-purple-400 font-bold mb-3 text-center">Añade también:</h3>
                         <ul className="space-y-4 mt-2 ml-10">
                             {extras.map((item, i) => (
                                 <li key={i} className="flex items-center gap-3">

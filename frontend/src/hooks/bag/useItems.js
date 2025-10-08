@@ -28,6 +28,7 @@ export const useItems = (bag, onUpdateBag) => {
     const allItems = Array.isArray(bag?.items) ? bag.items : [];
     const initialPacked = Array.isArray(bag?.packed) ? bag.packed : [];
     const [localPacked, setLocalPacked] = useState(initialPacked);
+    const isComplete = allItems.length > 0 && allItems.every((item) => localPacked.includes(item));
 
     useEffect(() => {
         setLocalPacked(initialPacked);
@@ -40,17 +41,18 @@ export const useItems = (bag, onUpdateBag) => {
 
         setLocalPacked(updatedPacked);
 
+        const isComplete = allItems.length > 0 && allItems.every((item) => updatedPacked.includes(item));
+
         if (bag) {
             onUpdateBag({
                 ...bag,
                 packed: updatedPacked,
+                isTomorrowBagComplete: isComplete,
             });
         }
 
         if (navigator.vibrate) navigator.vibrate(100);
     };
-
-    const isComplete = allItems.length > 0 && allItems.every((item) => localPacked.includes(item));
 
     return {
         allItems,

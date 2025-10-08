@@ -33,13 +33,16 @@
 
 import { useEffect, useMemo } from "react";
 import { useScheduleStore } from "../../store/useScheduleStore";
-import { FULL_WEEKDAYS_NUM } from "../../utils/constants";
+import { DAYS_INDEX_TO_KEY } from "../../utils/constants";
 
 const getTomorrowDayKey = () => {
     const today = new Date();
-    const todayIndex = today.getDay();
-    const days = FULL_WEEKDAYS_NUM;
-    return todayIndex >= 1 && todayIndex <= 4 ? days[todayIndex] : "L";
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const tomorrowIndex = tomorrow.getDay();
+    const key = DAYS_INDEX_TO_KEY[tomorrowIndex];
+    console.log("dayKey:", key);
+    return key;
 };
 
 const getTomorrowDateString = () => {
@@ -55,7 +58,8 @@ const getTomorrowSubjectsArray = (subjects, dayKey) =>
         .map(([key, value]) => {
             const [, hour] = key.split("-");
             return { ...value, hour };
-        });
+        })
+        .sort((a, b) => a.hour.localeCompare(b.hour));
 
 export const useTomorrowSubjects = ({ bag, onUpdateBag }) => {
     const { subjects } = useScheduleStore();
@@ -75,26 +79,25 @@ export const useTomorrowSubjects = ({ bag, onUpdateBag }) => {
     const checkedExtras = bag.tomorrow?.extras || [];
 
     useEffect(() => {
-        let updatedBag = { ...bag };
-        let needsUpdate = false;
-
         if (!bag.tomorrow || bag.tomorrow.date !== tomorrowDate) {
-            updatedBag.tomorrow = { date: tomorrowDate, subjects: [], extras: [] };
-            updatedBag.isTomorrowBagComplete = false;
-            needsUpdate = true;
+            console.log(bag.tomorrow.date, tomorrowDate);
+            onUpdateBag({
+                ...bag,
+                tomorrow: { date: tomorrowDate, subjects: [], extras: [] },
+                isTomorrowBagComplete: false,
+            });
         }
+    }, [bag, tomorrowDate, onUpdateBag]);
 
-        const isComplete =
-            subjectsForTomorrow.every((s) => (updatedBag.tomorrow?.subjects || []).includes(s.name)) &&
-            extras.every((e) => (updatedBag.tomorrow?.extras || []).includes(e));
+    useEffect(() => {
+        const allSubjectsChecked = subjectsForTomorrow.every((s) => checkedSubjects.includes(s.name));
+        const allExtrasChecked = extras.every((e) => checkedExtras.includes(e));
+        const isComplete = allSubjectsChecked && allExtrasChecked;
 
-        if (updatedBag.isTomorrowBagComplete !== isComplete) {
-            updatedBag.isTomorrowBagComplete = isComplete;
-            needsUpdate = true;
+        if (bag.isTomorrowBagComplete !== isComplete) {
+            onUpdateBag({ ...bag, isTomorrowBagComplete: isComplete });
         }
-
-        if (needsUpdate) onUpdateBag(updatedBag);
-    }, [bag, subjectsForTomorrow, extras, tomorrowDate, onUpdateBag]);
+    }, [checkedSubjects, checkedExtras, subjectsForTomorrow, extras]);
 
     const toggleSubject = (name) => {
         const updatedSubjects = checkedSubjects.includes(name)
@@ -111,6 +114,8 @@ export const useTomorrowSubjects = ({ bag, onUpdateBag }) => {
         onUpdateBag({ ...bag, tomorrow: { ...bag.tomorrow, extras: updatedExtras } });
         navigator.vibrate?.(100);
     };
+
+    console.log(subjects);
 
     return {
         subjects: subjectsForTomorrow,

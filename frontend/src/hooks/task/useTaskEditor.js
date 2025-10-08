@@ -59,6 +59,8 @@ export function useTaskEditor() {
 
         reload();
         setShowConfirmation(true);
+        setIsOpen(false);
+        setShowConfirmation(true);
     };
 
     const showTaskConfirmation = (task) => {

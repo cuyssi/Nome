@@ -86,6 +86,26 @@ export const useBagsStore = create(
         {
             name: "bags-storage",
             getStorage: () => localStorage,
+            version: 1,
+            migrate: (persistedState, version) => {
+                if (!persistedState?.bags) return { bags: [DEFAULT_BAG] };
+
+                const migratedBags = persistedState.bags.map((b) => ({
+                    ...createBaseBag(),
+                    ...b,
+                    tomorrow: {
+                        date: b.tomorrow?.date || null,
+                        subjects: b.tomorrow?.subjects || [],
+                        extras: b.tomorrow?.extras || [],
+                    },
+                    items:
+                        Array.isArray(b.items) || !b.items
+                            ? { L: [], M: [], X: [], J: [], V: [] }
+                            : b.items,
+                }));
+
+                return { bags: migratedBags };
+            },
         }
     )
 );

@@ -33,6 +33,7 @@ export const useBagModalManager = () => {
     const { updateBag } = useBagsStore();
 
     const openModalWithBag = (bag, modalMode = "edit") => {
+        setShowConfirmation(false);
         setSelectedBag(bag);
         setMode(modalMode);
         setIsOpen(true);
@@ -48,7 +49,7 @@ export const useBagModalManager = () => {
             setIsOpen(false);
             setSelectedBag(null);
             setMode(null);
-        }, 1500);
+        }, 1200);
     };
 
     const handleClose = () => {

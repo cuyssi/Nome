@@ -57,7 +57,7 @@ export const BagModalManager = ({ isOpen, selected, showConfirmation, onEdit, on
                 />
             ) : mode === "school" ? (
                 <TomorrowSubjects
-                    bag={selectedBag}
+                    bag={selectedBag || selected}
                     isOpen={true}
                     onClose={onClose}
                     onUpdateBag={(updatedBag) => onEdit(updatedBag, { skipConfirmation: true })}

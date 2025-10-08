@@ -53,7 +53,7 @@ export const useBagEditor = ({ bag, onUpdateBag }) => {
                 : { hour: "20", minute: "00" }
         );
         setNotifyDays(bag.notifyDays || ["L", "M", "X", "J", "V"]);
-    }, [bag]);
+    }, [bag?.id]);
 
     const handleSubmit = (e) => {
         e?.preventDefault?.();

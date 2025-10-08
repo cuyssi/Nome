@@ -7,12 +7,15 @@ import { ButtonTrash } from "../commons/buttons/ButtonTrash";
 import { ButtonDefault } from "../commons/buttons/ButtonDefault";
 import { ColorPicker } from "../commons/formComponents/ColorPicker";
 import { InputField } from "../commons/formComponents/InputField";
+import { useState, useEffect } from "react";
 
 export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
+    const [tomorrow, setTomorrow] = useState(bag?.tomorrow || { date: null, subjects: [], extras: [] });
     const {
         handleItemChange,
         handleRemoveItem,
         handleSubmit,
+        name,
         setName,
         items,
         selectedColor,
@@ -25,6 +28,11 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
         setNewItem,
         handleAddTypedItem,
     } = useBagEditor({ bag, isOpen, onClose, onUpdateBag });
+
+    useEffect(() => {
+        if (!bag) return;
+        setTomorrow(bag.tomorrow || { date: null, subjects: [], extras: [] });
+    }, [bag]);
 
     return (
         <div className="bg-white rounded-xl p-5 max-w-md w-full max-h-[75vh] flex flex-col relative">
@@ -42,7 +50,9 @@ export const EditBag = ({ bag, isOpen, onClose, onUpdateBag }) => {
                     <InputField
                         label="Nombre:"
                         type="text"
-                        value={bag.name === "Clase" ? "Clase (* No se puede cambiar)" : bag.name}
+                        placeholder="Escribe un nombre para tu mochila"
+                        value={bag.name === "Clase" ? "Clase (* No se puede cambiar)" : name}
+                        readOnly={bag.name === "Clase"}
                         onChange={(e) => setName(e.target.value)}
                         required
                         disabled={bag.name === "Clase"}

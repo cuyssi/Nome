@@ -95,7 +95,7 @@ export const useCard = (task, onDelete, onEdit, isSchoolBag) => {
             isEdited,
             dragOffset,
             isDragging,
-            setIsDragging, // <--- añadir aquí también
+            setIsDragging,
             preventClickRef,
         },
         color,
