@@ -47,6 +47,7 @@ export const useCard = (task, onDelete, onEdit, isSchoolBag) => {
 
     const {
         dragOffset,
+        setDragOffset,
         handlePointerDown,
         handlePointerMove,
         handlePointerUp,
@@ -58,6 +59,7 @@ export const useCard = (task, onDelete, onEdit, isSchoolBag) => {
         isChecked,
         isRemoved,
         isEdited,
+        setIsEdited,
         isDragging,
         setIsDragging,
         preventClickRef,
@@ -78,6 +80,12 @@ export const useCard = (task, onDelete, onEdit, isSchoolBag) => {
         text: `text-${baseColor}`,
     };
 
+    const resetSwipe = () => {
+        setIsDragging(false);
+        setIsEdited(false);
+        setDragOffset(0);
+    };
+
     return {
         gestureHandlers: {
             handlePointerStart: handlePointerDown,
@@ -95,9 +103,9 @@ export const useCard = (task, onDelete, onEdit, isSchoolBag) => {
             isEdited,
             dragOffset,
             isDragging,
-            setIsDragging,
             preventClickRef,
         },
         color,
+        resetSwipe,
     };
 };

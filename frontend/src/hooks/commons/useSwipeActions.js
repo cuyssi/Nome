@@ -34,14 +34,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useStorageStore } from "../../store/storageStore";
 
-export const useSwipeActions = ({
-    task,
-    onDelete,
-    onEdit,
-    threshold = 160,
-    isSchoolBag = false
-}) => {
-
+export const useSwipeActions = ({ task, onDelete, onEdit, threshold = 100, isSchoolBag = false }) => {
     const [dragOffset, setDragOffset] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [isRemoved, setIsRemoved] = useState(false);
@@ -54,7 +47,6 @@ export const useSwipeActions = ({
     const preventClickRef = useRef(false);
     const pressTimer = useRef(null);
     const toggleCompletedToday = useStorageStore((state) => state.toggleCompletedToday);
-
 
     const handleStart = (x, y) => {
         dragStartX.current = x;
@@ -72,7 +64,6 @@ export const useSwipeActions = ({
             }
         }, 550);
     };
-
 
     const handleMove = (x, y) => {
         if (dragStartX.current === null || dragStartY.current === null) return;
@@ -99,10 +90,8 @@ export const useSwipeActions = ({
         const slowdownZone = 100;
         const maxOffset = 180;
 
-        if (deltaX > slowdownZone)
-            adjustedOffset = slowdownZone + (deltaX - slowdownZone) * 0.5;
-        if (deltaX < -slowdownZone)
-            adjustedOffset = -slowdownZone + (deltaX + slowdownZone) * 0.5;
+        if (deltaX > slowdownZone) adjustedOffset = slowdownZone + (deltaX - slowdownZone) * 0.5;
+        if (deltaX < -slowdownZone) adjustedOffset = -slowdownZone + (deltaX + slowdownZone) * 0.5;
 
         if (isSchoolBag && adjustedOffset > 0) adjustedOffset = 0;
 
@@ -124,13 +113,21 @@ export const useSwipeActions = ({
                 setIsEdited(true);
                 preventClickRef.current = true;
                 setTimeout(() => (preventClickRef.current = false), 300);
+                setDragOffset(0);
                 setTimeout(() => {
                     onEdit?.();
                     setIsEdited(false);
+                    setDragOffset(0);
                 }, 160);
             } else {
-
                 setDragOffset(0);
+
+                if (hasMoved.current) {
+                    preventClickRef.current = true;
+                    setTimeout(() => {
+                        preventClickRef.current = false;
+                    }, 300);
+                }
             }
 
             dragStartX.current = null;
@@ -155,19 +152,20 @@ export const useSwipeActions = ({
     };
     const handleTouchEnd = () => endGesture(dragOffset);
 
-
     useEffect(() => {
         const handleGlobalPointerUp = () => endGesture(dragOffset);
         document.addEventListener("pointerup", handleGlobalPointerUp);
         return () => document.removeEventListener("pointerup", handleGlobalPointerUp);
     }, [dragOffset, endGesture]);
 
-
     return {
         dragOffset,
+        setDragOffset,
         isDragging,
+        setIsDragging,
         isRemoved,
         isEdited,
+        setIsEdited,
         isChecked,
         preventClickRef,
         handlePointerDown,

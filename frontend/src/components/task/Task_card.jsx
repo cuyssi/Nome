@@ -31,15 +31,27 @@ import { toLocalYMD } from "../../utils/dateUtils";
 import { getRepeatLabel } from "../../utils/getRepeatLabel";
 import { SwipeCard } from "../commons/SwipeCard";
 import { SwipeAction } from "../commons/SwipeAction";
+import { useEffect } from "react";
+import { useBagModalManager } from "../../hooks/bag/useBagModalManager";
 
 export const Task_card = ({ task, onDelete, onEdit }) => {
     const isCompleted = useStorageStore.getState().isTaskCompletedForDate(task.id, toLocalYMD(new Date()));
     const { markAsCompleted } = useStorageStore();
+    const modalManager = useBagModalManager();
+
     const {
         gestureHandlers,
         state: { dragOffset, isRemoving, isDragging },
         color,
+        resetSwipe,
     } = useCard(task, onDelete, onEdit, markAsCompleted);
+
+    useEffect(() => {
+        if (!modalManager.isOpen) {
+            console.log("Cerrando modal, reseteando swipe");
+            resetSwipe();
+        }
+    }, [modalManager.isOpen]);
 
     return (
         <SwipeCard

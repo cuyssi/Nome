@@ -20,7 +20,8 @@
 └──────────────────────────────────────────────────────────────────────────────*/
 
 import { Container_Card } from "./Container_Card";
-import { getDragColor } from "../../utils/constants"
+import { getDragColor } from "../../utils/constants";
+import { useEffect } from "react";
 
 export const SwipeCard = ({
     dragOffset,
@@ -30,8 +31,12 @@ export const SwipeCard = ({
     onClick,
     leftAction,
     rightAction,
-    children,    
+    children,
 }) => {
+    useEffect(() => {
+        console.log("dragOffset changed:", dragOffset);
+    }, [dragOffset]);
+
     return (
         <div className="relative flex-shrink-0 w-full min-h-[6rem] overflow-hidden rounded-xl">
             <div
@@ -53,11 +58,9 @@ export const SwipeCard = ({
                     gestureHandlers.handlePointerEnd(e);
                     gestureHandlers.handleLongPressEnd();
                 }}
-                className={`relative rounded-xl z-10 ${
-                    color.bg
-                } touch-pan-y transition-transform duration-150 ease-out ${
-                    isRemoving ? "opacity-0 scale-90 blur-sm" : ""
-                }`}
+                className={`relative rounded-xl z-10 ${color.bg} touch-pan-y ${
+                    dragOffset === 0 ? "transition-transform duration-300 ease-out" : ""
+                } ${isRemoving ? "opacity-0 scale-90 blur-sm" : ""}`}
                 style={{ transform: `translateX(${dragOffset}px)` }}
                 onClick={onClick}
             >

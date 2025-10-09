@@ -33,6 +33,8 @@ export const useBagModalManager = () => {
     const { updateBag } = useBagsStore();
 
     const openModalWithBag = (bag, modalMode = "edit") => {
+        const now = Date.now();
+        if (now - lastCloseTime < 500) return;
         setShowConfirmation(false);
         setSelectedBag(bag);
         setMode(modalMode);
@@ -52,7 +54,10 @@ export const useBagModalManager = () => {
         }, 1200);
     };
 
+    let lastCloseTime = 0;
+
     const handleClose = () => {
+        lastCloseTime = Date.now();
         setIsOpen(false);
         setSelectedBag(null);
         setMode(null);
