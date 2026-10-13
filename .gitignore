@@ -53,3 +53,6 @@ backend/temp_audio.mp3
 # Ignorar modelo Vosk
 backend/vosk-model-es-0.42/
 
+*.pem
+backend/.venv/
+
