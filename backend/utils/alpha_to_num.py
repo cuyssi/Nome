@@ -15,10 +15,12 @@ CORRECTIONS = {
     "dos": "2",
 }
 
+
 def alpha_to_num(text: str, lang: str = "es") -> str:
+    text = alpha2digit(text, lang=lang)
+
     for word, repl in CORRECTIONS.items():
         pattern = re.compile(rf'\b{word}\b(?!\s+mil)', flags=re.IGNORECASE)
         text = pattern.sub(repl, text)
 
-    text = alpha2digit(text, lang=lang)
     return text

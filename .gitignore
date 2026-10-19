@@ -9,10 +9,15 @@ backend/dist/
 dist/
 dist-ssr/
 
-#Local env files
+# Local environment files
 *.env
 *.env.*
 *.local
+/backend/api/notifications/subscriptions.json
+
+# Allow example environment templates
+!.env.example
+!**/.env.example
 
 #Logs
 *.log
@@ -56,3 +61,9 @@ backend/vosk-model-es-0.42/
 *.pem
 backend/.venv/
 
+# Python virtual environments
+backend/.venv-test/
+
+# Python test artifacts
+.coverage
+.pytest_cache/

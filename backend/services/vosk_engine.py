@@ -56,6 +56,7 @@ from vosk import Model, KaldiRecognizer
 from pydub import AudioSegment
 import time
 
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "..", "vosk-model-es-0.42")
 CUSTOM_WORDS_PATH = os.path.join(BASE_DIR, "custom_words.json")

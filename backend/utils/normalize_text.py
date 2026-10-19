@@ -84,20 +84,21 @@ def normalize_time(text):
         (r"\ba las una\b", " a las 1"),
         (r"\b la una\b", " a la 1"),
         (r"\b las una\b", " a las 1"),
-        (r"(\d{1,2})\s+y\s+media\b", r"\1:30"),
-        (r"(\d{1,2})\s+y\s+cuarto\b", r"\1:15"),
-        (r"\b(\d{1,2})\s+y\s+(\d{1,2})\b", y_replacer),
+        (r"(\d{1,2})\s+(?:y\s+)+media\b", r"\1:30"),
+        (r"(\d{1,2})\s+(?:y\s+)+cuarto\b", r"\1:15"),
+        (r"\b(\d{1,2})\s+(?:y\s+)+(\d{1,2})\b", y_replacer),
         (r"\b(\d{1,2})\s+(\d{2})\b", r"\1:\2"),
         (r"\ba las (\d{1,2})(?!:\d{2})\b", r" a las \1:00"),
         (r"\ba la (\d{1,2})(?!:\d{2})\b", r" a la \1:00"),
-        (r"\b las (\d{1,2})(?!:\d{2})\b", r" a las \1:00"),
+        (r"(?<!de)(?<!en)\b las (\d{1,2})(?!:\d{2})\b", r" las \1:00"),
+        (r"\b(de|en) las (\d{1,2})(?!:\d{2})\b", r"\1 las \2:00"),
         (r"\b la (\d{1,2})(?!:\d{2})\b", r" a la \1:00"),
     ]
 
     for pattern, repl in patterns:
         text = re.sub(pattern, repl, text)
 
-    return text
+    return text.strip()
 
 
 def insert_patterns(text, results):

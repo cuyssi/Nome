@@ -21,8 +21,7 @@ RUN pip install --upgrade pip setuptools wheel
 COPY requirements.txt .
 
 # Instalar dependencias de Python (incluye pywebpush)
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir spacy python-multipart
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar el código
 COPY . .
